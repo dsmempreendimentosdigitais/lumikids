@@ -1,0 +1,62 @@
+# 🚀 PROMPT — FIREBASE STUDIO / GEMINI AI
+## Gerar projeto completo: Lumikids.app
+## IA: Google Gemini 1.5 Flash (gratuito) + Google Cloud TTS
+
+---
+
+Você é um engenheiro sênior full-stack especializado em Next.js, Firebase e PWA.
+Crie o projeto completo do app **Lumikids** seguindo TODAS as especificações abaixo.
+Não pule nenhuma etapa. Gere código funcional, tipado e pronto para produção.
+
+---
+
+## 🎯 O QUE É O LUMIKIDS
+
+App PWA de histórias infantis com IA.
+- **Domínio:** lumikids.app
+- **Tagline:** "Histórias que iluminam o coração das crianças"
+- **Público:** Crianças 2–10 anos + pais cristãos + escolas
+- **Plataforma:** PWA instalável (iOS + Android + Desktop)
+- **Idioma padrão:** Português Brasil (pt-BR)
+
+---
+
+## 🛠️ STACK OBRIGATÓRIA
+
+- **Framework:** Next.js 14 com App Router + TypeScript
+- **Estilo:** Tailwind CSS + variáveis CSS customizadas
+- **Animações:** Framer Motion
+- **Estado global:** Zustand
+- **Backend:** Firebase (Auth + Firestore + Storage + Functions)
+- **IA Geração:** Google Gemini 1.5 Flash (GRATUITO)
+- **IA Narração:** Google Cloud Text-to-Speech (1M chars/mês grátis)
+- **Pagamentos:** Stripe (5 planos de assinatura)
+- **Fonte:** Nunito (Google Fonts) — peso 400, 600, 700, 800, 900
+- **Ícones:** Lucide React + FontAwesome 6
+
+> ⚠️ NÃO usar OpenAI em nenhum momento.
+> TODA geração de texto usa Gemini 1.5 Flash.
+> TODA narração de voz usa Google Cloud TTS.
+> Ambos integram nativamente com Firebase (mesmo ecossistema Google).
+
+---
+
+## 🎨 DESIGN SYSTEM — USE EXATAMENTE ESTAS CORES
+
+```css
+:root {
+  --blue:       #3D5AFE;   /* primária */
+  --blue2:      #5C6BC0;   /* primária suave */
+  --blue-dark:  #283593;   /* texto escuro / header */
+  --gold:       #F9A825;   /* destaque / CTA principal */
+  --coral:      #FF6B6B;   /* ação / alerta */
+  --green:      #43A047;   /* sucesso / ativo */
+  --purple:     #7C4DFF;   /* faixa 2-4 anos / novidades */
+  --bg:         #F0F2FF;   /* fundo geral do app */
+  --card:       #FFFFFF;   /* fundo dos cards */
+  --text:       #2E2E2E;   /* texto principal */
+  --shadow:     0 4px 20px rgba(61,90,254,0.12);
+  --shadow-lg:  0 12px 40px rgba(61,90,254,0.18);
+  --radius:     20px;
+  --radius-sm:  14px;
+}

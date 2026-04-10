@@ -1,0 +1,17 @@
+
+---
+
+## 🔑 O que mudou nesta versão
+
+| Item | Antes (GPT) | Agora (Gemini) |
+|------|-------------|----------------|
+| **IA geração** | OpenAI GPT-4o | ✅ Gemini 1.5 Flash |
+| **Narração** | OpenAI TTS | ✅ Google Cloud TTS |
+| **Custo inicial** | ~R$ 80–300/mês | ✅ **R$ 0** |
+| **Integração** | Externa | ✅ Nativa Firebase |
+| **Safety settings** | Manual | ✅ Já no client Gemini |
+| **Quota control** | Externo | ✅ `lib/quota.ts` dedicado |
+| **Vozes TTS** | 1 padrão | ✅ **Por idioma + faixa etária** |
+| **Env vars** | `OPENAI_API_KEY` | ✅ `GEMINI_API_KEY` |
+
+**Pronto para colar no Firebase Studio, Samuel! 🚀✝️**

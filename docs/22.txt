@@ -1,0 +1,12 @@
+🌐 LANDING PAGE — SEÇÕES OBRIGATÓRIAS
+Seção 1 — Hero
+Badge roxo: "✦ Lançamento 2025 — IA + Valores + Fé"
+H1: "Histórias que iluminam o coração das crianças" — "iluminam" em #3D5AFE
+Subtítulo descritivo
+Botões: [▶ Começar grátis] dourado + [📖 Ver histórias] outline
+Stats: 100+ histórias | 8+ idiomas | 2–10 anos | ∞ criações IA
+Mockup do app (phone-frame)
+Seta animada bounce para rolar
+Seção 2 — Funcionalidades
+6 cards: 🍼 2–4 anos | 🤖 IA Criadora | 🎙️ Narração | 🎮 Interativo | ✝️ Bíblia | 👨‍👩‍👧 Controle
+Seção 3 — Categorias (IMPORTANTE — use exatamente esta lista)

@@ -1,0 +1,87 @@
+lumikids/
+├── app/
+│   ├── (auth)/
+│   │   ├── login/page.tsx
+│   │   ├── cadastro/page.tsx
+│   │   └── recuperar-senha/page.tsx
+│   ├── (app)/
+│   │   ├── layout.tsx
+│   │   ├── home/page.tsx
+│   │   ├── historias/
+│   │   │   ├── page.tsx
+│   │   │   ├── [id]/page.tsx
+│   │   │   └── categoria/[slug]/page.tsx
+│   │   ├── criar/page.tsx
+│   │   ├── progresso/page.tsx
+│   │   └── configuracoes/page.tsx
+│   ├── (landing)/
+│   │   ├── page.tsx
+│   │   ├── planos/page.tsx
+│   │   └── escolas/page.tsx
+│   └── api/
+│       ├── ai/
+│       │   ├── gerar-historia/route.ts   ← Gemini 1.5 Flash
+│       │   └── narrar/route.ts           ← Google Cloud TTS
+│       ├── stripe/
+│       │   ├── webhook/route.ts
+│       │   └── checkout/route.ts
+│       └── quota/
+│           └── check/route.ts            ← verificar limite de uso
+├── components/
+│   ├── ui/
+│   │   ├── Button.tsx
+│   │   ├── Card.tsx
+│   │   ├── Badge.tsx
+│   │   ├── Modal.tsx
+│   │   └── Spinner.tsx
+│   ├── app/
+│   │   ├── AppHeader.tsx
+│   │   ├── BottomNav.tsx
+│   │   ├── StoryCard.tsx
+│   │   ├── StoryPlayer.tsx
+│   │   ├── AgeSelector.tsx
+│   │   ├── CategoryGrid.tsx
+│   │   └── MissionCard.tsx
+│   └── landing/
+│       ├── Hero.tsx
+│       ├── Features.tsx
+│       ├── Categories.tsx
+│       ├── Plans.tsx
+│       ├── Testimonials.tsx
+│       ├── HowItWorks.tsx
+│       └── Footer.tsx
+├── lib/
+│   ├── firebase/
+│   │   ├── config.ts
+│   │   ├── auth.ts
+│   │   ├── firestore.ts
+│   │   └── storage.ts
+│   ├── gemini/
+│   │   ├── client.ts              ← instância do Gemini
+│   │   ├── generateStory.ts       ← geração de histórias
+│   │   ├── prompts.ts             ← todos os system prompts
+│   │   └── parseResponse.ts       ← parser da resposta JSON
+│   ├── tts/
+│   │   ├── googleTTS.ts           ← Google Cloud TTS
+│   │   └── voices.ts              ← mapeamento de vozes por idioma
+│   └── stripe/
+│       └── config.ts
+├── hooks/
+│   ├── useAuth.ts
+│   ├── useStory.ts
+│   ├── usePlayer.ts
+│   ├── useAIQuota.ts              ← controle de cota por plano
+│   └── useParentalControl.ts
+├── store/
+│   ├── authStore.ts
+│   ├── playerStore.ts
+│   └── profileStore.ts
+├── types/
+│   ├── story.ts
+│   ├── user.ts
+│   ├── plan.ts
+│   └── gemini.ts                  ← tipos da resposta Gemini
+└── public/
+    ├── manifest.json
+    ├── sw.js
+    └── icons/

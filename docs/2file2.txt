@@ -1,0 +1,1 @@
+Tipografia: Nunito 900 em TODOS os títulos e headings. Gradiente header app: linear-gradient(145deg, #3D5AFE, #5C6BC0) Cards: fundo branco, border-radius 20px, box-shadow suave azulada Botão primário: gradiente azul, border-radius 99px Botão CTA: gradiente dourado (#F9A825 → #FFB300), texto azul escuro

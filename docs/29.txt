@@ -1,0 +1,39 @@
+✅ CHECKLIST FINAL
+ Next.js 14 App Router + TypeScript em todo o projeto
+ Design system aplicado (cores exatas, Nunito 900 nos títulos)
+ Gemini 1.5 Flash integrado em lib/gemini/
+ Google Cloud TTS integrado em lib/tts/
+ SEM nenhuma referência ao OpenAI
+ Firebase Auth (email + Google + Apple)
+ Middleware de proteção de rotas
+ Firestore com todos os modelos tipados
+ Sistema de quota por plano implementado
+ Player com karaokê e controles completos
+ Landing page com todas as 8 seções
+ Categorias com status corretos (ativo/desativado/parental)
+ Clássicos Infantis com badge "Novo ✨" dourado
+ 5 planos Stripe configurados
+ Webhook Stripe com 4 handlers
+ PWA manifest.json + service worker
+ Firestore rules seguras
+ 10 histórias seed geradas
+ Analytics events implementados
+ .env.example completo
+ README.md com setup passo a passo
+ Footer: "lumikids.app · Belo Horizonte, Brasil"
+ Mobile-first, 100% responsivo
+ORDEM DE GERAÇÃO:
+
+Estrutura de pastas + package.json
+Tipos TypeScript (types/)
+Config Firebase + Gemini + TTS (lib/)
+Componentes base UI (components/ui/)
+Componentes do app (components/app/)
+Componentes da landing (components/landing/)
+Páginas da landing (app/(landing)/)
+Páginas do app (app/(app)/)
+API Routes (app/api/)
+PWA + Service Worker
+Firestore Rules + Storage Rules
+Scripts seed
+.env.example + README.md

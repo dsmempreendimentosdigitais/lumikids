@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lumikids — Histórias que iluminam o coração</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Nunito', sans-serif; background: #F0F2FF; color: #2E2E2E; overflow-x: hidden; }
+
+    :root {
+      --blue:      #3D5AFE;
+      --blue2:     #5C6BC0;
+      --blue-dark: #283593;
+      --gold:      #F9A825;
+      --coral:     #FF6B6B;
+      --cream:     #FFFDF7;
+      --bg:        #F0F2FF;
+      --text:      #2E2E2E;
+      --green:     #43A047;
+      --purple:    #7C4DFF;
+      --card:      #FFFFFF;
+      --shadow:    0 4px 20px rgba(61,90,254,0.11);
+      --shadow-lg: 0 12px 40px rgba(61,90,254,0.17);
+      --radius:    20px;
+      --radius-sm: 14px;
+    }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: #C5CAE9; border-radius: 99px; }
+
+    /* ═══ BOTÕES ═══ */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 24px; border-radius: 99px;
+      font-family: 'Nunito', sans-serif; font-weight: 800; font-size: .92rem;
+      cursor: pointer; border: none; transition: all .22s; text-decoration: none;
+    }
+    .btn-outline { background: transparent; border: 2px solid var(--blue); color: var(--blue); }
+    .btn-outline:hover { background: #E8EAFD; }
+    .btn-primary { background: linear-gradient(135deg, var(--blue), var(--blue2)); color: #fff; box-shadow: 0 4px 16px rgba(61,90,254,.3); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(61,90,254,.38); }
+    .btn-gold { background: linear-gradient(135deg, var(--gold), #FFB300); color: var(--blue-dark); box-shadow: 0 4px 16px rgba(249,168,37,.35); }
+    .btn-gold:hover { transform: translateY(-2px); }
+    .btn-lg { padding: 15px 34px; font-size: 1rem; }
+
+    /* ═══ NAV ═══ */
+    .desk-nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5vw; height: 68px;
+      background: rgba(240,242,255,.94);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(61,90,254,.08);
+    }
+    .desk-logo { display: flex; align-items: center; gap: 9px; text-decoration: none; }
+    .dl-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--blue), var(--blue2)); border-radius: 11px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1rem; box-shadow: 0 3px 12px rgba(61,90,254,.3); }
+    .dl-name { font-size: 1.25rem; font-weight: 900; color: var(--blue-dark); letter-spacing: -.5px; }
+    .dl-name em { font-style: normal; color: var(--gold); }
+    .desk-links { display: flex; gap: 32px; list-style: none; }
+    .desk-links a { text-decoration: none; font-weight: 700; font-size: .9rem; color: #555; transition: color .2s; }
+    .desk-links a:hover { color: var(--blue); }
+    .desk-cta { display: flex; gap: 10px; }
+
+    /* ═══ TABS ═══ */
+    .view-tabs {
+      position: fixed; top: 68px; left: 0; right: 0; z-index: 190;
+      display: flex; gap: 8px; justify-content: center;
+      padding: 10px 16px;
+      background: rgba(240,242,255,.96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(61,90,254,.07);
+    }
+    .vt-btn {
+      padding: 7px 18px; border-radius: 99px;
+      font-family: 'Nunito', sans-serif; font-size: .8rem; font-weight: 800;
+      cursor: pointer; border: 2px solid transparent; transition: all .22s;
+    }
+    .vt-btn.active { background: var(--blue); color: #fff; border-color: var(--blue); box-shadow: 0 3px 12px rgba(61,90,254,.25); }
+    .vt-btn:not(.active) { background: var(--card); color: var(--blue); border-color: rgba(61,90,254,.18); }
+    .vt-btn:not(.active):hover { border-color: var(--blue); }
+
+    .view-panel { display: none; padding-top: 120px; }
+    .view-panel.active { display: block; }
+
+    /* ═══ SCROLL ARROWS ═══ */
+    .scroll-down-arrow {
+      position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      cursor: pointer; z-index: 10; text-decoration: none;
+      animation: bounce 2s infinite;
+    }
+    .scroll-down-arrow span { font-size: .72rem; font-weight: 800; color: var(--blue); opacity: .6; letter-spacing: .5px; text-transform: uppercase; }
+    .arrow-circle { width: 42px; height: 42px; background: var(--card); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow); color: var(--blue); font-size: 1rem; }
+    @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
+
+    .scroll-top-btn {
+      position: fixed; bottom: 28px; right: 24px; z-index: 300;
+      width: 46px; height: 46px;
+      background: linear-gradient(135deg, var(--blue), var(--blue2));
+      border-radius: 50%; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 1rem;
+      box-shadow: 0 6px 20px rgba(61,90,254,.35);
+      transition: all .25s; opacity: 0; pointer-events: none;
+    }
+    .scroll-top-btn.visible { opacity: 1; pointer-events: all; }
+    .scroll-top-btn:hover { transform: translateY(-3px); }
+
+    /* ═══════════════════════
+       APP VIEW
+    ═══════════════════════ */
+    .phone-wrapper { max-width: 390px; margin: 0 auto; min-height: calc(100vh - 120px); background: var(--bg); }
+
+    .app-header {
+      background: linear-gradient(145deg, var(--blue) 0%, var(--blue2) 100%);
+      padding: 36px 22px 76px; border-radius: 0 0 32px 32px;
+      position: relative; overflow: hidden;
+    }
+    .app-header::before { content:''; position:absolute; top:-50px; right:-40px; width:160px; height:160px; background:rgba(255,255,255,.07); border-radius:50%; }
+    .app-header::after  { content:''; position:absolute; bottom:-20px; left:-30px; width:110px; height:110px; background:rgba(255,255,255,.05); border-radius:50%; }
+    .header-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
+    .header-logo { font-size:1.32rem; font-weight:900; color:#fff; letter-spacing:-.5px; }
+    .header-logo em { font-style:normal; color:var(--gold); }
+    .header-avatar { width:38px; height:38px; background:var(--gold); border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:.95rem; color:var(--blue-dark); box-shadow:0 2px 10px rgba(249,168,37,.4); cursor:pointer; }
+    .header-greeting { color:rgba(255,255,255,.8); font-size:.88rem; font-weight:700; margin-bottom:3px; }
+    .header-title { color:#fff; font-size:1.5rem; font-weight:900; letter-spacing:-.5px; line-height:1.2; }
+    .age-selector { margin-top:16px; display:flex; gap:8px; flex-wrap:wrap; }
+    .age-pill { display:inline-flex; align-items:center; gap:5px; padding:6px 13px; border-radius:99px; font-size:.75rem; font-weight:800; cursor:pointer; border:2px solid rgba(255,255,255,.3); background:rgba(255,255,255,.18); color:rgba(255,255,255,.9); transition:all .2s; white-space:nowrap; }
+    .age-pill.active { background:#fff; color:var(--blue); border-color:#fff; box-shadow:0 2px 10px rgba(0,0,0,.12); }
+
+    .main-content { padding:0 16px 32px; margin-top:-48px; position:relative; z-index:2; }
+
+    .story-day-card { background:linear-gradient(135deg,var(--blue-dark) 0%,#3949AB 60%,#5C6BC0 100%); border-radius:var(--radius); padding:20px; margin-bottom:18px; position:relative; overflow:hidden; box-shadow:var(--shadow-lg); }
+    .story-day-card::before { content:'✦'; position:absolute; right:16px; top:14px; font-size:1.3rem; color:rgba(249,168,37,.45); }
+    .story-day-card::after  { content:'✦'; position:absolute; right:36px; top:28px; font-size:.65rem; color:rgba(249,168,37,.3); }
+    .sdc-tag { display:inline-flex; align-items:center; gap:5px; background:rgba(249,168,37,.22); border:1px solid rgba(249,168,37,.4); border-radius:99px; padding:4px 11px; font-size:.68rem; font-weight:800; color:var(--gold); letter-spacing:.5px; text-transform:uppercase; margin-bottom:10px; }
+    .sdc-title { color:#fff; font-size:1.1rem; font-weight:900; line-height:1.3; margin-bottom:8px; max-width:200px; }
+    .sdc-meta { display:flex; align-items:center; gap:6px; color:rgba(255,255,255,.75); font-size:.72rem; font-weight:700; margin-bottom:14px; }
+    .sdc-meta .dot { opacity:.5; }
+    .sdc-play { display:inline-flex; align-items:center; gap:8px; background:var(--gold); color:var(--blue-dark); border:none; border-radius:99px; padding:10px 20px; font-family:'Nunito',sans-serif; font-size:.85rem; font-weight:900; cursor:pointer; transition:all .2s; box-shadow:0 4px 14px rgba(249,168,37,.4); }
+    .sdc-play:hover { transform:scale(1.04); }
+    .play-circle { width:22px; height:22px; background:var(--blue-dark); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.62rem; color:var(--gold); }
+
+    .age-banner { background:linear-gradient(135deg,#7C4DFF,#9C27B0); border-radius:var(--radius); padding:15px 18px; margin-bottom:18px; display:flex; align-items:center; gap:14px; box-shadow:0 6px 24px rgba(124,77,255,.25); cursor:pointer; transition:transform .2s; }
+    .age-banner:hover { transform:translateY(-2px); }
+    .ab-icon-wrap { width:46px; height:46px; background:rgba(255,255,255,.18); border-radius:13px; display:flex; align-items:center; justify-content:center; font-size:1.4rem; flex-shrink:0; }
+    .ab-text { flex:1; }
+    .ab-tag   { font-size:.62rem; font-weight:900; color:rgba(255,255,255,.72); text-transform:uppercase; letter-spacing:.8px; margin-bottom:1px; }
+    .ab-title { font-size:.9rem; font-weight:900; color:#fff; line-height:1.25; }
+    .ab-sub   { font-size:.7rem; color:rgba(255,255,255,.72); font-weight:700; margin-top:2px; }
+    .ab-arrow { color:rgba(255,255,255,.55); font-size:.8rem; }
+
+    .sec-lbl { font-size:.72rem; font-weight:900; color:var(--blue-dark); text-transform:uppercase; letter-spacing:1px; margin-bottom:11px; display:flex; justify-content:space-between; align-items:center; }
+    .sec-lbl a { font-size:.7rem; color:var(--blue); font-weight:800; text-decoration:none; opacity:.8; }
+
+    .cols-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:20px; }
+    .col-card { background:var(--card); border-radius:var(--radius-sm); padding:14px 10px; text-align:center; box-shadow:var(--shadow); cursor:pointer; transition:all .22s; border:1.5px solid transparent; }
+    .col-card:hover { transform:translateY(-3px); border-color:var(--blue); }
+    .col-icon { width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; margin:0 auto 8px; }
+    .ci-blue{background:#E8EAF6} .ci-teal{background:#E0F2F1} .ci-pink{background:#FCE4EC}
+    .ci-gold{background:#FFF8E1} .ci-green{background:#E8F5E9} .ci-purp{background:#EDE7F6}
+    .ci-orange{background:#FFF3E0} .ci-red{background:#FFEBEE} .ci-cyan{background:#E0F7FA}
+    .ci-lime{background:#F9FBE7}
+    .col-card h4 { font-size:.73rem; font-weight:900; color:var(--blue-dark); margin-bottom:2px; line-height:1.25; }
+    .col-card span { font-size:.62rem; color:#aaa; font-weight:700; }
+
+    .quick-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px; }
+    .qa-card { border-radius:var(--radius-sm); padding:16px 14px; cursor:pointer; transition:all .22s; }
+    .qa-card:hover { transform:translateY(-3px); }
+    .qa-blue{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff}
+    .qa-gold{background:linear-gradient(135deg,var(--gold),#FFB300);color:var(--blue-dark)}
+    .qa-green{background:linear-gradient(135deg,var(--green),#66BB6A);color:#fff}
+    .qa-coral{background:linear-gradient(135deg,var(--coral),#FF8A65);color:#fff}
+    .qa-icon { font-size:1.3rem; margin-bottom:7px; }
+    .qa-card h4 { font-size:.8rem; font-weight:900; margin-bottom:2px; }
+    .qa-card p  { font-size:.67rem; font-weight:700; opacity:.82; line-height:1.3; }
+
+    .highlights { display:flex; flex-direction:column; gap:11px; margin-bottom:20px; }
+    .hl-card { background:var(--card); border-radius:var(--radius-sm); padding:13px 15px; display:flex; align-items:center; gap:13px; box-shadow:var(--shadow); cursor:pointer; transition:all .22s; }
+    .hl-card:hover { transform:translateX(4px); box-shadow:var(--shadow-lg); }
+    .hl-cover { width:50px; height:50px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.5rem; flex-shrink:0; }
+    .hl-info { flex:1; }
+    .hl-cat   { font-size:.62rem; font-weight:800; text-transform:uppercase; letter-spacing:.5px; margin-bottom:2px; }
+    .hl-title { font-size:.86rem; font-weight:900; color:var(--text); margin-bottom:4px; line-height:1.25; }
+    .hl-meta  { display:flex; gap:7px; font-size:.65rem; font-weight:700; color:#bbb; }
+    .hl-arrow { color:#ddd; font-size:.78rem; }
+
+    .bottom-nav { position:sticky; bottom:0; background:#fff; border-top:1px solid rgba(61,90,254,.07); padding:10px 0 16px; display:flex; justify-content:space-around; box-shadow:0 -4px 20px rgba(61,90,254,.08); z-index:10; }
+    .bn-item { display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; padding:0 12px; }
+    .bn-icon { width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:.95rem; transition:all .2s; }
+    .bn-item.active .bn-icon { background:var(--blue); color:#fff; box-shadow:0 4px 12px rgba(61,90,254,.28); }
+    .bn-item:not(.active) .bn-icon { background:transparent; color:#ccc; }
+    .bn-item:not(.active):hover .bn-icon { background:#F0F2FF; color:var(--blue); }
+    .bn-label { font-size:.6rem; font-weight:800; }
+    .bn-item.active .bn-label { color:var(--blue); }
+    .bn-item:not(.active) .bn-label { color:#ccc; }
+
+    /* ═══════════════════════
+       LANDING
+    ═══════════════════════ */
+    .hero-section {
+      min-height: calc(100vh - 120px);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 60px 5vw 110px;
+      position: relative;
+      background:
+        radial-gradient(ellipse at 70% 20%, rgba(61,90,254,.10) 0%, transparent 55%),
+        radial-gradient(ellipse at 25% 80%, rgba(249,168,37,.08) 0%, transparent 55%),
+        var(--bg);
+    }
+    .hero-badge { display:inline-flex; align-items:center; gap:6px; background:#EDE7F6; border:1.5px solid rgba(124,77,255,.22); border-radius:99px; padding:5px 16px; font-size:.78rem; font-weight:800; color:var(--purple); margin-bottom:22px; }
+    .hero-section h1 { font-family:'Nunito',sans-serif; font-size:clamp(2.2rem,5vw,3.6rem); font-weight:900; color:var(--blue-dark); line-height:1.15; letter-spacing:-1.5px; margin-bottom:18px; max-width:720px; }
+    .hero-section h1 span { color:var(--blue); }
+    .hero-section > p { font-size:1.05rem; color:#666; line-height:1.78; font-weight:600; margin-bottom:32px; max-width:540px; }
+    .hero-btns { display:flex; gap:14px; flex-wrap:wrap; justify-content:center; margin-bottom:44px; }
+    .hero-stats { display:flex; gap:32px; flex-wrap:wrap; justify-content:center; }
+    .stat-item { display:flex; flex-direction:column; align-items:center; }
+    .stat-item strong { font-size:1.55rem; font-weight:900; color:var(--blue); }
+    .stat-item span { font-size:.75rem; color:#999; font-weight:700; }
+    .stat-sep { width:1px; background:rgba(61,90,254,.12); height:36px; align-self:center; }
+    .hero-phone-wrap { margin-top:52px; display:flex; justify-content:center; }
+    .phone-frame { width:280px; border-radius:44px; border:8px solid var(--blue-dark); overflow:hidden; box-shadow:0 32px 80px rgba(26,35,126,.22),0 8px 24px rgba(0,0,0,.10); background:var(--bg); }
+
+    /* SEÇÕES LANDING */
+    .land-section { padding:88px 5vw; text-align:center; }
+    .land-section-dark { background:linear-gradient(135deg,var(--blue-dark),#283593); padding:88px 5vw; text-align:center; color:#fff; }
+    .land-section-light { background:#FAFBFF; padding:88px 5vw; text-align:center; }
+
+    .sec-tag-badge { display:inline-block; padding:4px 16px; border-radius:99px; font-size:.73rem; font-weight:800; letter-spacing:.5px; text-transform:uppercase; margin-bottom:14px; }
+    .stb-blue  { background:#E8EAF6; color:var(--blue); }
+    .stb-gold  { background:rgba(249,168,37,.2); color:#B8860B; }
+    .stb-white { background:rgba(255,255,255,.15); color:rgba(255,255,255,.9); }
+    .stb-purp  { background:#EDE7F6; color:var(--purple); }
+
+    .land-section h2,
+    .land-section-dark h2,
+    .land-section-light h2 {
+      font-family:'Nunito',sans-serif; font-size:clamp(1.75rem,3.5vw,2.5rem);
+      font-weight:900; letter-spacing:-.5px; color:var(--blue-dark); margin-bottom:10px;
+    }
+    .land-section-dark h2 { color:#fff; }
+    .land-section > p,
+    .land-section-dark > p,
+    .land-section-light > p {
+      font-size:.96rem; line-height:1.72; font-weight:600;
+      max-width:500px; margin:0 auto 52px; color:#777;
+    }
+    .land-section-dark > p { color:rgba(255,255,255,.75); }
+
+    /* ═══ CATEGORIAS GRID ═══ */
+    .cats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 18px;
+      max-width: 1200px;
+      margin: 0 auto;
+      text-align: left;
+    }
+    .cat-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 24px 18px 20px;
+      box-shadow: var(--shadow);
+      border: 1.5px solid transparent;
+      cursor: pointer;
+      transition: all .25s;
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+      gap: 6px;
+    }
+    .cat-card:hover { transform: translateY(-5px); border-color: var(--blue); box-shadow: var(--shadow-lg); }
+    .cat-card:active { transform: scale(.97); }
+
+    .cat-emoji {
+      font-size: 2rem;
+      width: 56px; height: 56px;
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 4px;
+    }
+    .ce-blue   { background: #E8EAF6; }
+    .ce-teal   { background: #E0F2F1; }
+    .ce-pink   { background: #FCE4EC; }
+    .ce-gold   { background: #FFF8E1; }
+    .ce-green  { background: #E8F5E9; }
+    .ce-purple { background: #EDE7F6; }
+    .ce-gray   { background: #F5F5F5; }
+    .ce-orange { background: #FFF3E0; }
+    .ce-red    { background: #FFEBEE; }
+    .ce-cyan   { background: #E0F7FA; }
+
+    .cat-card h4 {
+      font-size: .88rem; font-weight: 900;
+      color: var(--blue-dark); line-height: 1.25;
+    }
+    .cat-card .cat-count {
+      font-size: .72rem; color: #aaa; font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    /* STATUS BADGES */
+    .cat-status {
+      display: inline-flex; align-items: center; gap: 5px;
+      border-radius: 99px; padding: 4px 12px;
+      font-size: .68rem; font-weight: 800;
+      white-space: nowrap;
+    }
+    .cs-on      { background: #E8F5E9; color: #2E7D32; }
+    .cs-off     { background: #F5F5F5; color: #9E9E9E; }
+    .cs-parent  { background: #FFF8E1; color: #F57F17; }
+
+    /* FEAT GRID */
+    .feat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:20px; max-width:1100px; margin:0 auto; text-align:left; }
+    .feat-card { background:var(--card); border-radius:var(--radius); padding:28px 22px; box-shadow:var(--shadow); border:1.5px solid rgba(61,90,254,.06); transition:all .25s; position:relative; overflow:hidden; }
+    .feat-card:hover { transform:translateY(-5px); box-shadow:var(--shadow-lg); }
+    .feat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--blue),var(--gold)); }
+    .fci { width:48px; height:48px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:1.25rem; margin-bottom:15px; }
+    .fci-b{background:#E8EAF6} .fci-g{background:#FFF8E1} .fci-c{background:#FFE4E4}
+    .fci-gr{background:#E8F5E9} .fci-p{background:#EDE7F6}
+    .feat-card h3 { font-size:.97rem; font-weight:900; color:var(--blue-dark); margin-bottom:7px; }
+    .feat-card p  { font-size:.83rem; color:#777; line-height:1.65; font-weight:600; }
+
+    /* STEPS */
+    .steps-wrap { max-width:640px; margin:0 auto; text-align:left; }
+    .step-item { display:flex; gap:22px; align-items:flex-start; padding-bottom:36px; position:relative; }
+    .step-item:last-child { padding-bottom:0; }
+    .step-item::after { content:''; position:absolute; left:22px; top:46px; bottom:0; width:2px; background:rgba(61,90,254,.15); }
+    .step-item:last-child::after { display:none; }
+    .step-num { width:46px; height:46px; min-width:46px; background:linear-gradient(135deg,var(--blue),var(--blue2)); border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:1rem; color:#fff; z-index:1; box-shadow:0 4px 14px rgba(61,90,254,.3); }
+    .step-text h3 { font-size:1rem; font-weight:900; color:var(--blue-dark); margin-bottom:5px; }
+    .step-text p  { font-size:.85rem; color:#777; line-height:1.65; font-weight:600; }
+
+    /* PLANS */
+    .plans-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; max-width:1100px; margin:0 auto; align-items:start; text-align:left; }
+    .plan-card { background:var(--card); border-radius:var(--radius); padding:26px 20px; box-shadow:var(--shadow); border:2px solid transparent; transition:all .25s; position:relative; }
+    .plan-card:hover { transform:translateY(-4px); }
+    .plan-card.feat-plan { border-color:var(--gold); background:linear-gradient(160deg,#fff 60%,#FFF8E1); transform:scale(1.03); box-shadow:0 16px 50px rgba(249,168,37,.2); }
+    .plan-card.feat-plan:hover { transform:scale(1.03) translateY(-4px); }
+    .plan-badge { position:absolute; top:-11px; left:50%; transform:translateX(-50%); background:var(--gold); color:var(--blue-dark); border-radius:99px; padding:3px 14px; font-size:.68rem; font-weight:900; white-space:nowrap; }
+    .plan-name  { font-size:.7rem; font-weight:900; color:#bbb; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
+    .plan-price { display:flex; align-items:baseline; gap:3px; margin-bottom:5px; }
+    .pp-cur { font-size:.9rem; font-weight:900; color:var(--blue-dark); }
+    .pp-amt { font-size:2.2rem; font-weight:900; color:var(--blue-dark); line-height:1; }
+    .pp-per { font-size:.73rem; color:#bbb; font-weight:700; }
+    .plan-desc  { font-size:.76rem; color:#999; font-weight:600; margin-bottom:16px; line-height:1.5; }
+    .plan-feats { list-style:none; margin-bottom:20px; display:flex; flex-direction:column; gap:8px; }
+    .plan-feats li { display:flex; align-items:flex-start; gap:7px; font-size:.78rem; font-weight:700; color:var(--text); }
+    .plan-feats li i { color:var(--green); margin-top:2px; font-size:.7rem; }
+    .plan-feats li.off { opacity:.38; }
+    .plan-feats li.off i { color:#ccc; }
+
+    /* B2B */
+    .b2b-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:18px; max-width:1000px; margin:0 auto; text-align:left; }
+    .b2b-card { background:rgba(255,255,255,.08); border:1.5px solid rgba(255,255,255,.15); border-radius:var(--radius); padding:26px 20px; backdrop-filter:blur(8px); transition:all .25s; }
+    .b2b-card:hover { background:rgba(255,255,255,.13); transform:translateY(-4px); }
+    .b2b-icon { font-size:1.7rem; margin-bottom:12px; }
+    .b2b-card h4 { font-size:.97rem; font-weight:900; margin-bottom:7px; }
+    .b2b-card p  { font-size:.82rem; opacity:.8; line-height:1.65; font-weight:600; }
+
+    /* DEPOIMENTOS */
+    .testi-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:18px; max-width:1000px; margin:0 auto; text-align:left; }
+    .testi-card { background:var(--card); border-radius:var(--radius); padding:26px 22px; border:1.5px solid rgba(61,90,254,.07); }
+    .testi-quote { font-size:2.2rem; color:var(--gold); line-height:1; margin-bottom:8px; font-weight:900; }
+    .testi-stars { color:var(--gold); font-size:.78rem; margin-bottom:10px; letter-spacing:2px; }
+    .testi-card p { font-size:.86rem; line-height:1.75; color:#666; font-weight:600; font-style:italic; margin-bottom:16px; }
+    .testi-author { display:flex; align-items:center; gap:11px; }
+    .ta-av { width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:.88rem; color:#fff; }
+    .ta-name { font-weight:900; font-size:.83rem; color:var(--blue-dark); }
+    .ta-role { font-size:.7rem; color:#aaa; font-weight:700; }
+
+    /* PWA */
+    .pwa-strip { background:linear-gradient(135deg,var(--gold),#FFB300); padding:56px 5vw; text-align:center; }
+    .pwa-strip h2 { font-size:clamp(1.5rem,3.5vw,2.2rem); font-weight:900; color:var(--blue-dark); margin-bottom:10px; }
+    .pwa-strip p  { color:rgba(26,35,126,.72); font-size:.96rem; font-weight:700; margin-bottom:24px; max-width:440px; margin-left:auto; margin-right:auto; }
+    .pwa-steps-row { display:flex; justify-content:center; gap:28px; flex-wrap:wrap; margin-bottom:26px; }
+    .pwa-step { display:flex; align-items:center; gap:8px; font-size:.83rem; font-weight:800; color:var(--blue-dark); }
+    .pwa-num  { width:27px; height:27px; background:var(--blue-dark); color:var(--gold); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.75rem; font-weight:900; }
+
+    /* FOOTER */
+    footer { background:var(--blue-dark); color:rgba(255,255,255,.82); padding:52px 5vw 24px; }
+    .foot-grid { display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:36px; margin-bottom:36px; }
+    .foot-logo-row { display:flex; align-items:center; gap:9px; margin-bottom:13px; }
+    .fl-ic { width:34px; height:34px; background:var(--gold); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:.95rem; color:var(--blue-dark); }
+    .fl-nm { font-size:1.18rem; font-weight:900; color:#fff; }
+    .fl-nm em { font-style:normal; color:var(--gold); }
+    .foot-brand p { font-size:.78rem; opacity:.65; line-height:1.7; font-weight:600; max-width:220px; }
+    .foot-social { display:flex; gap:8px; margin-top:16px; }
+    .soc-ic { width:34px; height:34px; border-radius:9px; background:rgba(255,255,255,.1); display:flex; align-items:center; justify-content:center; color:#fff; font-size:.85rem; transition:background .2s; text-decoration:none; }
+    .soc-ic:hover { background:var(--gold); color:var(--blue-dark); }
+    .foot-col h5 { font-size:.72rem; font-weight:900; text-transform:uppercase; letter-spacing:1px; color:var(--gold); margin-bottom:14px; }
+    .foot-col ul { list-style:none; display:flex; flex-direction:column; gap:8px; }
+    .foot-col ul a { color:rgba(255,255,255,.65); text-decoration:none; font-size:.78rem; font-weight:600; transition:color .2s; }
+    .foot-col ul a:hover { color:var(--gold); }
+    .foot-bottom { border-top:1px solid rgba(255,255,255,.1); padding-top:18px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; }
+    .foot-bottom p { font-size:.74rem; opacity:.55; font-weight:600; }
+
+    .section-anchor { scroll-margin-top: 130px; }
+
+    /* RESPONSIVE */
+    @media(max-width:900px) {
+      .desk-links { display:none; }
+      .foot-grid { grid-template-columns:1fr 1fr; }
+      .plans-grid { grid-template-columns:1fr 1fr; }
+      .plan-card.feat-plan { transform:none; }
+      .cats-grid { grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); }
+    }
+    @media(max-width:600px) {
+      .plans-grid { grid-template-columns:1fr; }
+      .foot-grid { grid-template-columns:1fr; }
+      .hero-section h1 { font-size:2rem; }
+      .desk-cta .btn-outline { display:none; }
+      .cats-grid { grid-template-columns:repeat(2,1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- SETA PARA CIMA -->
+<button class="scroll-top-btn" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+  <i class="fas fa-chevron-up"></i>
+</button>
+
+<!-- NAV -->
+<nav class="desk-nav">
+  <a href="#" class="desk-logo">
+    <div class="dl-icon">✦</div>
+    <span class="dl-name">Lumi<em>kids</em></span>
+  </a>
+  <ul class="desk-links">
+    <li><a href="#features">Funcionalidades</a></li>
+    <li><a href="#categorias">Histórias</a></li>
+    <li><a href="#planos">Planos</a></li>
+    <li><a href="#escolas">Escolas</a></li>
+  </ul>
+  <div class="desk-cta">
+    <a href="#" class="btn btn-outline" style="padding:9px 20px;font-size:.85rem;">Entrar</a>
+    <a href="#" class="btn btn-primary" style="padding:9px 20px;font-size:.85rem;">Começar grátis</a>
+  </div>
+</nav>
+
+<!-- TABS -->
+<div class="view-tabs">
+  <button class="vt-btn active" onclick="showView('app',this)">📱 App Preview</button>
+  <button class="vt-btn" onclick="showView('landing',this)">🌐 Landing Page</button>
+</div>
+
+<!-- ════════════════════════
+     APP VIEW
+════════════════════════ -->
+<div class="view-panel active" id="view-app">
+  <div class="phone-wrapper">
+    <div class="app-header">
+      <div class="header-top">
+        <div class="header-logo">Lumi<em>kids</em></div>
+        <div class="header-avatar">S</div>
+      </div>
+      <div class="header-greeting">Boa noite, Samuel 👋</div>
+      <div class="header-title">O que vamos<br>ler hoje?</div>
+      <div class="age-selector">
+        <div class="age-pill" onclick="selectAge(this,'2-4')">🍼 2–4 anos</div>
+        <div class="age-pill active" onclick="selectAge(this,'5-7')">📚 5–7 anos</div>
+        <div class="age-pill" onclick="selectAge(this,'8-10')">🎓 8–10 anos</div>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <div class="story-day-card">
+        <div class="sdc-tag">✦ História do dia</div>
+        <div class="sdc-title" id="sdcTitle">O Pão que Alimentou a Multidão</div>
+        <div class="sdc-meta" id="sdcMeta">
+          <span>📖 Bíblia</span><span class="dot">•</span>
+          <span>5 min</span><span class="dot">•</span><span>5–7 anos</span>
+        </div>
+        <button class="sdc-play">
+          <div class="play-circle"><i class="fas fa-play"></i></div>Ouvir agora
+        </button>
+      </div>
+
+      <div class="age-banner">
+        <div class="ab-icon-wrap">🍼</div>
+        <div class="ab-text">
+          <div class="ab-tag">✨ Novidade</div>
+          <div class="ab-title">Histórias para 2–4 anos</div>
+          <div class="ab-sub">Leia junto com seu bebê ❤️</div>
+        </div>
+        <i class="fas fa-chevron-right ab-arrow"></i>
+      </div>
+
+      <div class="sec-lbl">Coleções <a href="#">Ver todas</a></div>
+      <div class="cols-grid">
+        <div class="col-card"><div class="col-icon ci-blue">✝️</div><h4>Vida de Jesus</h4><span>12 histórias</span></div>
+        <div class="col-card"><div class="col-icon ci-teal">💤</div><h4>Hora de dormir</h4><span>28 histórias</span></div>
+        <div class="col-card"><div class="col-icon ci-pink">❤️</div><h4>Sentimentos</h4><span>18 histórias</span></div>
+        <div class="col-card"><div class="col-icon ci-gold">👸</div><h4>Mulheres Fortes</h4><span>15 histórias</span></div>
+        <div class="col-card"><div class="col-icon ci-green">🔬</div><h4>Inventores</h4><span>20 histórias</span></div>
+        <div class="col-card"><div class="col-icon ci-orange">📚</div><h4>Clássicos</h4><span>24 histórias</span></div>
+      </div>
+
+      <div class="sec-lbl">Criar & Explorar</div>
+      <div class="quick-grid">
+        <div class="qa-card qa-blue"><div class="qa-icon">🤖</div><h4>Criar com IA</h4><p>Sua história em segundos</p></div>
+        <div class="qa-card qa-gold"><div class="qa-icon">🎯</div><h4>Missão do Bem</h4><p>Tarefa de hoje</p></div>
+        <div class="qa-card qa-green"><div class="qa-icon">📖</div><h4>Trilha Bíblica</h4><p>Continue sua jornada</p></div>
+        <div class="qa-card qa-coral"><div class="qa-icon">🌙</div><h4>Hora de Dormir</h4><p>Histórias calmas</p></div>
+      </div>
+
+      <div class="sec-lbl">Em destaque <a href="#">Ver todas</a></div>
+      <div class="highlights">
+        <div class="hl-card">
+          <div class="hl-cover" style="background:#E8EAF6;">🕊️</div>
+          <div class="hl-info">
+            <div class="hl-cat" style="color:var(--blue);">✝️ Bíblia</div>
+            <div class="hl-title">O Bom Samaritano</div>
+            <div class="hl-meta"><span>6 min</span><span>•</span><span>6–9 anos</span><span>•</span><span>⭐ 4.9</span></div>
+          </div>
+          <i class="fas fa-chevron-right hl-arrow"></i>
+        </div>
+        <div class="hl-card">
+          <div class="hl-cover" style="background:#EDE7F6;">🦁</div>
+          <div class="hl-info">
+            <div class="hl-cat" style="color:var(--purple);">🍼 2–4 anos</div>
+            <div class="hl-title">O Leãozinho Corajoso</div>
+            <div class="hl-meta"><span>3 min</span><span>•</span><span>2–4 anos</span><span>•</span><span>⭐ 5.0</span></div>
+          </div>
+          <i class="fas fa-chevron-right hl-arrow"></i>
+        </div>
+        <div class="hl-card">
+          <div class="hl-cover" style="background:#FFF8E1;">📚</div>
+          <div class="hl-info">
+            <div class="hl-cat" style="color:#F57F17;">📚 Clássicos</div>
+            <div class="hl-title">Chapeuzinho Vermelho</div>
+            <div class="hl-meta"><span>7 min</span><span>•</span><span>4–8 anos</span><span>•</span><span>⭐ 4.9</span></div>
+          </div>
+          <i class="fas fa-chevron-right hl-arrow"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <div class="bn-item active" onclick="setNav(this)"><div class="bn-icon"><i class="fas fa-house"></i></div><div class="bn-label">Início</div></div>
+      <div class="bn-item" onclick="setNav(this)"><div class="bn-icon"><i class="fas fa-book-open"></i></div><div class="bn-label">Histórias</div></div>
+      <div class="bn-item" onclick="setNav(this)"><div class="bn-icon"><i class="fas fa-wand-magic-sparkles"></i></div><div class="bn-label">Criar</div></div>
+      <div class="bn-item" onclick="setNav(this)"><div class="bn-icon"><i class="fas fa-chart-simple"></i></div><div class="bn-label">Progresso</div></div>
+      <div class="bn-item" onclick="setNav(this)"><div class="bn-icon"><i class="fas fa-gear"></i></div><div class="bn-label">Config.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════
+     LANDING VIEW
+════════════════════════ -->
+<div class="view-panel" id="view-landing">
+
+  <!-- HERO -->
+  <section class="hero-section" id="hero">
+    <div class="hero-badge">✦ Lançamento 2025 — IA + Valores + Fé</div>
+    <h1>Histórias que <span>iluminam</span> o coração das crianças</h1>
+    <p>IA que cria histórias personalizadas com valores, fé cristã e personagens que as crianças amam. De 2 a 10 anos, em qualquer idioma.</p>
+    <div class="hero-btns">
+      <a href="#" class="btn btn-gold btn-lg"><i class="fas fa-play"></i> Começar grátis</a>
+      <a href="#" class="btn btn-outline btn-lg"><i class="fas fa-book-open"></i> Ver histórias</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item"><strong>100+</strong><span>histórias</span></div>
+      <div class="stat-sep"></div>
+      <div class="stat-item"><strong>8+</strong><span>idiomas</span></div>
+      <div class="stat-sep"></div>
+      <div class="stat-item"><strong>2–10</strong><span>anos</span></div>
+      <div class="stat-sep"></div>
+      <div class="stat-item"><strong>∞</strong><span>criações IA</span></div>
+    </div>
+
+    <!-- PHONE MINI -->
+    <div class="hero-phone-wrap">
+      <div class="phone-frame">
+        <div class="app-header" style="padding:28px 16px 56px;">
+          <div class="header-top">
+            <div class="header-logo" style="font-size:1.05rem;">Lumi<em>kids</em></div>
+            <div class="header-avatar" style="width:30px;height:30px;font-size:.78rem;">S</div>
+          </div>
+          <div class="header-greeting" style="font-size:.75rem;">Boa noite, Samuel 👋</div>
+          <div class="header-title" style="font-size:1.1rem;">O que vamos<br>ler hoje?</div>
+          <div class="age-selector" style="margin-top:10px;gap:6px;">
+            <div class="age-pill" style="font-size:.65rem;padding:4px 9px;">🍼 2–4</div>
+            <div class="age-pill active" style="font-size:.65rem;padding:4px 9px;">📚 5–7</div>
+            <div class="age-pill" style="font-size:.65rem;padding:4px 9px;">🎓 8–10</div>
+          </div>
+        </div>
+        <div style="padding:0 11px 14px;margin-top:-38px;position:relative;z-index:2;">
+          <div class="story-day-card" style="padding:13px;margin-bottom:11px;">
+            <div class="sdc-tag" style="font-size:.58rem;padding:3px 9px;">✦ História do dia</div>
+            <div class="sdc-title" style="font-size:.82rem;margin-bottom:6px;">O Pão que Alimentou a Multidão</div>
+            <div class="sdc-meta" style="font-size:.6rem;margin-bottom:10px;"><span>📖 Bíblia</span><span class="dot">•</span><span>5 min</span></div>
+            <button class="sdc-play" style="font-size:.68rem;padding:7px 13px;">
+              <div class="play-circle" style="width:17px;height:17px;font-size:.52rem;"><i class="fas fa-play"></i></div>
+              Ouvir agora
+            </button>
+          </div>
+          <div style="font-size:.6rem;font-weight:900;color:var(--blue-dark);text-transform:uppercase;letter-spacing:1px;margin-bottom:9px;">Coleções</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px;">
+            <div class="col-card" style="padding:9px 6px;"><div class="col-icon ci-blue" style="width:30px;height:30px;border-radius:9px;font-size:.9rem;margin-bottom:5px;">✝️</div><h4 style="font-size:.58rem;">Vida de Jesus</h4><span style="font-size:.52rem;">12</span></div>
+            <div class="col-card" style="padding:9px 6px;"><div class="col-icon ci-teal" style="width:30px;height:30px;border-radius:9px;font-size:.9rem;margin-bottom:5px;">💤</div><h4 style="font-size:.58rem;">Dormir</h4><span style="font-size:.52rem;">28</span></div>
+            <div class="col-card" style="padding:9px 6px;"><div class="col-icon ci-orange" style="width:30px;height:30px;border-radius:9px;font-size:.9rem;margin-bottom:5px;">📚</div><h4 style="font-size:.58rem;">Clássicos</h4><span style="font-size:.52rem;">24</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <a class="scroll-down-arrow" href="#features">
+      <span>Explorar</span>
+      <div class="arrow-circle"><i class="fas fa-chevron-down"></i></div>
+    </a>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="land-section section-anchor" id="features">
+    <div class="sec-tag-badge stb-blue">Funcionalidades</div>
+    <h2>Tudo que uma criança precisa para crescer bem</h2>
+    <p>Tecnologia moderna a serviço dos valores mais importantes da vida.</p>
+    <div class="feat-grid">
+      <div class="feat-card"><div class="fci fci-p">🍼</div><h3>Para 2–4 anos também</h3><p>Histórias curtas com narração suave. Pais leem junto com seus bebês em missões de carinho diárias.</p></div>
+      <div class="feat-card"><div class="fci fci-g">🤖</div><h3>IA Criadora de Histórias</h3><p>Crie histórias com o nome da criança, tema e emoção — em segundos, em qualquer idioma.</p></div>
+      <div class="feat-card"><div class="fci fci-b">🎙️</div><h3>Narração Multilíngue</h3><p>Vozes naturais em 8+ idiomas com leitura sincronizada estilo karaokê.</p></div>
+      <div class="feat-card"><div class="fci fci-c">🎮</div><h3>Histórias Interativas</h3><p>A criança faz escolhas que mudam a história. Engajamento real com desenvolvimento de empatia.</p></div>
+      <div class="feat-card"><div class="fci fci-g">✝️</div><h3>Bíblia em Destaque</h3><p>Vida de Jesus, parábolas e muito mais — ativos por padrão e adaptados para cada faixa etária.</p></div>
+      <div class="feat-card"><div class="fci fci-gr">👨‍👩‍👧</div><h3>Controle Parental</h3><p>Ative e desative categorias com PIN. Relatório de progresso e tempo de tela controlado.</p></div>
+    </div>
+  </section>
+
+  <!-- ════ CATEGORIAS ════ -->
+  <section class="land-section-light section-anchor" id="categorias">
+    <div class="sec-tag-badge stb-purp">Biblioteca</div>
+    <h2>Histórias para cada momento</h2>
+    <p style="color:#777;max-width:500px;margin:0 auto 52px;font-size:.96rem;font-weight:600;line-height:1.72;">
+      Categorias ativadas e desativadas pelos pais. Bíblia ativa por padrão.
+    </p>
+
+    <div class="cats-grid">
+
+      <!-- ATIVAS -->
+      <div class="cat-card">
+        <div class="cat-emoji ce-blue">✝️</div>
+        <h4>Vida de Jesus</h4>
+        <div class="cat-count">12 histórias</div>
+        <span class="cat-status cs-on"><i class="fas fa-check"></i> Ativo</span>
+      </div>
+
+      <div class="cat-card">
+        <div class="cat-emoji ce-blue">📖</div>
+        <h4>Bíblia Kids</h4>
+        <div class="cat-count">48 histórias</div>
+        <span class="cat-status cs-on"><i class="fas fa-check"></i> Ativo</span>
+      </div>
+
+      <div class="cat-card">
+        <div class="cat-emoji ce-teal">💤</div>
+        <h4>Hora de Dormir</h4>
+        <div class="cat-count">28 histórias</div>
+        <span class="cat-status cs-on"><i class="fas fa-check"></i> Ativo</span>
+      </div>
+
+      <div class="cat-card">
+        <div class="cat-emoji ce-pink">❤️</div>
+        <h4>Sentimentos</h4>
+        <div class="cat-count">18 histórias</div>
+        <span class="cat-status cs-on"><i class="fas fa-check"></i> Ativo</span>
+      </div>
+
+      <div class="cat-card">
+        <div class="cat-emoji ce-gold">👩‍🦸</div>
+        <h4>Mulheres Fortes</h4>
+        <div class="cat-count">15 histórias</div>
+        <span class="cat-status cs-on"><i class="fas fa-check"></i> Ativo</span>
+      </div>
+
+      <div class="cat-card">
+        <div class="cat-emoji ce-green">🔬</div>
+        <h4>Inventores & Gênios</h4>
+        <div class="cat-count">20 histórias</div>
+        <span class="cat-status cs-on"><i class="fas fa-check"></i> Ativo</span>
+      </div>
+
+      <!-- CLÁSSICOS — NOVO -->
+      <div class="cat-card" style="border-color:var(--gold);box-shadow:0 6px 24px rgba(249,168,37,.18);">
+        <div class="cat-emoji ce-orange" style="position:relative;">
+          📚
+          <span style="position:absolute;top:-6px;right:-6px;background:var(--gold);color:var(--blue-dark);font-size:.55rem;font-weight:900;padding:2px 7px;border-radius:99px;white-space:nowrap;">Novo ✨</span>
+        </div>
+        <h4>Clássicos Infantis</h4>
+        <div class="cat-count">24 histórias</div>
+        <span class="cat-status cs-on"><i class="fas fa-check"></i> Ativo</span>
+      </div>
+
+      <div class="cat-card">
+        <div class="cat-emoji ce-cyan">🌍</div>
+        <h4>Países & Culturas</h4>
+        <div class="cat-count">30 histórias</div>
+        <span class="cat-status cs-on"><i class="fas fa-check"></i> Ativo</span>
+      </div>
+
+      <div class="cat-card">
+        <div class="cat-emoji ce-purple">🍼</div>
+        <h4>Bebês 2–4 Anos</h4>
+        <div class="cat-count">22 histórias</div>
+        <span class="cat-status cs-on"><i class="fas fa-check"></i> Ativo</span>
+      </div>
+
+      <!-- DESATIVADO -->
+      <div class="cat-card" style="opacity:.75;">
+        <div class="cat-emoji ce-gray">🏛️</div>
+        <h4>Mitologia Grega</h4>
+        <div class="cat-count">14 histórias</div>
+        <span class="cat-status cs-off"><i class="fas fa-circle"></i> Desativado</span>
+      </div>
+
+      <!-- CONTROLE PARENTAL -->
+      <div class="cat-card" style="opacity:.85;">
+        <div class="cat-emoji ce-gold">🌸</div>
+        <h4>Budismo & Hinduísmo</h4>
+        <div class="cat-count">8 histórias</div>
+        <span class="cat-status cs-parent"><i class="fas fa-shield"></i> Controle parental</span>
+      </div>
+
+      <!-- CTA CRIAR COM IA -->
+      <div class="cat-card" style="background:linear-gradient(135deg,var(--blue),var(--blue2));border:none;cursor:pointer;">
+        <div class="cat-emoji" style="background:rgba(255,255,255,.15);">🤖</div>
+        <h4 style="color:#fff;">Criar com IA</h4>
+        <div class="cat-count" style="color:rgba(255,255,255,.7);">Histórias únicas</div>
+        <span class="cat-status" style="background:var(--gold);color:var(--blue-dark);">✦ Personalizar</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- COMO FUNCIONA -->
+  <section class="land-section-dark section-anchor" id="como-funciona">
+    <div class="sec-tag-badge stb-white">Como funciona</div>
+    <h2>De 0 a história em menos de 1 minuto</h2>
+    <p>Simples para os pais, mágico para as crianças.</p>
+    <div class="steps-wrap">
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-text"><h3 style="color:#fff;">Crie o perfil da criança</h3><p style="color:rgba(255,255,255,.75);">Nome, idade (de 2 a 10 anos), idioma e preferências. O app se adapta completamente.</p></div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-text"><h3 style="color:#fff;">Escolha ou crie uma história</h3><p style="color:rgba(255,255,255,.75);">Use a biblioteca curada ou peça à IA para criar uma história com o tema e valor que você quiser.</p></div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-text"><h3 style="color:#fff;">Ouça, leia e interaja</h3><p style="color:rgba(255,255,255,.75);">Narração natural sincronizada com o texto. Para 2–4 anos, pais e filhos leem juntos.</p></div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">4</div>
+        <div class="step-text"><h3 style="color:#fff;">Missão do Bem + Reflexão</h3><p style="color:rgba(255,255,255,.75);">Cada história termina com uma missão prática e uma pergunta para conversar em família.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLANOS -->
+  <section class="land-section section-anchor" id="planos">
+    <div class="sec-tag-badge stb-blue">Planos</div>
+    <h2>Para cada família, o plano certo</h2>
+    <p>Comece grátis. Cresça no ritmo da sua família.</p>
+    <div class="plans-grid">
+      <div class="plan-card">
+        <div class="plan-name">Gratuito</div>
+        <div class="plan-price"><span class="pp-amt">0</span></div>
+        <div class="plan-desc">Perfeito para conhecer e já ter uma experiência incrível.</div>
+        <ul class="plan-feats">
+          <li><i class="fas fa-check-circle"></i> História do dia</li>
+          <li><i class="fas fa-check-circle"></i> 3 histórias/semana</li>
+          <li><i class="fas fa-check-circle"></i> 2 criações IA/semana</li>
+          <li><i class="fas fa-check-circle"></i> 1 perfil de criança</li>
+          <li class="off"><i class="fas fa-times-circle"></i> Biblioteca ilimitada</li>
+        </ul>
+        <a href="#" class="btn btn-outline" style="width:100%;justify-content:center;font-size:.82rem;">Começar grátis</a>
+      </div>
+      <div class="plan-card">
+        <div class="plan-name">Start</div>
+        <div class="plan-price"><span class="pp-cur">R$</span><span class="pp-amt">14</span><span class="pp-per">,90/mês</span></div>
+        <div class="plan-desc">Mais histórias e acesso livre à biblioteca.</div>
+        <ul class="plan-feats">
+          <li><i class="fas fa-check-circle"></i> Biblioteca ilimitada</li>
+          <li><i class="fas fa-check-circle"></i> Áudio sem limite</li>
+          <li><i class="fas fa-check-circle"></i> 2 perfis de criança</li>
+          <li><i class="fas fa-check-circle"></i> Sem anúncios</li>
+          <li class="off"><i class="fas fa-times-circle"></i> IA ilimitada</li>
+        </ul>
+        <a href="#" class="btn btn-primary" style="width:100%;justify-content:center;font-size:.82rem;">Assinar</a>
+      </div>
+      <div class="plan-card feat-plan">
+        <div class="plan-badge">⭐ Mais popular</div>
+        <div class="plan-name">Família</div>
+        <div class="plan-price"><span class="pp-cur">R$</span><span class="pp-amt">24</span><span class="pp-per">,90/mês</span></div>
+        <div class="plan-desc">O plano completo para quem valoriza aprendizado com valores.</div>
+        <ul class="plan-feats">
+          <li><i class="fas fa-check-circle"></i> 30 criações IA/mês</li>
+          <li><i class="fas fa-check-circle"></i> Vozes premium</li>
+          <li><i class="fas fa-check-circle"></i> 4 perfis de criança</li>
+          <li><i class="fas fa-check-circle"></i> Trilhas por virtudes</li>
+          <li><i class="fas fa-check-circle"></i> Relatório dos pais</li>
+        </ul>
+        <a href="#" class="btn btn-gold" style="width:100%;justify-content:center;font-size:.82rem;">Assinar</a>
+      </div>
+      <div class="plan-card">
+        <div class="plan-name">Família+</div>
+        <div class="plan-price"><span class="pp-cur">R$</span><span class="pp-amt">39</span><span class="pp-per">,90/mês</span></div>
+        <div class="plan-desc">Máxima personalização, IA avançada e modo offline.</div>
+        <ul class="plan-feats">
+          <li><i class="fas fa-check-circle"></i> 100 criações IA/mês</li>
+          <li><i class="fas fa-check-circle"></i> Modo offline parcial</li>
+          <li><i class="fas fa-check-circle"></i> Packs temáticos mensais</li>
+          <li><i class="fas fa-check-circle"></i> Relatório detalhado</li>
+          <li class="off"><i class="fas fa-times-circle"></i> Animações exclusivas</li>
+        </ul>
+        <a href="#" class="btn btn-primary" style="width:100%;justify-content:center;font-size:.82rem;">Assinar</a>
+      </div>
+      <div class="plan-card">
+        <div class="plan-name">Premium2</div>
+        <div class="plan-price"><span class="pp-cur">R$</span><span class="pp-amt">59</span><span class="pp-per">,90/mês</span></div>
+        <div class="plan-desc">Experiência máxima: animações, guias para pais e suporte VIP.</div>
+        <ul class="plan-feats">
+          <li><i class="fas fa-check-circle"></i> Mini animações exclusivas</li>
+          <li><i class="fas fa-check-circle"></i> IA quase ilimitada</li>
+          <li><i class="fas fa-check-circle"></i> Guias para pais</li>
+          <li><i class="fas fa-check-circle"></i> Desafios semanais</li>
+          <li><i class="fas fa-check-circle"></i> Prioridade na fila da IA</li>
+        </ul>
+        <a href="#" class="btn btn-gold" style="width:100%;justify-content:center;font-size:.82rem;">Assinar</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ESCOLAS -->
+  <section class="land-section-dark section-anchor" id="escolas">
+    <div class="sec-tag-badge stb-gold">Para Escolas</div>
+    <h2>Clube de Leitura Digital para sua escola</h2>
+    <p>Trilhas prontas, material para professor e relatórios de engajamento.</p>
+    <div class="b2b-grid">
+      <div class="b2b-card"><div class="b2b-icon">📋</div><h4>Trilhas mensais prontas</h4><p>4 semanas de conteúdo curado por faixa etária. O professor aplica — o app ensina.</p></div>
+      <div class="b2b-card"><div class="b2b-icon">👩‍🏫</div><h4>Material do professor</h4><p>PDF semanal com roteiro, perguntas guia e missões coletivas. Pronto para usar.</p></div>
+      <div class="b2b-card"><div class="b2b-icon">📊</div><h4>Relatórios de turma</h4><p>Histórias concluídas, tempo de leitura e missões realizadas. Dados simples e visuais.</p></div>
+      <div class="b2b-card"><div class="b2b-icon">🏫</div><h4>Licenças por aluno</h4><p>Preço especial por aluno/mês. Contrato simples, onboarding rápido, suporte dedicado.</p></div>
+    </div>
+    <div style="margin-top:36px;">
+      <a href="#" class="btn btn-gold btn-lg"><i class="fas fa-school"></i> Falar com nossa equipe</a>
+    </div>
+  </section>
+
+  <!-- DEPOIMENTOS -->
+  <section class="land-section section-anchor" id="depoimentos">
+    <div class="sec-tag-badge stb-blue">Depoimentos</div>
+    <h2>O que as famílias dizem</h2>
+    <p>Experiências reais de pais e educadores.</p>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="testi-quote">"</div>
+        <div class="testi-stars">★★★★★</div>
+        <p>Minha filha de 7 anos pediu para ouvir o Bom Samaritano três vezes. No dia seguinte ela ajudou a vizinha sem eu pedir. Não tem preço.</p>
+        <div class="testi-author"><div class="ta-av" style="background:var(--blue);">A</div><div><div class="ta-name">Ana Paula M.</div><div class="ta-role">Mãe · Belo Horizonte, MG</div></div></div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-quote">"</div>
+        <div class="testi-stars">★★★★★</div>
+        <p>Usei nas minhas turmas do 2º ano. As crianças ficam em silêncio absoluto. As perguntas depois geram conversas incríveis sobre valores.</p>
+        <div class="testi-author"><div class="ta-av" style="background:var(--green);">C</div><div><div class="ta-name">Prof. Carla R.</div><div class="ta-role">Professora · Escola Particular · SP</div></div></div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-quote">"</div>
+        <div class="testi-stars">★★★★★</div>
+        <p>Meu filho tem TDAH e nunca focava em livros. Com o Lumikids ele termina as histórias, faz as missões e ainda pede mais. Transformador.</p>
+        <div class="testi-author"><div class="ta-av" style="background:var(--coral);">R</div><div><div class="ta-name">Ricardo F.</div><div class="ta-role">Pai · Goiânia, GO</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PWA -->
+  <div class="pwa-strip">
+    <h2>📲 Instale como app — sem loja, sem taxas</h2>
+    <p>Funciona como um app de verdade no seu celular em lumikids.app</p>
+    <div class="pwa-steps-row">
+      <div class="pwa-step"><div class="pwa-num">1</div> Abra lumikids.app</div>
+      <div class="pwa-step"><div class="pwa-num">2</div> Toque em "Compartilhar"</div>
+      <div class="pwa-step"><div class="pwa-num">3</div> "Adicionar à tela inicial"</div>
+      <div class="pwa-step"><div class="pwa-num">4</div> Pronto! ✨</div>
+    </div>
+    <a href="#" class="btn btn-primary btn-lg"><i class="fas fa-download"></i> Instalar o Lumikids</a>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="foot-logo-row">
+          <div class="fl-ic">✦</div>
+          <span class="fl-nm">Lumi<em>kids</em></span>
+        </div>
+        <p>Histórias que iluminam o coração — com fé, valores e inteligência artificial.</p>
+        <div style="margin-top:8px;font-size:.74rem;opacity:.5;font-weight:700;">🌐 lumikids.app</div>
+        <div class="foot-social">
+          <a href="#" class="soc-ic"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="soc-ic"><i class="fab fa-tiktok"></i></a>
+          <a href="#" class="soc-ic"><i class="fab fa-youtube"></i></a>
+          <a href="#" class="soc-ic"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+      <div class="foot-col">
+        <h5>Produto</h5>
+        <ul>
+          <li><a href="#">Funcionalidades</a></li>
+          <li><a href="#">Planos</a></li>
+          <li><a href="#">Para Escolas</a></li>
+          <li><a href="#">Instalar PWA</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>Histórias</h5>
+        <ul>
+          <li><a href="#">Bíblia Kids</a></li>
+          <li><a href="#">Clássicos Infantis</a></li>
+          <li><a href="#">2–4 Anos</a></li>
+          <li><a href="#">Criar com IA</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>Empresa</h5>
+        <ul>
+          <li><a href="#">Sobre nós</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Contato</a></li>
+          <li><a href="#">Privacidade</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <p>© 2025 Lumikids · lumikids.app · Feito com ❤️ em Belo Horizonte, Brasil.</p>
+      <p>Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+</div><!-- /view-landing -->
+
+<script>
+  function showView(id, btn) {
+    document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.vt-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('view-' + id).classList.add('active');
+    btn.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  const ageData = {
+    '2-4':  { title:'O Leãozinho Corajoso',            meta:'🍼 Bebês<span class="dot">•</span>3 min<span class="dot">•</span>2–4 anos' },
+    '5-7':  { title:'O Pão que Alimentou a Multidão',  meta:'📖 Bíblia<span class="dot">•</span>5 min<span class="dot">•</span>5–7 anos' },
+    '8-10': { title:'A Menina que Inventou a Luz',     meta:'🔬 Inventores<span class="dot">•</span>8 min<span class="dot">•</span>8–10 anos' }
+  };
+  function selectAge(el, age) {
+    document.querySelectorAll('#view-app .age-pill').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('sdcTitle').textContent = ageData[age].title;
+    document.getElementById('sdcMeta').innerHTML   = ageData[age].meta;
+  }
+
+  function setNav(el) {
+    document.querySelectorAll('.bn-item').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  window.addEventListener('scroll', () => {
+    document.getElementById('scrollTopBtn').classList.toggle('visible', window.scrollY > 400);
+  });
+
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const t = document.querySelector(a.getAttribute('href'));
+      if (t) { e.preventDefault(); t.scrollIntoView({ behavior:'smooth' }); }
+    });
+  });
+</script>
+</body>
+</html>

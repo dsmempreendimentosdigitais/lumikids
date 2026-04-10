@@ -1,0 +1,28 @@
+Seção 4 — Como Funciona (fundo #283593 branco)
+4 passos com linha conectora vertical
+Seção 5 — Planos
+5 cards. Família em destaque com badge "⭐ Mais popular" e borda dourada
+Seção 6 — Para Escolas (fundo #283593)
+4 cards B2B
+Seção 7 — Depoimentos
+3 cards com avatar + estrelas douradas + texto + cidade
+Seção 8 — Instalar PWA (fundo dourado)
+4 passos de instalação + botão azul
+Footer
+Logo + 🌐 lumikids.app
+Redes sociais: Instagram, TikTok, YouTube, WhatsApp
+Copyright: "© 2025 Lumikids · lumikids.app · Feito com ❤️ em Belo Horizonte, Brasil."
+📱 HOME DO APP — /home
+Header (gradiente azul)
+Logo + avatar com inicial
+Saudação personalizada por horário (Bom dia / Boa tarde / Boa noite)
+Título: "O que vamos ler hoje?"
+Pills de faixa etária: 🍼 2–4 | 📚 5–7 | 🎓 8–10
+Conteúdo
+Card história do dia (gradiente azul escuro)
+Banner bebês 2–4 anos (gradiente roxo)
+Grid coleções 3×2
+Grid criar & explorar 2×2
+Lista destaques com covers
+Bottom Nav (5 itens sticky)
+🏠 Início | 📚 Histórias | ✨ Criar | 📊 Progresso | ⚙️ Config.
