@@ -1,6 +1,13 @@
 import * as admin from 'firebase-admin';
 
-if (!admin.apps.length) {
+function initFirebaseAdmin() {
+  if (admin.apps.length > 0) return;
+
+  // Se não houver as variáveis (ex: durante o build da Vercel), ignora a inicialização para não quebrar o build
+  if (!process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID) {
+    return;
+  }
+
   try {
     admin.initializeApp({
       credential: admin.credential.cert({
@@ -16,6 +23,28 @@ if (!admin.apps.length) {
   }
 }
 
-export const adminAuth = admin.auth();
-export const adminDb = admin.firestore();
-export const adminStorage = admin.storage();
+// Inicializa imediatamente se possível
+initFirebaseAdmin();
+
+// Exportamos Proxies para atrasar a chamada `admin.firestore()` até o momento exato em que a API é usada.
+// Isso evita que o Next.js quebre durante a compilação estática (`npm run build`) caso as variáveis de ambiente ainda não existam.
+export const adminAuth = new Proxy({}, {
+  get: (_, prop) => {
+    initFirebaseAdmin();
+    return (admin.auth() as any)[prop];
+  }
+}) as admin.auth.Auth;
+
+export const adminDb = new Proxy({}, {
+  get: (_, prop) => {
+    initFirebaseAdmin();
+    return (admin.firestore() as any)[prop];
+  }
+}) as admin.firestore.Firestore;
+
+export const adminStorage = new Proxy({}, {
+  get: (_, prop) => {
+    initFirebaseAdmin();
+    return (admin.storage() as any)[prop];
+  }
+}) as admin.storage.Storage;
