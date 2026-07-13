@@ -31,29 +31,30 @@ export default function PlanosPage() {
       </div>
 
       <div className="bg-white rounded-[24px] overflow-hidden shadow-[0_8px_30px_rgba(61,90,254,.12)] relative border-2 border-[#3D5AFE]">
-        <div className="absolute top-0 right-0 bg-[#3D5AFE] text-white text-[0.65rem] font-bold uppercase tracking-wider py-1 px-4 rounded-bl-lg">Mais Popular</div>
+        <div className="absolute top-0 right-0 bg-[#FFC107] text-black text-[0.65rem] font-bold uppercase tracking-wider py-1 px-4 rounded-bl-lg">30 Dias Grátis</div>
         <div className="p-6 text-center border-b border-gray-100">
-          <h2 className="text-2xl font-extrabold text-[#283593] mb-1">Premium</h2>
+          <h2 className="text-2xl font-extrabold text-[#283593] mb-1">Premium2</h2>
+          <div className="text-sm font-bold text-[#FF9800] mb-2 uppercase tracking-wide">Teste grátis por 30 dias</div>
           <div className="flex items-baseline justify-center gap-1">
             <span className="text-xl font-bold text-gray-400">R$</span>
-            <span className="text-5xl font-black text-[#3D5AFE]">14</span>
+            <span className="text-5xl font-black text-[#3D5AFE]">59</span>
             <span className="text-xl font-bold text-gray-400">,90</span>
-            <span className="text-sm text-gray-400 font-medium">/mês</span>
+            <span className="text-sm text-gray-400 font-medium">/mês após o teste</span>
           </div>
         </div>
         
         <div className="p-6 bg-gray-50/50 space-y-4">
           <div className="flex items-center gap-3">
             <div className="w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs"><i className="fas fa-check"></i></div>
+            <span className="text-sm font-semibold text-gray-700">Mini animações exclusivas (Imagens por IA)</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs"><i className="fas fa-check"></i></div>
             <span className="text-sm font-semibold text-gray-700">Criação Ilimitada de Histórias</span>
           </div>
           <div className="flex items-center gap-3">
             <div className="w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs"><i className="fas fa-check"></i></div>
-            <span className="text-sm font-semibold text-gray-700">Áudio narração Premium (Google)</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs"><i className="fas fa-check"></i></div>
-            <span className="text-sm font-semibold text-gray-700">Todos os Personagens do Mundo Lumikids</span>
+            <span className="text-sm font-semibold text-gray-700">Prioridade na fila da IA e Guias para Pais</span>
           </div>
         </div>
         
@@ -63,13 +64,13 @@ export default function PlanosPage() {
             disabled={loading}
             className="w-full h-[54px] rounded-[16px] font-extrabold flex items-center justify-center gap-2 text-white bg-[linear-gradient(135deg,#3D5AFE,#5C6BC0)] shadow-lg hover:-translate-y-1 transition-all"
           >
-            {loading ? <span className="animate-pulse">Abrindo checkout...</span> : 'Assinar Agora'}
+            {loading ? <span className="animate-pulse">Iniciando teste...</span> : 'Começar Teste Grátis'}
           </button>
         </div>
       </div>
       
       <div className="text-center mt-6">
-        <p className="text-xs text-gray-400 font-medium px-8">Ao assinar, você concorda com nossos Termos de Serviço. Cancele quando quiser diretamente no seu perfil.</p>
+        <p className="text-xs text-gray-400 font-medium px-8">A cobrança será feita automaticamente após os 30 dias de teste grátis. Cancele quando quiser diretamente no seu perfil.</p>
       </div>
     </div>
   );

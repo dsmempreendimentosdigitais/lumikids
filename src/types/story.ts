@@ -22,6 +22,8 @@ export interface Story {
       startTime: number;    // ms — para karaokê
       endTime: number;      // ms
       isHighlight: boolean;
+      imagePrompt?: string;
+      imageUrl?: string;
     }[];
   };
   audio: {
@@ -34,6 +36,7 @@ export interface Story {
   coverEmoji: string;
   coverColor: string;
   coverImageUrl?: string;
+  nanoBananaImageUrl?: string;
   value: string;
   bibleReference?: string;
   mission: {

@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@flora-ai/flora": "^0.8.1",
     "@google-cloud/text-to-speech": "^6.4.0",
     "@google/generative-ai": "^0.24.1",
     "clsx": "^2.1.1",

@@ -1,6 +1,34 @@
+'use client';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
 
 export default function Hero() {
+  const [canInstall, setCanInstall] = useState(false);
+
+  useEffect(() => {
+    const handlePwaReady = () => setCanInstall(true);
+    if (typeof window !== 'undefined' && window.pwaPrompt) {
+      setCanInstall(true);
+    }
+    if (typeof window !== 'undefined') {
+      window.addEventListener('pwa-ready', handlePwaReady);
+    }
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('pwa-ready', handlePwaReady);
+      }
+    };
+  }, []);
+
+  const handleInstallClick = () => {
+    if (typeof window !== 'undefined' && window.pwaPrompt) {
+      window.pwaPrompt.prompt();
+      window.pwaPrompt.userChoice.then(() => {
+        window.pwaPrompt = null;
+        setCanInstall(false);
+      });
+    }
+  };
   return (
     <section className="hero-section" id="hero">
       <div className="hero-badge">✦ Lançamento 2025 — IA + Valores + Fé</div>
@@ -8,7 +36,12 @@ export default function Hero() {
       <p>IA que cria histórias personalizadas com valores, fé cristã e personagens que as crianças amam. De 2 a 10 anos, em qualquer idioma.</p>
       <div className="hero-btns">
         <Link href="/cadastro" className="btn btn-gold btn-lg"><i className="fas fa-play"></i> Começar grátis</Link>
-        <Link href="/galeria" className="btn btn-outline btn-lg"><i className="fas fa-book-open"></i> Ver histórias</Link>
+        <Link href="/galeria" className="btn btn-outline btn-lg hidden md:inline-flex"><i className="fas fa-book-open"></i> Ver histórias</Link>
+        {canInstall && (
+          <button onClick={handleInstallClick} className="btn btn-lg" style={{ background: '#3D5AFE', color: 'white', border: 'none', cursor: 'pointer' }}>
+            <i className="fas fa-mobile-alt"></i> Baixar App
+          </button>
+        )}
       </div>
       <div className="hero-stats">
         <div className="stat-item"><strong>100+</strong><span>histórias</span></div>

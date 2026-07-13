@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# firebase & docs
+docs/*.json
+docs/lumikids-app-firebase-adminsdk-fbsvc-7b83fd3c4d.json

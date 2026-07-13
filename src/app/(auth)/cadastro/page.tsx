@@ -51,10 +51,15 @@ export default function CadastroPage() {
       await signUpWithEmail(formData.email, formData.password, formData.name, formData.phone);
       router.push('/app'); // Redirecionar após criar a conta logada
     } catch (err: any) {
-      if (err.code === 'auth/email-already-in-use') {
-        setError('Este e-mail já está em uso.');
-      } else if (err.code === 'auth/weak-password') {
+      const errorCode = err.code || '';
+      const errorMessage = err.message || '';
+      
+      if (errorCode === 'auth/email-already-in-use' || errorMessage.includes('email-already-in-use')) {
+        setError('Este e-mail já está em uso. Tente fazer login.');
+      } else if (errorCode === 'auth/weak-password' || errorMessage.includes('weak-password')) {
         setError('A senha deve ter pelo menos 6 caracteres.');
+      } else if (errorCode === 'auth/operation-not-allowed' || errorMessage.includes('operation-not-allowed')) {
+        setError('O login com e-mail e senha não está ativado no Firebase.');
       } else {
         setError('Erro ao criar conta. Tente novamente.');
       }
@@ -70,7 +75,7 @@ export default function CadastroPage() {
           <div className="w-[48px] h-[48px] rounded-[14px] flex items-center justify-center text-white text-[1.2rem] mx-auto mb-4" style={{ background: 'linear-gradient(135deg, #3D5AFE, #5C6BC0)' }}>
              ✦
           </div>
-          <h1 className="text-[1.8rem] font-black text-[#283593] leading-[1.15] tracking-[-1px] mb-2">Crie sua contaa</h1>
+          <h1 className="text-[1.8rem] font-black text-[#283593] leading-[1.15] tracking-[-1px] mb-2">Crie sua conta</h1>
           <p className="text-[#666] text-[0.85rem] font-semibold">Junte-se ao Lumikids hoje.</p>
         </div>
 

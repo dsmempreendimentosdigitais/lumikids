@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateStoryWithGemini } from '@/lib/gemini/generateStory';
+import { generateImageWithNanoBanana } from '@/lib/gemini/generateImage';
 import { generateNarrationGoogle } from '@/lib/tts/googleTTS';
 import { adminDb, adminStorage } from '@/lib/firebase/admin';
 import { checkAndIncrementQuota } from '@/lib/quota';
@@ -30,8 +31,37 @@ export async function POST(req: NextRequest) {
     // 3. Dados do request
     const body: GenerateStoryRequest = await req.json();
 
-    // 4. Gerar história com Gemini 1.5 Flash
+    // 4. Gerar história com Gemini
     const story = await generateStoryWithGemini(body);
+
+    // 4.5 Gerar imagem com Nano Banana para a capa e para cada parágrafo/página
+    const imageUrl = await generateImageWithNanoBanana(
+      body.childName,
+      body.ageGroup,
+      story.title,
+      0
+    );
+    story.nanoBananaImageUrl = imageUrl;
+
+    if (story.content && Array.isArray(story.content.paragraphs)) {
+      const updatedParagraphs = [];
+      for (let idx = 0; idx < story.content.paragraphs.length; idx++) {
+        const p = story.content.paragraphs[idx];
+        const scenePrompt = p.imagePrompt || `${story.title} - cena ${idx + 1}: ${p.text.slice(0, 100)}`;
+        const pImageUrl = await generateImageWithNanoBanana(
+          body.childName,
+          body.ageGroup,
+          scenePrompt,
+          idx
+        );
+        updatedParagraphs.push({
+          ...p,
+          imageUrl: pImageUrl
+        });
+        await new Promise(resolve => setTimeout(resolve, 250));
+      }
+      story.content.paragraphs = updatedParagraphs;
+    }
 
     // 5. Gerar narração com Google Cloud TTS
     const audioBuffer = await generateNarrationGoogle({
@@ -45,6 +75,7 @@ export async function POST(req: NextRequest) {
     const bucket    = adminStorage.bucket();
     const file      = bucket.file(audioPath);
     await file.save(Buffer.from(audioBuffer), { contentType: 'audio/mpeg' });
+    await file.makePublic();
     
     // Tornar público se configurado no bucket, ou usar signed URL
     const audioUrl = `https://storage.googleapis.com/${bucket.name}/${audioPath}`;
@@ -58,6 +89,7 @@ export async function POST(req: NextRequest) {
       ageGroups:       [body.ageGroup],
       language:        body.language,
       audio:           { [body.language]: { url: audioUrl, duration: 0, voiceName: '' } },
+      nanoBananaImageUrl: imageUrl,
       isAIGenerated:   true,
       generatedForUid: uid,
       isPremium:       false,

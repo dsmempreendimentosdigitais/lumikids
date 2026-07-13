@@ -5,6 +5,7 @@ export interface User {
   email: string;
   displayName: string;
   photoURL?: string;
+  role?: 'admin' | 'user';
   plan: 'free' | 'start' | 'familia' | 'familia_plus' | 'premium2';
   planExpiresAt?: Timestamp;
   stripeCustomerId?: string;

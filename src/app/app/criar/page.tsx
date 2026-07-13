@@ -181,14 +181,69 @@ export default function CriarPage() {
             </div>
           )}
 
-          <div className="prose prose-blue max-w-none mb-6 text-[#444] leading-relaxed">
-            {success.story.content?.text.split('\n').map((p: string, i: number) => (
-              <p key={i} className="mb-4">{p}</p>
-            ))}
-            <hr className="my-6 border-blue-100" />
-            <h3 className="font-extrabold text-blue-800 flex items-center gap-2"><i className="fas fa-gem text-gold-500"></i> Missão do Bem</h3>
-            <p className="bg-blue-50 p-4 rounded-[16px] text-blue-900 font-medium">{success.story.content?.mission}</p>
-          </div>
+          {/* Páginas da História com Imagem e Texto Integrados */}
+          {success.story.content?.paragraphs && success.story.content.paragraphs.length > 0 ? (
+            <div className="flex flex-col gap-8 mb-8">
+              {success.story.content.paragraphs.map((p: any, i: number) => {
+                const img = p.imageUrl || success.story.nanoBananaImageUrl || 'https://images.unsplash.com/photo-1514068574489-503a8eb91592?q=80&w=800&auto=format&fit=crop';
+                return (
+                  <div 
+                    key={i} 
+                    className="relative rounded-[32px] overflow-hidden shadow-[0_12px_36px_rgba(39,44,74,0.15)] group transition-all duration-500 hover:shadow-[0_20px_48px_rgba(61,90,254,0.25)] hover:-translate-y-1 bg-[#1a1c2e]"
+                  >
+                    {/* Imagem de Fundo com zoom suave no hover */}
+                    <div className="absolute inset-0 w-full h-full overflow-hidden">
+                      <img 
+                        src={img} 
+                        alt={`Página ${i + 1}`} 
+                        className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-105 opacity-90"
+                        onError={(e) => { e.currentTarget.src = 'https://images.unsplash.com/photo-1514068574489-503a8eb91592?q=80&w=800&auto=format&fit=crop'; }}
+                      />
+                      {/* Gradient Overlay Premium (glassmorphism/dark gradient) para garantir legibilidade perfeita do texto */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#0d1127] via-[#0d1127]/70 to-transparent"></div>
+                    </div>
+
+                    {/* Conteúdo (Texto dentro da imagem) */}
+                    <div className="relative z-10 p-8 pt-56 flex flex-col justify-end min-h-[380px] md:min-h-[440px]">
+                      <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-md text-white text-xs font-bold uppercase tracking-wider mb-4 w-fit shadow-inner border border-white/20">
+                        <i className="fas fa-book-open text-yellow-300"></i> Página {i + 1}
+                      </div>
+                      <p className="text-white font-bold text-xl md:text-2xl leading-relaxed drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] select-none">
+                        {p.text}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <>
+              {success.story.nanoBananaImageUrl && (
+                <div className="mb-6 rounded-[24px] overflow-hidden shadow-sm">
+                  <img src={success.story.nanoBananaImageUrl} alt="Ilustração da história" className="w-full h-auto object-cover" />
+                </div>
+              )}
+              <div className="prose prose-blue max-w-none mb-6 text-[#444] leading-relaxed">
+                {success.story.content?.text.split('\n').map((p: string, i: number) => (
+                  <p key={i} className="mb-4">{p}</p>
+                ))}
+              </div>
+            </>
+          )}
+
+          {(success.story.mission || success.story.content?.mission) && (
+            <div className="bg-[linear-gradient(135deg,#3D5AFE,#5C6BC0)] text-white p-6 rounded-[24px] shadow-lg mb-8">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-[10px] bg-white/20 flex items-center justify-center text-xl text-yellow-300">
+                  <i className="fas fa-star"></i>
+                </div>
+                <h3 className="font-extrabold text-xl">{success.story.mission?.title || 'Missão do Bem'}</h3>
+              </div>
+              <p className="font-medium text-blue-50 leading-relaxed border-l-2 border-blue-400 pl-4">
+                {success.story.mission?.description || success.story.content?.mission}
+              </p>
+            </div>
+          )}
 
           <button 
             onClick={() => setSuccess(null)}

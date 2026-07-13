@@ -14,7 +14,7 @@ export default function Plans() {
           <ul className="plan-feats">
             <li><i className="fas fa-check-circle"></i> História do dia</li>
             <li><i className="fas fa-check-circle"></i> 3 histórias/semana</li>
-            <li><i className="fas fa-check-circle"></i> 2 criações IA/semana</li>
+            <li><i className="fas fa-check-circle"></i> 10 criações IA/mês</li>
             <li><i className="fas fa-check-circle"></i> 1 perfil de criança</li>
             <li className="off"><i className="fas fa-times-circle"></i> Biblioteca ilimitada</li>
           </ul>
@@ -60,10 +60,14 @@ export default function Plans() {
           </ul>
           <Link href="/cadastro" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', fontSize: '.82rem' }}>Assinar</Link>
         </div>
-        <div className="plan-card">
+        <div className="plan-card" style={{ border: '2px solid #FFC107', position: 'relative' }}>
+          <div style={{ position: 'absolute', top: -14, left: '50%', transform: 'translateX(-50%)', background: '#FFC107', color: '#000', padding: '4px 12px', borderRadius: 20, fontSize: 12, fontWeight: 'bold' }}>30 DIAS GRÁTIS</div>
           <div className="plan-name">Premium2</div>
           <div className="plan-price"><span className="pp-cur">R$</span><span className="pp-amt">59</span><span className="pp-per">,90/mês</span></div>
-          <div className="plan-desc">Experiência máxima: animações, guias para pais e suporte VIP.</div>
+          <div className="plan-desc">
+            <strong>Teste grátis por 30 dias!</strong> Experiência máxima: animações, guias para pais e suporte VIP.<br/>
+            <span style={{ fontSize: '0.75rem', color: '#888' }}>Após o período de teste, a assinatura será renovada automaticamente. Cancele a qualquer momento.</span>
+          </div>
           <ul className="plan-feats">
             <li><i className="fas fa-check-circle"></i> Mini animações exclusivas</li>
             <li><i className="fas fa-check-circle"></i> IA quase ilimitada</li>
@@ -71,7 +75,7 @@ export default function Plans() {
             <li><i className="fas fa-check-circle"></i> Desafios semanais</li>
             <li><i className="fas fa-check-circle"></i> Prioridade na fila da IA</li>
           </ul>
-          <Link href="/cadastro" className="btn btn-gold" style={{ width: '100%', justifyContent: 'center', fontSize: '.82rem' }}>Assinar</Link>
+          <Link href="/cadastro" className="btn btn-gold" style={{ width: '100%', justifyContent: 'center', fontSize: '.82rem', marginTop: '1rem' }}>Começar Teste Grátis</Link>
         </div>
       </div>
     </section>

@@ -1,6 +1,12 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 
+declare global {
+  interface Window {
+    pwaPrompt: any;
+  }
+}
+
 export default function PwaInstaller() {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [showInstallBanner, setShowInstallBanner] = useState(false);
@@ -11,10 +17,8 @@ export default function PwaInstaller() {
       e.preventDefault();
       // Guarda o evento para disparar depois
       setDeferredPrompt(e);
-      // Mostra nosso banner customizado após 2 segundos
-      setTimeout(() => {
-        setShowInstallBanner(true);
-      }, 2000);
+      window.pwaPrompt = e;
+      window.dispatchEvent(new Event('pwa-ready'));
     };
 
     window.addEventListener('beforeinstallprompt', handler);
@@ -36,6 +40,7 @@ export default function PwaInstaller() {
 
     // Limpamos o prompt
     setDeferredPrompt(null);
+    window.pwaPrompt = null;
     setShowInstallBanner(false);
   };
 

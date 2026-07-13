@@ -12,7 +12,7 @@ const ageData = {
 };
 
 export default function AppDashboard() {
-  const { user } = useAuth();
+  const { user, dbUser } = useAuth();
   const [activeAge, setActiveAge] = useState<'2-4'|'5-7'|'8-10'>('5-7');
   const [recentStories, setRecentStories] = useState<any[]>([]);
   const [loadingStories, setLoadingStories] = useState(true);
@@ -87,6 +87,13 @@ export default function AppDashboard() {
 
         <div className="sec-lbl">Criar & Explorar</div>
         <div className="quick-grid">
+          {dbUser?.role === 'admin' && (
+            <Link href="/app/admin" className="qa-card" style={{ background: 'linear-gradient(135deg, #1A237E, #3949AB)', color: 'white' }}>
+              <div className="qa-icon">👑</div>
+              <h4 className="text-white">Admin Panel</h4>
+              <p className="text-blue-100">Gerenciar usuários</p>
+            </Link>
+          )}
           <Link href="/app/criar" className="qa-card qa-blue"><div className="qa-icon">🤖</div><h4>Criar com IA</h4><p>Sua história em segundos</p></Link>
           <Link href="/app/progresso" className="qa-card qa-gold"><div className="qa-icon">🎯</div><h4>Missão do Bem</h4><p>Tarefa de hoje</p></Link>
           <Link href="/app/historias?cat=biblia-kids" className="qa-card qa-green"><div className="qa-icon">📖</div><h4>Trilha Bíblica</h4><p>Continue sua jornada</p></Link>
