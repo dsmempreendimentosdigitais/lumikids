@@ -8,7 +8,7 @@
  * GEMINI (Nano Banana) está PAUSADO: cota gratuita = 0 neste modelo.
  */
 
-import Flora from '@flora-ai/flora';
+
 
 // Variáveis de ambiente
 const FLORA_AI_API_KEY = process.env.FLORA_AI_API_KEY || '';
@@ -64,84 +64,18 @@ export async function generateImageWithNanoBanana(
   index: number = 0
 ): Promise<string> {
   const cleanPrompt = buildPrompt(childName, ageGroup, storyTitleOrScene);
-
-  // ============================================================
-  // FLORA.AI — API oficial via SDK @flora-ai/flora
-  // ============================================================
-  if (!FLORA_AI_API_KEY) {
-    throw new Error('FLORA_AI_API_KEY não está configurada no .env.local');
-  }
-
-  try {
-    console.log(`[generateImage] Flora.ai SDK gerando (Página ${index})...`);
-
-    const client = new Flora({ apiKey: FLORA_AI_API_KEY });
-
-    // 1. Busca workspace
-    const workspacesRes = await client.workspaces.list();
-    const workspaceId = workspacesRes?.workspaces?.[0]?.workspace_id;
-    if (!workspaceId) throw new Error('Nenhum workspace encontrado na conta Flora.ai');
-
-    // 2. Busca ou cria projeto no workspace
-    const projectsPage: any = await client.projects.list({ workspace_id: workspaceId });
-    const projectList = projectsPage?.data || projectsPage?.items || projectsPage?.projects || [];
-    let projectId = projectList[0]?.project_id;
-
-    if (!projectId) {
-      console.log(`[generateImage] Nenhum projeto encontrado no workspace. Criando projeto 'LumiKids Stories'...`);
-      const newProj = await client.projects.create({
-        name: 'LumiKids Stories',
-        workspace_id: workspaceId
-      });
-      projectId = newProj.project_id;
-    }
-
-    if (!projectId) throw new Error('Não foi possível obter ou criar um project_id no Flora.ai');
-
-    // 3. Inicia geração de imagem (assíncrona — retorna run_id)
-    const generation = await client.generations.create({
-      workspace_id: workspaceId,
-      project_id: projectId,
-      type: 'image',
-      prompt: cleanPrompt,
-    });
-
-    const runId = generation.run_id || (generation as any).id;
-    if (!runId) throw new Error('Flora.ai não retornou um run_id');
-
-    console.log(`[generateImage] Flora.ai run iniciado: ${runId} (Página ${index})`);
-
-    // 4. Polling até completar (timeout: 90s)
-    for (let attempt = 0; attempt < 45; attempt++) {
-      await new Promise(r => setTimeout(r, 2000));
-
-      const result = await client.generations.retrieve(runId);
-      const status = result.status as string;
-
-      if (status === 'completed' || status === 'succeeded') {
-        const outputs = result.outputs;
-        const outputUrl = outputs?.[0]?.url || (result as any).output_url;
-
-        if (outputUrl) {
-          console.log(`[generateImage] Flora.ai ✅ Página ${index}: ${outputUrl}`);
-          return outputUrl;
-        }
-        throw new Error('Flora.ai: geração concluída mas sem URL de saída');
-      }
-
-      if (status === 'failed' || status === 'error' || status === 'cancelled') {
-        throw new Error(`Flora.ai run ${runId} falhou: ${result.error_message || status}`);
-      }
-
-      if (attempt % 5 === 0) {
-        console.log(`[generateImage] Flora.ai aguardando... status=${status} (tentativa ${attempt + 1}/45)`);
-      }
-    }
-
-    throw new Error('Flora.ai timeout: 90s excedidos sem resultado');
-
-  } catch (floraErr: any) {
-    console.error(`[generateImage] Flora.ai falhou (página ${index}):`, floraErr.message || floraErr);
-    throw floraErr;
-  }
+  
+  // Usamos Pollinations AI para geração gratuita, super rápida e sem necessidade de SDK/Keys.
+  // Criamos uma 'seed' baseada no nome da criança para tentar manter alguma consistência na mesma história.
+  const seed = Array.from(childName).reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  
+  // Formatamos a URL direta da imagem
+  const encodedPrompt = encodeURIComponent(cleanPrompt);
+  const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1024&height=1024&nologo=true&seed=${seed}`;
+  
+  console.log(`[generateImage] Pollinations AI gerando via URL direta (Página ${index})...`);
+  
+  // Retornamos a URL diretamente! O Next.js/Navegador vai baixar a imagem no momento da renderização.
+  // Como o modelo Flux da Pollinations gera a imagem sob demanda via GET, é instantâneo na nossa API.
+  return imageUrl;
 }
