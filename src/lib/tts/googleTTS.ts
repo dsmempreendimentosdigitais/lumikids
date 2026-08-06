@@ -27,7 +27,6 @@ export async function generateNarrationGoogle(
     voice: {
       languageCode: req.language,
       name:         voiceName,
-      ssmlGender:   'FEMALE',
     },
     audioConfig: {
       audioEncoding: 'MP3',
