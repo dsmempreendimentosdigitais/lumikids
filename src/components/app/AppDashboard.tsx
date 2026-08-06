@@ -4,11 +4,12 @@ import { db } from '@/lib/firebase/config';
 import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
+import { Sparkles, Play, ChevronRight, Crown, Wand2, Target, BookOpen, Moon } from 'lucide-react';
 
 const ageData = {
-  '2-4':  { title: 'O Leãozinho Corajoso', meta: '🍼 Bebês<span class="dot">•</span>3 min<span class="dot">•</span>2–4 anos' },
-  '5-7':  { title: 'O Pão que Alimentou a Multidão', meta: '📖 Bíblia<span class="dot">•</span>5 min<span class="dot">•</span>5–7 anos' },
-  '8-10': { title: 'A Menina que Inventou a Luz', meta: '🔬 Inventores<span class="dot">•</span>8 min<span class="dot">•</span>8–10 anos' }
+  '2-4':  { title: 'O Leãozinho Corajoso', meta: '🍼 Bebês • 3 min • 2–4 anos' },
+  '5-7':  { title: 'O Pão que Alimentou a Multidão', meta: '📖 Bíblia • 5 min • 5–7 anos' },
+  '8-10': { title: 'A Menina que Inventou a Luz', meta: '🔬 Inventores • 8 min • 8–10 anos' }
 };
 
 export default function AppDashboard() {
@@ -40,90 +41,161 @@ export default function AppDashboard() {
   const greeting = hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite';
 
   return (
-    <>
-      <div className="app-header">
-        <div className="header-top">
-          <div className="header-logo">Lumi<em>kids</em></div>
-          <div className="header-avatar">{userInitial}</div>
+    <div className="relative min-h-screen pb-32">
+      {/* Dynamic Background Overlays (App is already dark from body) */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none"></div>
+      
+      {/* Header Area */}
+      <div className="pt-8 px-6 pb-6 relative z-10">
+        <div className="flex justify-between items-center mb-6">
+          <div className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-300 to-blue-300 font-serif drop-shadow-lg flex items-center gap-2">
+            Lumi<em className="not-italic text-yellow-300">kids</em>
+            <Sparkles className="w-5 h-5 text-yellow-300" />
+          </div>
+          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center font-bold text-white shadow-[0_0_15px_rgba(139,92,246,0.6)]">
+            {userInitial}
+          </div>
         </div>
-        <div className="header-greeting">{greeting}, {userName} 👋</div>
-        <div className="header-title">O que vamos<br/>ler hoje?</div>
-        <div className="age-selector">
-          <div className={`age-pill ${activeAge === '2-4' ? 'active' : ''}`} onClick={() => setActiveAge('2-4')}>🍼 2–4 anos</div>
-          <div className={`age-pill ${activeAge === '5-7' ? 'active' : ''}`} onClick={() => setActiveAge('5-7')}>📚 5–7 anos</div>
-          <div className={`age-pill ${activeAge === '8-10' ? 'active' : ''}`} onClick={() => setActiveAge('8-10')}>🎓 8–10 anos</div>
+
+        <div className="text-purple-200/80 text-sm font-bold tracking-wide mb-1">{greeting}, {userName}</div>
+        <div className="text-[2rem] text-white font-black leading-tight drop-shadow-md mb-6 font-serif">
+          O que vamos<br/>ler hoje?
+        </div>
+
+        <div className="flex gap-2 flex-wrap">
+          {['2-4', '5-7', '8-10'].map(age => (
+            <button 
+              key={age}
+              onClick={() => setActiveAge(age as any)}
+              className={`px-4 py-2 rounded-full text-xs font-bold transition-all duration-300 ${
+                activeAge === age 
+                ? 'bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-[0_0_15px_rgba(217,70,239,0.5)]' 
+                : 'bg-[#150F2D] border border-purple-500/30 text-purple-200/70'
+              }`}
+            >
+              {age === '2-4' ? '🍼' : age === '5-7' ? '📚' : '🎓'} {age} anos
+            </button>
+          ))}
         </div>
       </div>
 
-      <div className="main-content">
-        <div className="story-day-card">
-          <div className="sdc-tag">✦ História do dia</div>
-          <div className="sdc-title" id="sdcTitle">{ageData[activeAge].title}</div>
-          <div className="sdc-meta" id="sdcMeta" dangerouslySetInnerHTML={{ __html: ageData[activeAge].meta }}></div>
-          <Link href={recentStories.length > 0 ? `/app/historias/${recentStories[0].id}` : '/app/criar'} className="sdc-play inline-flex items-center justify-center gap-2">
-            <div className="play-circle"><i className="fas fa-play"></i></div>Ouvir agora
+      <div className="px-6 relative z-10">
+        {/* Story of the day */}
+        <div className="relative group mb-8">
+          <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-[32px] opacity-60 blur-sm group-hover:opacity-100 transition duration-500"></div>
+          <div className="relative bg-[#150F2D]/90 backdrop-blur-xl border border-white/10 rounded-[30px] p-6 overflow-hidden">
+            <div className="absolute right-4 top-4 text-5xl text-white/5 rotate-12"><Sparkles /></div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-400/20 border border-yellow-400/30 text-yellow-300 text-[0.65rem] font-bold uppercase tracking-wider mb-3">
+              <Sparkles size={12} /> História do dia
+            </div>
+            <h3 className="text-xl text-white font-black mb-2 max-w-[200px] leading-tight drop-shadow-md">
+              {ageData[activeAge].title}
+            </h3>
+            <p className="text-purple-200/70 text-xs font-bold mb-6">
+              {ageData[activeAge].meta}
+            </p>
+            <Link href={recentStories.length > 0 ? `/app/historias/${recentStories[0].id}` : '/app/criar'} className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-pink-500 to-blue-500 hover:shadow-[0_0_20px_rgba(139,92,246,0.6)] transition-all text-white font-bold text-sm px-5 py-3 rounded-full">
+              <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center"><Play size={12} className="ml-0.5" fill="currentColor" /></div>
+              Ouvir agora
+            </Link>
+          </div>
+        </div>
+
+        {/* Categories Section */}
+        <div className="flex justify-between items-center mb-4">
+          <h4 className="text-sm font-black text-purple-300 uppercase tracking-widest">Explorar Mágica</h4>
+          <Link href="/app/historias" className="text-xs text-blue-400 font-bold hover:text-blue-300">Ver todas</Link>
+        </div>
+        
+        <div className="grid grid-cols-2 gap-4 mb-8">
+          {dbUser?.role === 'admin' && (
+            <Link href="/app/admin" className="relative group col-span-2">
+               <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-[22px] opacity-70 blur-[2px] transition duration-300"></div>
+               <div className="relative bg-[#150F2D] border border-white/10 rounded-[20px] p-5 flex items-center gap-4">
+                 <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 flex items-center justify-center text-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.4)]"><Crown size={24} /></div>
+                 <div>
+                   <h5 className="font-bold text-white mb-1">Painel Admin</h5>
+                   <p className="text-xs text-purple-200/60 font-medium">Controle de Usuários</p>
+                 </div>
+               </div>
+            </Link>
+          )}
+
+          <Link href="/app/criar" className="relative group">
+            <div className="absolute -inset-0.5 bg-gradient-to-br from-pink-500 to-purple-500 rounded-[22px] opacity-60 blur-[2px] group-hover:opacity-100 transition duration-300"></div>
+            <div className="relative bg-[#150F2D] border border-white/10 rounded-[20px] p-4 text-center h-full flex flex-col items-center justify-center">
+              <div className="w-10 h-10 mb-3 rounded-xl bg-pink-500/20 flex items-center justify-center text-pink-400 drop-shadow-[0_0_10px_rgba(236,72,153,0.5)]"><Wand2 size={20} /></div>
+              <h5 className="font-bold text-white text-sm mb-1">Criar com IA</h5>
+              <p className="text-[0.65rem] text-purple-200/50">Histórias únicas</p>
+            </div>
+          </Link>
+          
+          <Link href="/app/progresso" className="relative group">
+            <div className="absolute -inset-0.5 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-[22px] opacity-60 blur-[2px] group-hover:opacity-100 transition duration-300"></div>
+            <div className="relative bg-[#150F2D] border border-white/10 rounded-[20px] p-4 text-center h-full flex flex-col items-center justify-center">
+              <div className="w-10 h-10 mb-3 rounded-xl bg-yellow-500/20 flex items-center justify-center text-yellow-400 drop-shadow-[0_0_10px_rgba(234,179,8,0.5)]"><Target size={20} /></div>
+              <h5 className="font-bold text-white text-sm mb-1">Missão do Bem</h5>
+              <p className="text-[0.65rem] text-purple-200/50">Tarefas diárias</p>
+            </div>
+          </Link>
+
+          <Link href="/app/historias?cat=biblia-kids" className="relative group">
+            <div className="absolute -inset-0.5 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-[22px] opacity-60 blur-[2px] group-hover:opacity-100 transition duration-300"></div>
+            <div className="relative bg-[#150F2D] border border-white/10 rounded-[20px] p-4 text-center h-full flex flex-col items-center justify-center">
+              <div className="w-10 h-10 mb-3 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 drop-shadow-[0_0_10px_rgba(16,185,129,0.5)]"><BookOpen size={20} /></div>
+              <h5 className="font-bold text-white text-sm mb-1">Trilha Bíblica</h5>
+              <p className="text-[0.65rem] text-purple-200/50">Aprenda a Palavra</p>
+            </div>
+          </Link>
+
+          <Link href="/app/historias?cat=hora-de-dormir" className="relative group">
+            <div className="absolute -inset-0.5 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-[22px] opacity-60 blur-[2px] group-hover:opacity-100 transition duration-300"></div>
+            <div className="relative bg-[#150F2D] border border-white/10 rounded-[20px] p-4 text-center h-full flex flex-col items-center justify-center">
+              <div className="w-10 h-10 mb-3 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]"><Moon size={20} fill="currentColor" /></div>
+              <h5 className="font-bold text-white text-sm mb-1">Hora de Dormir</h5>
+              <p className="text-[0.65rem] text-purple-200/50">Sonos tranquilos</p>
+            </div>
           </Link>
         </div>
 
-        <div className="age-banner">
-          <div className="ab-icon-wrap">🍼</div>
-          <div className="ab-text">
-            <div className="ab-tag">✨ Novidade</div>
-            <div className="ab-title">Histórias para 2–4 anos</div>
-            <div className="ab-sub">Leia junto com seu bebê ❤️</div>
-          </div>
-          <i className="fas fa-chevron-right ab-arrow"></i>
+        {/* Highlights */}
+        <div className="flex justify-between items-center mb-4">
+          <h4 className="text-sm font-black text-purple-300 uppercase tracking-widest">Recentes</h4>
+          <Link href="/app/historias" className="text-xs text-blue-400 font-bold hover:text-blue-300">Ver todas</Link>
         </div>
 
-        <div className="sec-lbl">Coleções <Link href="/app/historias">Ver todas</Link></div>
-        <div className="cols-grid">
-          <Link href="/app/historias?cat=vida-de-jesus" className="col-card"><div className="col-icon ci-blue">✝️</div><h4>Vida de Jesus</h4><span>12 histórias</span></Link>
-          <Link href="/app/historias?cat=hora-de-dormir" className="col-card"><div className="col-icon ci-teal">💤</div><h4>Hora de dormir</h4><span>28 histórias</span></Link>
-          <Link href="/app/historias?cat=sentimentos" className="col-card"><div className="col-icon ci-pink">❤️</div><h4>Sentimentos</h4><span>18 histórias</span></Link>
-          <Link href="/app/historias?cat=mulheres-fortes" className="col-card"><div className="col-icon ci-gold">👸</div><h4>Mulheres Fortes</h4><span>15 histórias</span></Link>
-          <Link href="/app/historias?cat=inventores-genios" className="col-card"><div className="col-icon ci-green">🔬</div><h4>Inventores</h4><span>20 histórias</span></Link>
-          <Link href="/app/historias?cat=classicos-infantis" className="col-card"><div className="col-icon ci-orange">📚</div><h4>Clássicos</h4><span>24 histórias</span></Link>
-        </div>
-
-        <div className="sec-lbl">Criar & Explorar</div>
-        <div className="quick-grid">
-          {dbUser?.role === 'admin' && (
-            <Link href="/app/admin" className="qa-card" style={{ background: 'linear-gradient(135deg, #1A237E, #3949AB)', color: 'white' }}>
-              <div className="qa-icon">👑</div>
-              <h4 className="text-white">Admin Panel</h4>
-              <p className="text-blue-100">Gerenciar usuários</p>
-            </Link>
-          )}
-          <Link href="/app/criar" className="qa-card qa-blue"><div className="qa-icon">🤖</div><h4>Criar com IA</h4><p>Sua história em segundos</p></Link>
-          <Link href="/app/progresso" className="qa-card qa-gold"><div className="qa-icon">🎯</div><h4>Missão do Bem</h4><p>Tarefa de hoje</p></Link>
-          <Link href="/app/historias?cat=biblia-kids" className="qa-card qa-green"><div className="qa-icon">📖</div><h4>Trilha Bíblica</h4><p>Continue sua jornada</p></Link>
-          <Link href="/app/historias?cat=hora-de-dormir" className="qa-card qa-coral"><div className="qa-icon">🌙</div><h4>Hora de Dormir</h4><p>Histórias calmas</p></Link>
-        </div>
-
-        <div className="sec-lbl">Em destaque <Link href="/app/historias">Ver todas</Link></div>
-        <div className="highlights">
+        <div className="flex flex-col gap-4">
           {loadingStories ? (
-            <div className="p-4 text-sm text-gray-500 text-center w-full animate-pulse">Carregando histórias...</div>
+            <div className="p-6 text-sm text-purple-300/50 text-center w-full animate-pulse bg-[#150F2D] rounded-[24px] border border-white/5">
+              Conjurando histórias...
+            </div>
           ) : recentStories.length > 0 ? (
             recentStories.map((story) => (
-              <Link href={`/app/historias/${story.id}`} key={story.id} className="hl-card block cursor-pointer transition-all hover:scale-[1.02]">
-                <div className="hl-cover relative flex items-center justify-center text-3xl" style={{ background: 'linear-gradient(135deg, #E8EAF6, #C5CAE9)' }}>
-                  {story.ageGroups?.[0] === '2-4' ? '🍼' : story.ageGroups?.[0] === '8-10' ? '🎓' : '📚'}
+              <Link href={`/app/historias/${story.id}`} key={story.id} className="group relative">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-[22px] opacity-0 group-hover:opacity-100 transition duration-300"></div>
+                <div className="relative bg-[#150F2D]/80 backdrop-blur-sm border border-purple-500/20 rounded-[20px] p-4 flex items-center gap-4 transition-all">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 border border-purple-500/30 flex items-center justify-center text-2xl shadow-[0_0_15px_rgba(139,92,246,0.2)]">
+                    {story.ageGroups?.[0] === '2-4' ? '🍼' : story.ageGroups?.[0] === '8-10' ? '🎓' : '📚'}
+                  </div>
+                  <div className="flex-1 overflow-hidden">
+                    <div className="text-[0.65rem] font-black text-pink-400 uppercase tracking-widest mb-1 truncate">{story.theme || 'Aventura Mágica'}</div>
+                    <div className="font-bold text-white truncate text-sm mb-1">{story.title || 'História Encantada'}</div>
+                    <div className="text-xs text-purple-200/50 font-medium">⭐ Criada com IA</div>
+                  </div>
+                  <ChevronRight className="text-purple-500/50 group-hover:text-pink-400 transition-colors" />
                 </div>
-                <div className="hl-info">
-                  <div className="hl-cat" style={{ color: 'var(--blue)' }}>{story.theme || 'História Mágica'}</div>
-                  <div className="hl-title truncate w-full pr-4">{story.title || 'Incrível Aventura'}</div>
-                  <div className="hl-meta"><span>{story.ageGroups?.[0] ? `${story.ageGroups[0]} anos` : 'Livre'}</span><span>•</span><span>⭐ Nova</span></div>
-                </div>
-                <i className="fas fa-chevron-right hl-arrow"></i>
               </Link>
             ))
           ) : (
-            <div className="p-4 text-sm text-gray-500 text-center w-full">Nenhuma história encontrada. Que tal <Link href="/app/criar" className="text-[var(--blue)] font-bold">criar uma nova</Link>?</div>
+            <div className="p-6 text-sm text-purple-200/50 text-center w-full bg-[#150F2D] rounded-[24px] border border-white/5 flex flex-col items-center gap-2">
+              <Sparkles className="text-purple-500/50 mb-2" />
+              Nenhuma história mágica ainda. 
+              <Link href="/app/criar" className="text-pink-400 font-bold hover:underline">Comece a criar!</Link>
+            </div>
           )}
         </div>
-      </div>
 
-    </>
+      </div>
+    </div>
   );
 }

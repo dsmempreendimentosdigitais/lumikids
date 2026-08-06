@@ -1,26 +1,37 @@
 @import "tailwindcss";
 
 :root {
-  --blue:      #3D5AFE;
-  --blue2:     #5C6BC0;
-  --blue-dark: #283593;
-  --gold:      #F9A825;
-  --coral:     #FF6B6B;
-  --cream:     #FFFDF7;
-  --bg:        #F0F2FF;
-  --text:      #2E2E2E;
-  --green:     #43A047;
-  --purple:    #7C4DFF;
-  --card:      #FFFFFF;
-  --shadow:    0 4px 20px rgba(61,90,254,0.11);
-  --shadow-lg: 0 12px 40px rgba(61,90,254,0.17);
-  --radius:    20px;
-  --radius-sm: 14px;
+  --blue:      #3B82F6;
+  --blue2:     #6366F1;
+  --blue-dark: #1E1B4B;
+  --gold:      #FBBF24;
+  --coral:     #F43F5E;
+  --cream:     #F8FAFC;
+  --bg:        #0B0819; /* Fundo escuro deep space */
+  --text:      #FFFFFF;
+  --green:     #10B981;
+  --purple:    #8B5CF6;
+  --card:      rgba(255, 255, 255, 0.05); /* Fundo glass */
+  --shadow:    0 8px 32px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 12px 48px rgba(139, 92, 246, 0.3);
+  --radius:    24px;
+  --radius-sm: 16px;
+  
+  --neon-border: rgba(139, 92, 246, 0.5);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
-body { font-family: var(--font-nunito), 'Nunito', sans-serif; background: #F0F2FF; color: #2E2E2E; overflow-x: hidden; }
+body { 
+  font-family: var(--font-nunito), 'Nunito', sans-serif; 
+  background-color: var(--bg); 
+  background-image: 
+    radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.15), transparent 25%),
+    radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.15), transparent 25%);
+  color: var(--text); 
+  overflow-x: hidden; 
+  min-height: 100vh;
+}
 
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: var(--bg); }

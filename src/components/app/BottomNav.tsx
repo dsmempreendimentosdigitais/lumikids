@@ -16,19 +16,19 @@ export default function BottomNav() {
   ];
 
   return (
-    <div className="bottom-nav sticky bottom-0 bg-white border-t border-[rgba(61,90,254,0.07)] p-[10px_0_16px] flex justify-around shadow-[0_-4px_20px_rgba(61,90,254,0.08)] z-10 w-full rounded-t-[20px]">
+    <div className="bottom-nav fixed bottom-0 left-0 w-full bg-[#0B0819]/80 backdrop-blur-xl border-t border-purple-500/20 p-[10px_0_16px] flex justify-around shadow-[0_-10px_30px_rgba(139,92,246,0.15)] z-50 rounded-t-[32px]">
       {ITEMS.map((item) => {
         const isActive = pathname === item.path;
         return (
           <Link 
             key={item.id}
             href={item.path}
-            className={`bn-item flex flex-col items-center gap-[3px] cursor-pointer px-[12px] group ${isActive ? 'active' : ''}`}
+            className={`bn-item flex flex-col items-center gap-[4px] cursor-pointer px-[12px] group ${isActive ? 'active' : ''} transition-all duration-300`}
           >
-            <div className={`bn-icon w-[40px] h-[40px] rounded-[12px] flex items-center justify-center text-[0.95rem] transition-all ${isActive ? 'bg-[var(--blue)] text-white shadow-[0_4px_12px_rgba(61,90,254,0.28)]' : 'bg-transparent text-[#ccc] group-hover:bg-[#F0F2FF] group-hover:text-[var(--blue)]'}`}>
+            <div className={`bn-icon w-[44px] h-[44px] rounded-[16px] flex items-center justify-center text-[1.1rem] transition-all duration-300 ${isActive ? 'bg-gradient-to-tr from-purple-500 to-blue-500 text-white shadow-[0_0_20px_rgba(139,92,246,0.6)]' : 'bg-transparent text-purple-200/40 group-hover:bg-white/5 group-hover:text-purple-300'}`}>
               {item.icon}
             </div>
-            <div className={`bn-label text-[0.6rem] font-[800] ${isActive ? 'text-[var(--blue)]' : 'text-[#ccc]'}`}>
+            <div className={`bn-label text-[0.65rem] font-[800] tracking-wide transition-all duration-300 ${isActive ? 'text-purple-300 drop-shadow-[0_0_5px_rgba(139,92,246,0.8)]' : 'text-purple-200/40'}`}>
               {item.label}
             </div>
           </Link>
