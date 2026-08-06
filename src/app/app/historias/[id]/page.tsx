@@ -262,14 +262,22 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
 
   if (generating) {
     return (
-      <div className="flex flex-col justify-center items-center p-6 min-h-screen bg-[#F0F2FF] text-center">
-        <div className="relative mb-6">
-          <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
-          <div className="absolute inset-0 flex items-center justify-center text-xl animate-pulse">✨</div>
+      <div className="flex flex-col justify-center items-center p-6 min-h-screen bg-[#0B0819] text-center relative overflow-hidden">
+        {/* Background Starry Glows */}
+        <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 50% 20%, rgba(139, 92, 246, 0.15), transparent 60%)' }}></div>
+        <div className="absolute top-[20%] left-[15%] w-1.5 h-1.5 bg-white rounded-full shadow-[0_0_10px_rgba(255,255,255,0.8)] animate-pulse"></div>
+        <div className="absolute top-[40%] right-[20%] w-2 h-2 bg-purple-300 rounded-full shadow-[0_0_15px_rgba(216,180,254,0.8)] animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute bottom-[30%] left-[25%] w-1.5 h-1.5 bg-blue-300 rounded-full shadow-[0_0_12px_rgba(147,197,253,0.8)] animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+
+        <div className="relative mb-8 z-10">
+          <div className="w-24 h-24 border-4 border-purple-900/30 border-t-pink-500 rounded-full animate-spin drop-shadow-[0_0_15px_rgba(236,72,153,0.5)]"></div>
+          <div className="absolute inset-0 flex items-center justify-center text-3xl animate-pulse drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">✨</div>
         </div>
-        <h2 className="text-2xl font-black text-[#283593] mb-2 animate-pulse">Preparando magia...</h2>
-        <p className="text-gray-500 text-sm font-semibold max-w-xs leading-relaxed">
-          Nossa inteligência artificial está escrevendo as páginas, desenhando as ilustrações e gravando a narração da história! Aguarde um momento. 📖
+        <h2 className="text-[2.2rem] font-serif font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-purple-200 to-blue-200 mb-4 animate-pulse drop-shadow-md z-10">
+          Preparando Magia...
+        </h2>
+        <p className="text-purple-200/80 text-sm font-bold max-w-sm leading-relaxed z-10">
+          Nossa inteligência artificial está escrevendo as páginas, renderizando ilustrações 3D e gravando a narração da história! Aguarde só mais um pouquinho. 📖
         </p>
       </div>
     );
@@ -321,11 +329,11 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
   }
 
   const ageGroup = story.ageGroups?.[0] || '5-7';
-  let fontStyleClass = "text-white font-bold text-xs md:text-sm leading-normal select-none tracking-wide";
+  let fontStyleClass = "text-gray-900 font-black text-xl md:text-2xl leading-tight select-none tracking-wide";
   if (ageGroup === '2-4') {
-    fontStyleClass = "text-white font-extrabold text-sm md:text-base leading-snug select-none tracking-wide";
+    fontStyleClass = "text-gray-900 font-black text-2xl md:text-3xl leading-snug select-none tracking-wide";
   } else if (ageGroup === '8-10') {
-    fontStyleClass = "text-white font-medium text-[0.7rem] md:text-xs leading-normal select-none tracking-wide";
+    fontStyleClass = "text-gray-900 font-extrabold text-lg md:text-xl leading-snug select-none tracking-wide";
   }
 
   const audioUrl = story.audio?.[story.language || 'pt-BR']?.url;
@@ -603,7 +611,8 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
                         )}
                       </div>
 
-                      <div className="w-full max-w-[92%] md:max-w-[85%] bg-black/75 backdrop-blur-md px-5 py-3.5 rounded-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)] text-center mb-1 pointer-events-auto overflow-hidden flex items-center justify-center">
+                      <div className="w-full max-w-[95%] md:max-w-[88%] bg-white px-6 py-5 rounded-[28px] border-4 border-blue-500 shadow-[0_10px_25px_rgba(0,0,0,0.4),0_0_15px_rgba(59,130,246,0.6)] text-center mb-4 pointer-events-auto overflow-hidden flex items-center justify-center relative">
+                        <div className="absolute top-0 right-0 w-16 h-16 bg-blue-100 rounded-full blur-2xl opacity-50 pointer-events-none"></div>
                         <p className={fontStyleClass}>{p.text}</p>
                       </div>
                     </div>

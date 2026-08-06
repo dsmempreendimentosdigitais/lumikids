@@ -39,19 +39,19 @@ function sanitizeSceneForChild(childName: string, scene: string): string {
 }
 
 function buildPrompt(childName: string, ageGroup: string, storyTitleOrScene: string): string {
-  // Estilo cartoon 2D inspirado em quadrinhos infantis (cel-shaded, cores limpas, contornos bem definidos)
-  const stylePrompt = 'Cute 2D vector cartoon style, comic book panel illustration, bold outlines, flat colors, children storybook art, friendly and expressive characters, warm and vibrant lighting, highly clean, vector graphic look';
+  // Estilo 3D Pixar / Patrulha Canina
+  const stylePrompt = 'High quality 3D render, Pixar style, Paw Patrol aesthetic, vibrant cinematic lighting, highly detailed, octane render, vivid colors, cute and friendly character design';
 
   const rawScene = storyTitleOrScene.replace(/[^\w\sÀ-ÿ,.()\-]/g, ' ').trim();
   const safeScene = sanitizeSceneForChild(childName, rawScene);
 
   const fullPrompt = [
-    `Children's comic book illustration panel`,
+    `Children's 3D storybook illustration`,
     `Main character: ${childName}, a cute ${ageGroup}-year-old Brazilian child`,
-    `Action in this scene: ${safeScene}`,
+    `Action: ${safeScene}`,
     stylePrompt,
     `Child-safe, family-friendly, warm and inviting atmosphere`,
-    `No text, no letters, no words, no watermark, no speech bubbles, no talk bubbles anywhere in the image`,
+    `No text, no letters, no words, no watermark, no speech bubbles`,
   ].join('. ');
 
   return fullPrompt.replace(/\s+/g, ' ').trim();
@@ -65,9 +65,9 @@ export async function generateImageWithNanoBanana(
 ): Promise<string> {
   const cleanPrompt = buildPrompt(childName, ageGroup, storyTitleOrScene);
   
-  // Usamos Pollinations AI para geração gratuita, super rápida e sem necessidade de SDK/Keys.
-  // Criamos uma 'seed' baseada no nome da criança para tentar manter alguma consistência na mesma história.
-  const seed = Array.from(childName).reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  // A semente varia baseada no nome da criança E no índice da página para garantir imagens diferentes!
+  const baseSeed = Array.from(childName).reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const seed = baseSeed + (index * 137); // Multiplicador para espalhar a semente
   
   // Formatamos a URL direta da imagem
   const encodedPrompt = encodeURIComponent(cleanPrompt);

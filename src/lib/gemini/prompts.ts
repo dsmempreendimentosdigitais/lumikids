@@ -19,9 +19,10 @@ REGRAS POR FAIXA ETÁRIA (Todas devem ter NO MÍNIMO 6 PÁGINAS):
 
 REGRAS PARA CRIAÇÃO DAS PÁGINAS E DESCRITIVO DE IMAGENS (imagePrompt):
 - O campo "imagePrompt" DEVE ser escrito obrigatoriamente em INGLÊS.
-- CONSISTÊNCIA DE PERSONAGEM (MUITO IMPORTANTE): Em cada imagePrompt, descreva os detalhes físicos do personagem principal de forma idêntica (ex: "Pedro, a cute 5-year-old Brazilian boy with short brown hair, wearing a red t-shirt and blue jeans").
-- Descreva O QUE ESTÁ ACONTECENDO na cena visualmente. Use adjetivos vibrantes: "dynamic action shot, vibrant colors, bright lighting, highly detailed, cute 3D cartoon style, Paw Patrol aesthetic, Pixar style rendering, cheerful".
-- SEMPRE child-safe. Crianças sorrindo, pulando, brincando.
+- CONSISTÊNCIA DE PERSONAGEM (MUITO IMPORTANTE): Em cada imagePrompt, descreva os detalhes físicos do personagem de forma idêntica (ex: "Pedro, a cute 5-year-old Brazilian boy with short brown hair, wearing a red t-shirt").
+- OBRIGATÓRIO: Termine cada imagePrompt com este estilo exato: "High quality 3D render, Pixar style, Paw Patrol aesthetic, vibrant lighting, highly detailed, octane render, vivid colors".
+- Descreva a cena com MUITA AÇÃO (pulando, correndo, rindo) e detalhes de luz (ex: "cinematic sunlight", "glowing magic").
+- SEMPRE child-safe. Crianças sorrindo, sem violências. No text, no letters no words.
 
 FORMATO DE RESPOSTA (JSON estrito, sem markdown):
 {
