@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { Smartphone, Sparkles, BookOpen, Play } from 'lucide-react';
 
 export default function Hero() {
   const [canInstall, setCanInstall] = useState(false);
@@ -27,45 +28,61 @@ export default function Hero() {
         window.pwaPrompt = null;
         setCanInstall(false);
       });
+    } else {
+      // Dispara o modal de instruções PWA
+      window.dispatchEvent(new CustomEvent('open-pwa-modal'));
     }
   };
+
   return (
     <section className="hero-section" id="hero">
-      <div className="hero-badge">✦ Lançamento 2025 — IA + Valores + Fé</div>
-      <h1>Histórias que <span>iluminam</span> o coração das crianças</h1>
-      <p>IA que cria histórias personalizadas com valores, fé cristã e personagens que as crianças amam. De 2 a 10 anos, em qualquer idioma.</p>
-      <div className="hero-btns">
-        <Link href="/cadastro" className="btn btn-gold btn-lg"><i className="fas fa-play"></i> Começar grátis</Link>
-        <Link href="/galeria" className="btn btn-outline btn-lg hidden md:inline-flex"><i className="fas fa-book-open"></i> Ver histórias</Link>
-        {canInstall && (
-          <button onClick={handleInstallClick} className="btn btn-lg" style={{ background: '#3D5AFE', color: 'white', border: 'none', cursor: 'pointer' }}>
-            <i className="fas fa-mobile-alt"></i> Baixar App
-          </button>
-        )}
+      <div className="hero-badge">✦ Lançamento 2025 — Histórias Mágicas + Valores + Fé</div>
+      <h1 className="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-purple-200 to-blue-200 leading-tight mb-4 drop-shadow-lg">
+        Histórias que <span>iluminam</span> o coração das crianças
+      </h1>
+      <p className="text-purple-200/80 text-sm md:text-base max-w-xl mx-auto mb-6">
+        IA que cria histórias infantis personalizadas com ilustrações 3D estilo Pixar, fé cristã e valores morais. De 2 a 14 anos, no celular e tablet!
+      </p>
+
+      <div className="hero-btns flex flex-wrap items-center justify-center gap-3 mb-8">
+        <Link href="/cadastro" className="btn btn-gold btn-lg flex items-center gap-2">
+          <Play size={18} /> Começar grátis
+        </Link>
+        <Link href="/login" className="btn btn-outline btn-lg flex items-center gap-2">
+          <BookOpen size={18} /> Acessar Minha Conta
+        </Link>
+        <button 
+          onClick={handleInstallClick} 
+          className="btn btn-lg flex items-center gap-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-extrabold shadow-lg shadow-purple-500/30 border border-purple-400/30 hover:scale-105 transition-transform"
+        >
+          <Smartphone size={18} /> Baixar App PWA
+        </button>
       </div>
+
       <div className="hero-stats">
         <div className="stat-item"><strong>100+</strong><span>histórias</span></div>
         <div className="stat-sep"></div>
         <div className="stat-item"><strong>8+</strong><span>idiomas</span></div>
         <div className="stat-sep"></div>
-        <div className="stat-item"><strong>2–10</strong><span>anos</span></div>
+        <div className="stat-item"><strong>2–14</strong><span>anos</span></div>
         <div className="stat-sep"></div>
-        <div className="stat-item"><strong>∞</strong><span>criações IA</span></div>
+        <div className="stat-item"><strong>3D</strong><span>Pixar IA</span></div>
       </div>
 
-      <div className="hero-phone-wrap">
-        <div className="phone-frame">
+      <div className="hero-phone-wrap mt-8">
+        <div className="phone-frame shadow-[0_0_50px_rgba(139,92,246,0.3)] border border-purple-500/30">
           <div className="app-header" style={{ padding: '28px 16px 56px' }}>
             <div className="header-top">
               <div className="header-logo" style={{ fontSize: '1.05rem' }}>Lumi<em>kids</em></div>
               <div className="header-avatar" style={{ width: '30px', height: '30px', fontSize: '.78rem' }}>S</div>
             </div>
-            <div className="header-greeting" style={{ fontSize: '.75rem' }}>Boa noite, Samuel 👋</div>
+            <div className="header-greeting" style={{ fontSize: '.75rem' }}>Boa noite, Explorador 👋</div>
             <div className="header-title" style={{ fontSize: '1.1rem' }}>O que vamos<br/>ler hoje?</div>
             <div className="age-selector" style={{ marginTop: '10px', gap: '6px' }}>
               <div className="age-pill" style={{ fontSize: '.65rem', padding: '4px 9px' }}>🍼 2–4</div>
               <div className="age-pill active" style={{ fontSize: '.65rem', padding: '4px 9px' }}>📚 5–7</div>
               <div className="age-pill" style={{ fontSize: '.65rem', padding: '4px 9px' }}>🎓 8–10</div>
+              <div className="age-pill" style={{ fontSize: '.65rem', padding: '4px 9px' }}>🗡️ 11–14</div>
             </div>
           </div>
           <div style={{ padding: '0 11px 14px', marginTop: '-38px', position: 'relative', zIndex: 2 }}>

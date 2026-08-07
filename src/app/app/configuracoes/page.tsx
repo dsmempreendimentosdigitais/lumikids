@@ -55,18 +55,21 @@ export default function ConfigPage() {
             <i className="fas fa-chevron-right text-purple-400/50"></i>
           </Link>
           
-          <div className="flex items-center justify-between p-4 rounded-[20px] hover:bg-purple-900/30 transition-colors w-full cursor-pointer border border-transparent hover:border-purple-500/30">
+          <button 
+            onClick={() => window.dispatchEvent(new CustomEvent('open-pwa-modal'))}
+            className="flex items-center justify-between p-4 rounded-[20px] hover:bg-purple-900/30 transition-colors w-full cursor-pointer border border-transparent hover:border-purple-500/30 text-left"
+          >
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-full bg-purple-500/20 border border-purple-500/30 text-purple-300 flex items-center justify-center">
-                <i className="fas fa-user-edit"></i>
+              <div className="w-10 h-10 rounded-full bg-pink-500/20 border border-pink-500/30 text-pink-300 flex items-center justify-center text-base">
+                📲
               </div>
               <div className="text-left">
-                <div className="font-bold text-white text-sm">Editar Perfil</div>
-                <div className="text-xs text-purple-200/60 font-medium">Alterar nome ou foto</div>
+                <div className="font-bold text-white text-sm">Instalar no Celular / Tablet</div>
+                <div className="text-xs text-purple-200/60 font-medium">Salvar ícone na tela inicial (PWA)</div>
               </div>
             </div>
-            <i className="fas fa-chevron-right text-purple-400/50"></i>
-          </div>
+            <i className="fas fa-download text-pink-400/70 text-xs"></i>
+          </button>
         </div>
 
         <div className="flex justify-center mt-8">

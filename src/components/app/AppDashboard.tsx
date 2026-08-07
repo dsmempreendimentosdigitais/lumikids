@@ -53,8 +53,19 @@ export default function AppDashboard() {
             Lumi<em className="not-italic text-yellow-300">kids</em>
             <Sparkles className="w-5 h-5 text-yellow-300" />
           </div>
-          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center font-bold text-white shadow-[0_0_15px_rgba(139,92,246,0.6)]">
-            {userInitial}
+          
+          <div className="flex items-center gap-2.5">
+            <button
+              onClick={() => window.dispatchEvent(new CustomEvent('open-pwa-modal'))}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#150F2D] border border-purple-500/40 text-purple-200 text-xs font-bold hover:bg-purple-900/40 shadow-sm"
+              title="Instalar aplicativo no celular ou tablet"
+            >
+              📲 <span className="hidden sm:inline">Baixar App</span>
+            </button>
+            
+            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center font-bold text-white shadow-[0_0_15px_rgba(139,92,246,0.6)]">
+              {userInitial}
+            </div>
           </div>
         </div>
 
