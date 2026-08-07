@@ -1,138 +1,132 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { db } from '@/lib/firebase/config';
+import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 
 export default function AdminPage() {
-  const { user, dbUser, loading } = useAuth();
+  const { dbUser } = useAuth();
   const router = useRouter();
-  
+
   const [users, setUsers] = useState<any[]>([]);
-  const [isLoadingUsers, setIsLoadingUsers] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (loading) return;
-    
-    // Se não for admin, redirecionar
-    if (!user || dbUser?.role !== 'admin') {
-      router.replace('/app');
+    if (dbUser && dbUser.role !== 'admin') {
+      router.push('/app');
       return;
     }
 
-    fetchUsers();
-  }, [user, dbUser, loading, router]);
+    const fetchUsers = async () => {
+      try {
+        const snap = await getDocs(collection(db, 'users'));
+        const uList = snap.docs.map(d => ({ uid: d.id, ...d.data() }));
+        setUsers(uList);
+      } catch (err: any) {
+        console.error(err);
+        setError('Erro ao carregar lista de usuários.');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const fetchUsers = async () => {
-    setIsLoadingUsers(true);
-    try {
-      if (!user) return;
-      const token = await user.getIdToken();
-      const res = await fetch('/api/admin/users', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Erro ao carregar usuários');
-      setUsers(data.users);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setIsLoadingUsers(false);
+    if (dbUser?.role === 'admin') {
+      fetchUsers();
     }
-  };
+  }, [dbUser, router]);
 
   const handlePlanChange = async (targetUid: string, newPlan: string) => {
     try {
-      if (!user) return;
-      const token = await user.getIdToken();
-      const res = await fetch('/api/admin/users', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ targetUid, plan: newPlan })
+      await updateDoc(doc(db, 'users', targetUid), {
+        plan: newPlan,
+        updatedAt: new Date()
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Erro ao atualizar plano');
-      
-      // Atualizar estado local
-      setUsers(users.map(u => u.uid === targetUid ? { ...u, plan: newPlan } : u));
+      setUsers(prev => prev.map(u => u.uid === targetUid ? { ...u, plan: newPlan } : u));
     } catch (err: any) {
-      alert(err.message);
+      console.error(err);
+      alert('Erro ao atualizar plano do usuário.');
     }
   };
 
-  if (loading || isLoadingUsers) {
-    return <div className="p-8 text-center text-[#283593] font-bold">Carregando painel admin...</div>;
+  if (loading) {
+    return (
+      <div className="p-8 text-center bg-[#0B0819] text-white min-h-screen">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-purple-500 mx-auto"></div>
+        <p className="mt-4 font-bold text-sm text-purple-300">Carregando painel admin...</p>
+      </div>
+    );
   }
 
-  if (dbUser?.role !== 'admin') return null; // Redirecionando...
+  if (dbUser?.role !== 'admin') return null;
 
   return (
-    <div className="p-6 bg-[#F0F2FF] min-h-screen pb-32 font-sans overflow-x-hidden">
-      <div className="flex items-center gap-3 mb-8">
-        <div className="w-[48px] h-[48px] rounded-[14px] flex items-center justify-center text-white text-[1.2rem] shadow-lg shadow-blue-500/30" style={{ background: 'linear-gradient(135deg, #1A237E, #3949AB)' }}>
-           👑
-        </div>
-        <div>
-          <h1 className="text-[1.8rem] font-black text-[#1A237E] leading-tight">Painel Admin</h1>
-          <p className="text-[#666] text-sm font-semibold">Gerenciamento de usuários e planos</p>
-        </div>
-      </div>
+    <div className="p-6 bg-[#0B0819] text-white min-h-screen pb-36 font-sans overflow-x-hidden relative">
+      <div className="fixed inset-0 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 50% 20%, rgba(139, 92, 246, 0.15), transparent 60%)' }}></div>
 
-      {error && <div className="text-red-500 font-bold bg-red-50 p-4 rounded-[16px] text-sm mb-6">{error}</div>}
+      <div className="relative z-10 max-w-4xl mx-auto pt-4">
+        <div className="flex items-center gap-3 mb-8">
+          <div className="w-[48px] h-[48px] rounded-[16px] flex items-center justify-center text-white text-[1.4rem] shadow-lg shadow-purple-500/30 border border-purple-400/30 bg-gradient-to-tr from-purple-600 to-indigo-600">
+             👑
+          </div>
+          <div>
+            <h1 className="text-[2rem] font-serif font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-purple-200 to-blue-200 leading-tight">Painel Admin</h1>
+            <p className="text-purple-200/60 text-xs font-semibold">Gerenciamento de usuários e planos</p>
+          </div>
+        </div>
 
-      <div className="bg-white rounded-[24px] p-6 shadow-xl overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-gray-100 text-[#3949AB] text-sm">
-                <th className="pb-3 font-bold px-2">Nome</th>
-                <th className="pb-3 font-bold px-2">E-mail</th>
-                <th className="pb-3 font-bold px-2">Data Cadastro</th>
-                <th className="pb-3 font-bold px-2">Role</th>
-                <th className="pb-3 font-bold px-2">Plano Atual</th>
-                <th className="pb-3 font-bold px-2 text-right">Ação</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map(u => (
-                <tr key={u.uid} className="border-b border-gray-50 text-sm hover:bg-gray-50 transition-colors">
-                  <td className="py-4 px-2 font-bold text-[#333]">{u.displayName || 'Sem nome'}</td>
-                  <td className="py-4 px-2 text-gray-500">{u.email}</td>
-                  <td className="py-4 px-2 text-gray-500">
-                    {u.createdAt ? new Date(u.createdAt._seconds * 1000).toLocaleDateString('pt-BR') : '-'}
-                  </td>
-                  <td className="py-4 px-2">
-                    <span className={`px-2 py-1 rounded-full text-xs font-bold ${u.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-600'}`}>
-                      {u.role || 'user'}
-                    </span>
-                  </td>
-                  <td className="py-4 px-2 font-semibold">
-                    <span className={`px-2 py-1 rounded-full text-xs font-bold ${u.plan === 'premium2' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
-                      {u.plan}
-                    </span>
-                  </td>
-                  <td className="py-4 px-2 text-right">
-                    <select
-                      className="bg-[#F0F2FF] border-none text-[#283593] font-bold text-xs rounded-lg px-2 py-1.5 outline-none cursor-pointer"
-                      value={u.plan || 'free'}
-                      onChange={(e) => handlePlanChange(u.uid, e.target.value)}
-                    >
-                      <option value="free">Free</option>
-                      <option value="start">Start (Ilimitado temp)</option>
-                      <option value="familia">Família (30/mês)</option>
-                      <option value="familia_plus">Família Plus (100/mês)</option>
-                      <option value="premium2">Premium2 (Ilimitado)</option>
-                    </select>
-                  </td>
+        {error && <div className="text-red-400 font-bold bg-red-500/20 border border-red-500/40 p-4 rounded-[16px] text-sm mb-6">{error}</div>}
+
+        <div className="bg-[#150F2D] border border-purple-500/30 rounded-[24px] p-6 shadow-xl overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-purple-500/20 text-purple-300 text-sm">
+                  <th className="pb-3 font-bold px-2">Nome</th>
+                  <th className="pb-3 font-bold px-2">E-mail</th>
+                  <th className="pb-3 font-bold px-2">Data Cadastro</th>
+                  <th className="pb-3 font-bold px-2">Role</th>
+                  <th className="pb-3 font-bold px-2">Plano Atual</th>
+                  <th className="pb-3 font-bold px-2 text-right">Ação</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {users.map(u => (
+                  <tr key={u.uid} className="border-b border-purple-500/10 text-sm hover:bg-purple-900/20 transition-colors">
+                    <td className="py-4 px-2 font-bold text-white">{u.displayName || 'Sem nome'}</td>
+                    <td className="py-4 px-2 text-purple-200/60">{u.email}</td>
+                    <td className="py-4 px-2 text-purple-200/60">
+                      {u.createdAt ? new Date(u.createdAt._seconds * 1000).toLocaleDateString('pt-BR') : '-'}
+                    </td>
+                    <td className="py-4 px-2">
+                      <span className={`px-2 py-1 rounded-full text-xs font-bold ${u.role === 'admin' ? 'bg-purple-500/30 text-purple-300 border border-purple-500/40' : 'bg-gray-500/20 text-gray-400'}`}>
+                        {u.role || 'user'}
+                      </span>
+                    </td>
+                    <td className="py-4 px-2 font-semibold">
+                      <span className={`px-2 py-1 rounded-full text-xs font-bold ${u.plan === 'premium2' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-blue-500/20 text-blue-300 border border-blue-500/40'}`}>
+                        {u.plan}
+                      </span>
+                    </td>
+                    <td className="py-4 px-2 text-right">
+                      <select
+                        className="bg-[#1A133A] border border-purple-500/30 text-purple-200 font-bold text-xs rounded-lg px-2 py-1.5 outline-none cursor-pointer"
+                        value={u.plan || 'free'}
+                        onChange={(e) => handlePlanChange(u.uid, e.target.value)}
+                      >
+                        <option value="free">Free</option>
+                        <option value="start">Start (Ilimitado temp)</option>
+                        <option value="familia">Família (30/mês)</option>
+                        <option value="familia_plus">Família Plus (100/mês)</option>
+                        <option value="premium2">Premium2 (Ilimitado)</option>
+                      </select>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>

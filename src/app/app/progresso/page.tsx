@@ -47,61 +47,67 @@ export default function ProgressoPage() {
   const planColor = stats.plan === 'free' ? 'text-gray-500' : 'text-gold-500';
 
   return (
-    <div className="p-6 font-sans bg-[#F0F2FF] min-h-screen pb-32">
-      <div className="flex items-center gap-4 mb-8">
-        <div className="w-[54px] h-[54px] rounded-full overflow-hidden shadow-md border-4 border-white">
-          <img src={user?.photoURL || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix'} alt="Avatar" className="w-[100%] h-[100%] object-cover" />
-        </div>
-        <div>
-          <h1 className="text-[1.5rem] font-black text-[#283593] leading-tight break-all pr-4">{user?.displayName || 'Aventureiro'}</h1>
-          <p className={`text-xs font-bold flex items-center gap-1 ${planColor}`}>
-            <i className="fas fa-crown"></i> {planName}
-          </p>
-        </div>
-      </div>
+    <div className="p-6 font-sans bg-[#0B0819] text-white min-h-screen pb-36 relative overflow-x-hidden">
+      {/* Background Starry Glows */}
+      <div className="fixed inset-0 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 50% 20%, rgba(139, 92, 246, 0.15), transparent 60%)' }}></div>
 
-      <div className="bg-white rounded-[24px] p-6 shadow-sm mb-6 flex items-center justify-between">
-        <div>
-          <h3 className="font-extrabold text-[#283593] text-xl mb-1">Total de Leituras</h3>
-          <p className="text-[#666] text-xs font-semibold">Histórias geradas no Lumikids</p>
-        </div>
-        <div className="text-4xl font-black text-[#3D5AFE]">
-          {loading ? '...' : stats.totalStories}
-        </div>
-      </div>
-
-      <h2 className="text-lg font-black text-[#283593] mb-4">Uso do Plano IA</h2>
-      <div className="grid grid-cols-2 gap-4">
-        <div className="bg-white rounded-[20px] p-5 shadow-sm relative overflow-hidden flex flex-col items-center justify-center min-h-[140px]">
-          <div className="absolute -top-6 -right-6 w-16 h-16 bg-blue-50 rounded-full blur-xl"></div>
-          <div className="text-3xl mb-1">📅</div>
-          <div className="text-gray-500 text-[0.65rem] font-bold uppercase tracking-wider text-center">Nesta Semana</div>
-          <div className="text-3xl font-black text-[#283593] mt-2">
-            {loading ? '-' : stats.weekCount} <span className="text-sm text-gray-400 font-semibold">{stats.plan === 'free' ? '/ 2' : ''}</span>
+      <div className="relative z-10 max-w-2xl mx-auto pt-4">
+        <div className="flex items-center gap-4 mb-8">
+          <div className="w-[58px] h-[58px] rounded-full overflow-hidden shadow-[0_0_15px_rgba(139,92,246,0.5)] border-2 border-purple-400 flex-shrink-0">
+            <img src={user?.photoURL || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix'} alt="Avatar" className="w-[100%] h-[100%] object-cover" />
+          </div>
+          <div>
+            <h1 className="text-[1.6rem] font-serif font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-purple-200 to-blue-200 leading-tight break-all pr-4">{user?.displayName || 'Aventureiro'}</h1>
+            <p className="text-xs font-bold flex items-center gap-1.5 text-amber-300">
+              <i className="fas fa-crown"></i> {planName}
+            </p>
           </div>
         </div>
 
-        <div className="bg-white rounded-[20px] p-5 shadow-sm relative overflow-hidden flex flex-col items-center justify-center min-h-[140px]">
-          <div className="absolute -top-6 -left-6 w-16 h-16 bg-purple-50 rounded-full blur-xl"></div>
-          <div className="text-3xl mb-1">🗓️</div>
-          <div className="text-gray-500 text-[0.65rem] font-bold uppercase tracking-wider text-center">Neste Mês</div>
-          <div className="text-3xl font-black text-[#283593] mt-2">
-            {loading ? '-' : stats.monthCount}
+        <div className="bg-[#150F2D] border border-purple-500/30 rounded-[28px] p-6 shadow-lg mb-6 flex items-center justify-between">
+          <div>
+            <h3 className="font-extrabold text-white text-xl mb-1 font-serif">Total de Leituras</h3>
+            <p className="text-purple-200/60 text-xs font-semibold">Histórias geradas no Lumikids</p>
+          </div>
+          <div className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-300">
+            {loading ? '...' : stats.totalStories}
           </div>
         </div>
-      </div>
 
-      <div className="mt-8 bg-[linear-gradient(135deg,#3D5AFE,#5C6BC0)] text-white p-6 rounded-[24px] shadow-lg">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="font-black text-lg">Lumikids Premium</h3>
-          <i className="fas fa-rocket text-yellow-300 text-2xl animate-pulse"></i>
+        <h2 className="text-sm font-black text-purple-300 uppercase tracking-widest mb-4">Uso do Plano IA</h2>
+        <div className="grid grid-cols-2 gap-4 mb-8">
+          <div className="bg-[#150F2D] border border-purple-500/20 rounded-[24px] p-5 shadow-lg relative overflow-hidden flex flex-col items-center justify-center min-h-[140px]">
+            <div className="text-3xl mb-1">📅</div>
+            <div className="text-purple-200/60 text-[0.65rem] font-bold uppercase tracking-wider text-center">Nesta Semana</div>
+            <div className="text-3xl font-black text-white mt-2 font-serif">
+              {loading ? '-' : stats.weekCount} <span className="text-sm text-purple-300/50 font-semibold">{stats.plan === 'free' ? '/ 2' : ''}</span>
+            </div>
+          </div>
+
+          <div className="bg-[#150F2D] border border-purple-500/20 rounded-[24px] p-5 shadow-lg relative overflow-hidden flex flex-col items-center justify-center min-h-[140px]">
+            <div className="text-3xl mb-1">🗓️</div>
+            <div className="text-purple-200/60 text-[0.65rem] font-bold uppercase tracking-wider text-center">Neste Mês</div>
+            <div className="text-3xl font-black text-white mt-2 font-serif">
+              {loading ? '-' : stats.monthCount}
+            </div>
+          </div>
         </div>
-        <p className="font-medium text-blue-100 text-sm leading-relaxed mb-6">
-          Desbloqueie infinitas criações, trilhas de valores cristãos completas e áudios super detalhados.
-        </p>
-        <Link href="/app/planos" className="w-full flex items-center justify-center bg-white text-[#3D5AFE] font-extrabold h-[48px] rounded-[14px] shadow-md hover:bg-gray-50 transition-colors">
-          Fazer Upgrade
-        </Link>
+
+        <div className="relative group">
+          <div className="absolute -inset-0.5 bg-gradient-to-r from-pink-500 to-purple-500 rounded-[28px] opacity-75 blur-[2px] transition duration-300"></div>
+          <div className="relative bg-[#150F2D] text-white p-6 rounded-[26px] shadow-lg">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="font-serif font-black text-xl text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-amber-400">Lumikids Premium</h3>
+              <i className="fas fa-rocket text-yellow-300 text-2xl animate-pulse"></i>
+            </div>
+            <p className="font-medium text-purple-200/80 text-xs leading-relaxed mb-6">
+              Desbloqueie infinitas criações, trilhas de valores cristãos completas e áudios super detalhados.
+            </p>
+            <Link href="/app/planos" className="w-full flex items-center justify-center bg-gradient-to-r from-pink-500 to-purple-500 text-white font-extrabold h-[50px] rounded-[16px] shadow-md hover:opacity-90 transition-opacity text-sm">
+              Fazer Upgrade ✨
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   );

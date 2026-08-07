@@ -40,21 +40,24 @@ function sanitizeSceneForChild(childName: string, scene: string): string {
 
 function buildPrompt(childName: string, ageGroup: string, storyTitleOrScene: string): string {
   // Estilo 3D Pixar / Patrulha Canina
-  const stylePrompt = 'High quality 3D render, Pixar style, Paw Patrol aesthetic, vibrant cinematic lighting, highly detailed, octane render, vivid colors, cute and friendly character design';
+  const stylePrompt = '3D Pixar render, Paw Patrol style, vibrant lighting, highly detailed, cute cartoon, vivid colors';
 
-  const rawScene = storyTitleOrScene.replace(/[^\w\sÀ-ÿ,.()\-]/g, ' ').trim();
+  // Sanitiza texto para evitar caracteres especiais que quebrem URLs de imagem
+  const rawScene = storyTitleOrScene
+    .replace(/[*_#~`"']/g, '')
+    .replace(/[^\w\sÀ-ÿ,.()\-]/g, ' ')
+    .trim()
+    .slice(0, 180); // Limita o tamanho para evitar URLs gigantes
+
   const safeScene = sanitizeSceneForChild(childName, rawScene);
 
-  const fullPrompt = [
-    `Children's 3D storybook illustration`,
-    `Main character: ${childName}, a cute ${ageGroup}-year-old Brazilian child`,
-    `Action: ${safeScene}`,
+  return [
+    `3D children storybook scene`,
+    `Character: ${childName}, cute ${ageGroup} year old child`,
+    `Scene: ${safeScene}`,
     stylePrompt,
-    `Child-safe, family-friendly, warm and inviting atmosphere`,
-    `No text, no letters, no words, no watermark, no speech bubbles`,
-  ].join('. ');
-
-  return fullPrompt.replace(/\s+/g, ' ').trim();
+    `no text, no watermark, no speech bubbles`
+  ].join(', ');
 }
 
 export async function generateImageWithNanoBanana(

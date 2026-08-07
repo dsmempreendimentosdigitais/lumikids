@@ -4,8 +4,11 @@ import { useAuth } from '@/context/AuthContext';
 import { GenerateStoryRequest } from '@/types/ai';
 import { Sparkles, Wand2, Castle, Moon } from 'lucide-react';
 
+import { useRouter } from 'next/navigation';
+
 export default function CriarPage() {
   const { user } = useAuth();
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState<any>(null);
@@ -14,7 +17,7 @@ export default function CriarPage() {
     childName: '',
     ageGroup: '5-7',
     theme: '',
-    emotion: 'Alegria',
+    emotion: 'Feliz',
     value: '',
     character: '',
     language: 'pt-BR',
@@ -45,7 +48,11 @@ export default function CriarPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Erro ao gerar história.');
       
-      setSuccess(data);
+      if (data.storyId) {
+        router.push(`/app/historias/${data.storyId}`);
+      } else {
+        setSuccess(data);
+      }
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -148,16 +155,20 @@ export default function CriarPage() {
                 </div>
                 <div className="flex-1">
                   <label className="block text-white font-bold text-sm mb-2">4. Emoção da História</label>
-                  <div className="flex flex-wrap gap-2">
-                    {['Feliz', 'Curioso', 'Valente', 'Engraçado'].map(em => (
+                  <div className="flex flex-wrap gap-2 max-h-[140px] overflow-y-auto pr-1">
+                    {[
+                      'Feliz', 'Curioso', 'Valente', 'Engraçado', 
+                      'Calmo', 'Amoroso', 'Corajoso', 'Aventureiro', 
+                      'Criativo', 'Empático', 'Sonhador'
+                    ].map(em => (
                       <button
                         key={em}
                         type="button"
                         onClick={() => setFormData({...formData, emotion: em})}
-                        className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
+                        className={`px-3.5 py-2 rounded-full text-xs md:text-sm font-bold transition-all ${
                           formData.emotion === em 
-                          ? 'bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-[0_0_10px_rgba(217,70,239,0.5)]' 
-                          : 'bg-[#1A133A] text-purple-200/70 border border-purple-500/20'
+                          ? 'bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-[0_0_12px_rgba(217,70,239,0.6)] scale-105' 
+                          : 'bg-[#1A133A] text-purple-200/70 border border-purple-500/20 hover:bg-purple-900/30'
                         }`}
                       >
                         {em}
