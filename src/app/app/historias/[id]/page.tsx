@@ -339,7 +339,7 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
   const audioUrl = story.audio?.[story.language || 'pt-BR']?.url;
 
   return (
-    <div className="bg-[#F0F2FF] min-h-screen font-sans pb-32">
+    <div className="bg-[#0B0819] min-h-screen font-sans pb-32 text-white">
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes floatBalloon {
           0% { transform: translateY(120vh) translateX(0) rotate(0deg); opacity: 0; }
@@ -406,38 +406,58 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
         }
       `}} />
 
-      <div className="bg-white rounded-b-[40px] p-6 pt-10 shadow-sm relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50 rounded-full blur-3xl -mr-10 -mt-20 z-0"></div>
+      <div className="bg-[#120F28]/90 backdrop-blur-xl border-b border-purple-500/20 rounded-b-[40px] p-6 pt-10 shadow-lg relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-purple-600/10 rounded-full blur-3xl -mr-10 -mt-20 z-0"></div>
         <div className="relative z-10">
-          <Link href="/app/historias" className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-[#F5F7FF] text-[#283593] mb-6 hover:bg-blue-100 transition-colors">
+          <Link href="/app/historias" className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-purple-900/40 text-purple-200 mb-6 hover:bg-purple-800/50 transition-colors border border-purple-500/30">
             <i className="fas fa-arrow-left"></i>
           </Link>
           <div className="flex items-center gap-2 mb-2">
-            <div className="text-xs font-bold text-[#3D5AFE] uppercase tracking-wider">{story.theme ? story.theme.split(' - ')[0] : 'Aventura Mágica'}</div>
+            <div className="text-xs font-bold text-pink-400 uppercase tracking-wider">{story.theme ? story.theme.split(' - ')[0] : 'Aventura Mágica'}</div>
             {story.isPremium && (
-              <span className="bg-amber-100 text-amber-800 text-[0.6rem] font-black px-1.5 py-0.5 rounded-full border border-amber-200 uppercase">
+              <span className="bg-amber-500/20 text-amber-300 text-[0.6rem] font-black px-2 py-0.5 rounded-full border border-amber-500/30 uppercase">
                 Premium 👑
               </span>
             )}
           </div>
-          <h1 className="text-3xl font-black text-[#283593] leading-tight mb-4">{story.title}</h1>
-          <div className="flex items-center gap-4 text-xs font-bold text-[#666]">
-            <span className="flex items-center gap-1"><i className="fas fa-child text-[#3D5AFE]"></i> {story.ageGroups?.[0] ? `${story.ageGroups[0]} anos` : 'Livre'}</span>
-            <span className="flex items-center gap-1"><i className="fas fa-clock text-[#3D5AFE]"></i> {story.durationMinutes || 5} min</span>
-            <span className="flex items-center gap-1"><i className="fas fa-heart text-[#3D5AFE]"></i> {story.value || 'Valores'}</span>
+          <h1 className="text-3xl font-serif font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-100 via-pink-200 to-white leading-tight mb-4">{story.title}</h1>
+          <div className="flex items-center gap-4 text-xs font-bold text-purple-200/70">
+            <span className="flex items-center gap-1"><i className="fas fa-child text-pink-400"></i> {story.ageGroups?.[0] ? `${story.ageGroups[0]} anos` : 'Livre'}</span>
+            <span className="flex items-center gap-1"><i className="fas fa-clock text-pink-400"></i> {story.durationMinutes || 5} min</span>
+            <span className="flex items-center gap-1"><i className="fas fa-heart text-pink-400"></i> {story.value || 'Valores'}</span>
           </div>
         </div>
       </div>
 
       <div className="p-6 -mt-4 relative z-20">
         {audioUrl && (
-          <div className="bg-white p-4 rounded-[20px] shadow-[0_8px_24px_rgba(61,90,254,.08)] mb-8 flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-[#E8EAF6] text-[#3D5AFE] flex justify-center items-center flex-shrink-0 text-xl animate-pulse">
+          <div className="bg-[#120F28]/90 backdrop-blur-xl border border-purple-500/30 p-4 rounded-[24px] shadow-[0_8px_24px_rgba(0,0,0,0.4)] mb-8 flex items-center gap-4">
+            <div className="w-12 h-12 rounded-full bg-purple-900/50 text-pink-300 flex justify-center items-center flex-shrink-0 text-xl animate-pulse border border-purple-500/30">
               <i className="fas fa-headphones"></i>
             </div>
             <div className="flex-1 w-full overflow-hidden">
-              <div className="text-xs font-bold text-[#283593] mb-1">Ouvir história</div>
-              <audio controls className="w-full h-8 custom-audio-player outline-none" controlsList="nodownload">
+              <div className="text-xs font-bold text-purple-200 mb-1 flex justify-between">
+                <span>Ouvir história (Auto-Play ativado)</span>
+                <span className="text-[0.65rem] text-pink-400 font-normal">Sincronizado ✨</span>
+              </div>
+              <audio 
+                controls 
+                className="w-full h-8 custom-audio-player outline-none" 
+                controlsList="nodownload"
+                onTimeUpdate={(e) => {
+                  const audio = e.currentTarget;
+                  if (audio.duration && displayParagraphs.length > 0) {
+                    const progress = audio.currentTime / audio.duration;
+                    const targetIndex = Math.min(
+                      Math.floor(progress * displayParagraphs.length),
+                      displayParagraphs.length - 1
+                    );
+                    if (targetIndex !== currentPageIndex) {
+                      setCurrentPageIndex(targetIndex);
+                    }
+                  }
+                }}
+              >
                 <source src={audioUrl} type="audio/mpeg" />
               </audio>
             </div>
@@ -448,33 +468,33 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
           <div>
             {currentPageIndex === displayParagraphs.length ? (
               /* Slide Final: Moral da História & Missão */
-              <div className="relative rounded-[32px] overflow-hidden shadow-[0_12px_36px_rgba(39,44,74,0.15)] bg-gradient-to-tr from-[#1a237e] via-[#283593] to-[#3f51b5] border border-blue-900/30 min-h-[385px] md:min-h-[450px] p-6 text-white flex flex-col justify-between">
+              <div className="relative rounded-[32px] overflow-hidden shadow-[0_12px_36px_rgba(0,0,0,0.5)] bg-gradient-to-tr from-[#120F28] via-[#1a153a] to-[#2a1f56] border border-purple-500/30 min-h-[385px] md:min-h-[450px] p-6 text-white flex flex-col justify-between">
                 <div className="text-center mt-4">
                   <div className="text-5xl mb-2 animate-bounce">🌟</div>
-                  <h2 className="text-2xl font-black tracking-tight text-yellow-300">Fim da Aventura!</h2>
-                  <p className="text-blue-100 text-xs font-bold uppercase tracking-wider mt-1">Parabéns por concluir esta leitura!</p>
+                  <h2 className="text-2xl font-serif font-black tracking-tight text-yellow-300">Fim da Aventura!</h2>
+                  <p className="text-purple-200/80 text-xs font-bold uppercase tracking-wider mt-1">Parabéns por concluir esta leitura!</p>
                 </div>
 
                 <div className="my-6 space-y-4">
                   {(story.mission || story.content?.mission) && (
-                    <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/10">
+                    <div className="bg-purple-950/40 backdrop-blur-md p-4 rounded-2xl border border-purple-500/30">
                       <div className="flex items-center gap-2 mb-1.5 text-yellow-300 font-extrabold text-xs">
                         <i className="fas fa-star"></i>
                         <span>MISSÃO DO BEM: {story.mission?.title || 'Missão do Bem'}</span>
                       </div>
-                      <p className="text-blue-50 text-xs leading-relaxed font-semibold">
+                      <p className="text-purple-100 text-xs leading-relaxed font-semibold">
                         {story.mission?.description || story.content?.mission}
                       </p>
                     </div>
                   )}
 
                   {story.reflection?.question && (
-                    <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/10">
+                    <div className="bg-purple-950/40 backdrop-blur-md p-4 rounded-2xl border border-purple-500/30">
                       <div className="flex items-center gap-2 mb-1.5 text-cyan-300 font-extrabold text-xs">
                         <i className="far fa-comments"></i>
                         <span>VAMOS CONVERSAR?</span>
                       </div>
-                      <p className="text-blue-50 text-xs leading-relaxed font-semibold">
+                      <p className="text-purple-100 text-xs leading-relaxed font-semibold">
                         {story.reflection.question}
                       </p>
                     </div>
@@ -484,99 +504,39 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
                 <div className="flex flex-col gap-2 mb-2">
                   <button 
                     onClick={() => setCurrentPageIndex(0)}
-                    className="w-full h-11 rounded-full bg-white text-[#283593] font-black text-xs hover:bg-blue-50 transition-all shadow-md flex items-center justify-center gap-1.5"
+                    className="w-full h-11 rounded-full bg-white text-[#120F28] font-black text-xs hover:bg-purple-50 transition-all shadow-md flex items-center justify-center gap-1.5"
                   >
                     <i className="fas fa-redo"></i> Reler História
                   </button>
                   <Link 
                     href="/app/historias"
-                    className="w-full h-11 rounded-full bg-[#3D5AFE] text-white font-black text-xs hover:bg-blue-600 transition-all shadow-md flex items-center justify-center gap-1.5 border border-blue-400/30"
+                    className="w-full h-11 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-black text-xs hover:opacity-90 transition-all shadow-md flex items-center justify-center gap-1.5 border border-purple-400/30"
                   >
                     <i className="fas fa-book-open"></i> Ver Outras Histórias
                   </Link>
                 </div>
               </div>
             ) : (
-              /* Página Ativa da História */
+              /* Página Ativa da História - Layout Separado (Imagem + Balão Abaixo) */
               (() => {
                 const p = displayParagraphs[currentPageIndex];
                 const activeEffects = getDynamicEffects(p.text);
                 const playStateStyle = { animationPlayState: isVideoPaused ? 'paused' : 'running' } as React.CSSProperties;
 
                 return (
-                  <div className="relative rounded-[32px] overflow-hidden shadow-[0_12px_36px_rgba(39,44,74,0.15)] group bg-[#090b14] border border-gray-100/5 transition-all duration-300">
-                    <div className="absolute inset-0 w-full h-full overflow-hidden">
+                  <div className="flex flex-col gap-5">
+                    {/* Quadro de Imagem */}
+                    <div className="relative rounded-[32px] overflow-hidden shadow-[0_12px_36px_rgba(0,0,0,0.6)] bg-[#090b14] border border-purple-500/30 w-full min-h-[300px] max-h-[420px] aspect-square mx-auto flex items-center justify-center">
                       <img 
                         src={p.imageUrl} 
                         alt={`Página ${currentPageIndex + 1}`} 
-                        className="w-full h-full object-cover opacity-90"
+                        className="w-full h-full object-cover"
                         onError={(e) => { e.currentTarget.src = 'https://images.unsplash.com/photo-1514068574489-503a8eb91592?q=80&w=800&auto=format&fit=crop'; }}
                       />
-                      {isVideoEnabledUser && (
-                        <div className="absolute inset-0 pointer-events-none overflow-hidden z-10">
-                          <div className="absolute bottom-20 left-12 w-2.5 h-2.5 bg-yellow-300 rounded-full animate-ping opacity-60" style={playStateStyle}></div>
-                          <div className="absolute top-24 right-20 w-3 h-3 bg-white rounded-full animate-pulse opacity-40" style={playStateStyle}></div>
-                          <div className="absolute bottom-28 right-16 w-2.5 h-2.5 bg-yellow-200 rounded-full animate-bounce opacity-50" style={playStateStyle}></div>
-                          <div className="absolute top-1/2 left-1/4 w-2 h-2 bg-blue-300 rounded-full animate-pulse opacity-50" style={playStateStyle}></div>
-                          {activeEffects.includes('balloon') && (
-                            <>
-                              <div className="absolute bottom-0 right-[25%] text-4xl animate-balloon-slow" style={{ ...playStateStyle, animationDelay: '0.8s' }}>🎈</div>
-                              <div className="absolute bottom-0 left-[20%] text-3xl animate-balloon-slow" style={{ ...playStateStyle, animationDelay: '4.2s', animationDuration: '11s' }}>🎈</div>
-                            </>
-                          )}
-                          {activeEffects.includes('stars') && (
-                            <>
-                              <div className="absolute top-[12%] left-[20%] text-yellow-300 text-lg animate-star-twinkle" style={playStateStyle}>⭐</div>
-                              <div className="absolute top-[28%] right-[25%] text-yellow-200 text-sm animate-star-twinkle" style={{ ...playStateStyle, animationDelay: '1.2s' }}>⭐</div>
-                              <div className="absolute top-[8%] right-[45%] text-yellow-100 text-xs animate-star-twinkle" style={{ ...playStateStyle, animationDelay: '0.7s' }}>⭐</div>
-                            </>
-                          )}
-                          {activeEffects.includes('wind') && (
-                            <>
-                              <div className="absolute top-[25%] w-full h-[2px] bg-white/10 animate-wind" style={playStateStyle}></div>
-                              <div className="absolute top-[45%] w-full h-[1px] bg-white/15 animate-wind" style={{ ...playStateStyle, animationDelay: '2.5s', animationDuration: '8s' }}></div>
-                            </>
-                          )}
-                          {activeEffects.includes('petals') && (
-                            <>
-                              <div className="absolute top-0 left-[35%] text-pink-300 text-sm animate-petal" style={playStateStyle}>🌸</div>
-                              <div className="absolute top-0 left-[65%] text-green-300 text-xs animate-petal" style={{ ...playStateStyle, animationDelay: '3.2s', animationDuration: '9s' }}>🍃</div>
-                              <div className="absolute top-0 left-[50%] text-red-300/60 text-sm animate-petal" style={{ ...playStateStyle, animationDelay: '1.5s', animationDuration: '6.5s' }}>🌸</div>
-                            </>
-                          )}
-                          {activeEffects.includes('ripples') && (
-                            <div className="absolute bottom-0 left-0 right-0 h-14 bg-gradient-to-t from-blue-500/20 to-transparent backdrop-blur-[0.5px]">
-                              <div className="absolute bottom-0 left-0 w-full h-3 bg-blue-400/25 animate-pulse" style={playStateStyle}></div>
-                            </div>
-                          )}
-                          {activeEffects.includes('rain') && (
-                            <>
-                              <div className="absolute inset-0 bg-blue-950/5"></div>
-                              <div className="absolute top-0 left-[15%] text-blue-200/40 text-xs animate-rain" style={playStateStyle}>💧</div>
-                              <div className="absolute top-0 left-[45%] text-blue-300/40 text-xs animate-rain" style={{ ...playStateStyle, animationDelay: '0.4s' }}>💧</div>
-                              <div className="absolute top-0 left-[75%] text-blue-200/40 text-xs animate-rain" style={{ ...playStateStyle, animationDelay: '0.2s' }}>💧</div>
-                            </>
-                          )}
-                          {activeEffects.includes('glow') && (
-                            <div className="absolute top-[15%] left-[35%] w-36 h-36 rounded-full bg-yellow-300/10 blur-2xl animate-glow" style={playStateStyle}></div>
-                          )}
-                          {activeEffects.includes('sunbeams') && (
-                            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-yellow-100/10 to-transparent pointer-events-none animate-sunbeams" style={playStateStyle}></div>
-                          )}
-                          {activeEffects.includes('magic_sparks') && (
-                            <>
-                              <div className="absolute bottom-[30%] left-[30%] w-2 h-2 bg-yellow-300 rounded-full shadow-[0_0_8px_#fde047] animate-sparks" style={playStateStyle}></div>
-                              <div className="absolute bottom-[40%] right-[35%] w-2.5 h-2.5 bg-yellow-200 rounded-full shadow-[0_0_10px_#fef08a] animate-sparks" style={{ ...playStateStyle, animationDelay: '1.5s' }}></div>
-                              <div className="absolute bottom-[25%] right-[20%] w-1.5 h-1.5 bg-amber-200 rounded-full shadow-[0_0_6px_#fde68a] animate-sparks" style={{ ...playStateStyle, animationDelay: '3s' }}></div>
-                            </>
-                          )}
-                        </div>
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#090b14]/90 via-[#0d1127]/20 to-transparent pointer-events-none"></div>
-                    </div>
-                    <div className="relative z-30 p-6 flex flex-col justify-between items-center min-h-[385px] md:min-h-[450px] w-full pointer-events-none">
-                      <div className="w-full flex justify-between items-start pointer-events-none">
-                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/45 backdrop-blur-md text-white text-[0.62rem] font-bold uppercase tracking-wider border border-white/10 shadow-inner pointer-events-auto">
+
+                      {/* Header Flutuante por Cima da Imagem */}
+                      <div className="absolute top-4 left-4 right-4 flex justify-between items-center z-30 pointer-events-none">
+                        <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md text-white text-[0.65rem] font-black uppercase tracking-wider border border-white/20 shadow-lg pointer-events-auto">
                           <i className="fas fa-book-open text-yellow-300"></i> Página {p.originalIndex + 1} {p.totalSubs > 1 ? `(${p.subIndex + 1}/${p.totalSubs})` : ''}
                         </div>
 
@@ -611,10 +571,25 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
                         )}
                       </div>
 
-                      <div className="w-full max-w-[95%] md:max-w-[88%] bg-white px-6 py-5 rounded-[28px] border-4 border-blue-500 shadow-[0_10px_25px_rgba(0,0,0,0.4),0_0_15px_rgba(59,130,246,0.6)] text-center mb-4 pointer-events-auto overflow-hidden flex items-center justify-center relative">
-                        <div className="absolute top-0 right-0 w-16 h-16 bg-blue-100 rounded-full blur-2xl opacity-50 pointer-events-none"></div>
-                        <p className={fontStyleClass}>{p.text}</p>
-                      </div>
+                      {/* Efeitos dinâmicos sobre a imagem */}
+                      {isVideoEnabledUser && (
+                        <div className="absolute inset-0 pointer-events-none overflow-hidden z-10">
+                          <div className="absolute bottom-20 left-12 w-2.5 h-2.5 bg-yellow-300 rounded-full animate-ping opacity-60" style={playStateStyle}></div>
+                          <div className="absolute top-24 right-20 w-3 h-3 bg-white rounded-full animate-pulse opacity-40" style={playStateStyle}></div>
+                          {activeEffects.includes('balloon') && (
+                            <div className="absolute bottom-0 right-[25%] text-4xl animate-balloon-slow" style={{ ...playStateStyle, animationDelay: '0.8s' }}>🎈</div>
+                          )}
+                          {activeEffects.includes('stars') && (
+                            <div className="absolute top-[12%] left-[20%] text-yellow-300 text-lg animate-star-twinkle" style={playStateStyle}>⭐</div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Balão de Narração / Texto ABAIXO da Imagem (Sem Tampá-la) */}
+                    <div className="w-full bg-white px-6 py-5 rounded-[28px] border-4 border-purple-500/40 shadow-[0_10px_30px_rgba(139,92,246,0.3)] text-center pointer-events-auto overflow-hidden flex items-center justify-center relative min-h-[110px]">
+                      <div className="absolute top-0 right-0 w-16 h-16 bg-purple-100 rounded-full blur-2xl opacity-60 pointer-events-none"></div>
+                      <p className={fontStyleClass}>{p.text}</p>
                     </div>
                   </div>
                 );

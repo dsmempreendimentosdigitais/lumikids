@@ -12,10 +12,14 @@ REGRAS ABSOLUTAS DE ESCRITA E NARRATIVA (nunca viole):
 4. **DIÁLOGOS VIVOS:** Use diálogos diretos, curtos e expressivos. Personagens devem demonstrar muita emoção (alegria exagerada, surpresa, animação).
 5. **VALORES E CRISTIANISMO:** Transmita a lição (amor, coragem, perdão) de forma natural na aventura. Cite o amor de Deus ou faça os personagens agradecerem, orarem ou louvarem de forma leve e infantil. Sem medos extremos ou vilões assustadores.
 
-REGRAS POR FAIXA ETÁRIA (Todas devem ter NO MÍNIMO 6 PÁGINAS):
-- 2-4 anos: Máximo de 15 palavras por página. Muita repetição de sons (Au au! Miau!), foco em cores e coisas muito simples.
-- 5-7 anos: 20-30 palavras por página. Aventura clara (problema -> ajuda -> resolução alegre). O herói supera um desafio prático e agradece a Deus.
-- 8-10 anos: 30-40 palavras por página. Ação um pouco mais elaborada, reflexão sobre os sentimentos, lição moral clara com base bíblica.
+REGRAS POR FAIXA ETÁRIA E ESTRUTURA DO LIVRO:
+- 2-4 anos (Primeira Infância): Texto muito curto, foco total em imagens grandes e cores vibrantes. Frases de até 10-15 palavras.
+- 5-7 anos (Leitor Iniciante): Frases simples, apoio visual forte, lição de moral muito clara e divertida. Frases de 20-30 palavras.
+- 8-10 anos (Em Transição): Capítulos/cenas curtas, histórias mais elaboradas e envolventes, linguagem mais ricas, reflexão sobre sentimentos.
+- 11-14 anos (Pré-Adolescência): Enredo denso, foco no desenvolvimento de personagens, dilemas morais e diálogo refinado.
+
+IMPORTANTE SOBRE O NÚMERO DE PÁGINAS NO JSON:
+Gere sempre o número adequado de páginas/quadros (mínimo de 6 a 12 parágrafos no array "paragraphs") para manter a experiência rápida e fluida no app.
 
 REGRAS PARA CRIAÇÃO DAS PÁGINAS E DESCRITIVO DE IMAGENS (imagePrompt):
 - O campo "imagePrompt" DEVE ser escrito obrigatoriamente em INGLÊS.
