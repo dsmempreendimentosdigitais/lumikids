@@ -61,25 +61,25 @@ export default function CriarPage() {
       <div className="fixed top-[30%] right-[15%] w-2 h-2 bg-purple-300 rounded-full shadow-[0_0_15px_rgba(216,180,254,0.8)] animate-pulse" style={{ animationDelay: '1s' }}></div>
       <div className="fixed top-[60%] left-[20%] w-1.5 h-1.5 bg-blue-300 rounded-full shadow-[0_0_12px_rgba(147,197,253,0.8)] animate-pulse" style={{ animationDelay: '0.5s' }}></div>
 
-      <div className="p-6 relative z-10 max-w-lg mx-auto">
+      <div className="p-6 relative z-10 max-w-lg md:max-w-xl mx-auto min-h-[calc(100vh-110px)] flex flex-col justify-between py-4 pb-28">
         
         {/* Title */}
-        <div className="flex items-center justify-center gap-2 mb-10 mt-8">
-          <h1 className="text-[2.6rem] font-serif font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-purple-200 to-blue-200 leading-tight drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]">
+        <div className="flex items-center justify-center gap-2 mb-6 mt-4">
+          <h1 className="text-[2.4rem] md:text-[2.8rem] font-serif font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-purple-200 to-blue-200 leading-tight drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]">
             Criar História
           </h1>
           <Sparkles className="text-yellow-200 w-8 h-8 drop-shadow-[0_0_10px_rgba(253,224,71,0.8)]" />
         </div>
 
         {!success ? (
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="flex-1 flex flex-col justify-between space-y-4 md:space-y-6">
             
             {/* Field 1: Nome */}
             <div className="relative group">
               <div className="absolute -inset-0.5 bg-gradient-to-r from-pink-500 to-purple-500 rounded-[28px] opacity-75 blur-[2px] transition duration-300 group-hover:opacity-100"></div>
-              <div className="relative bg-[#150F2D] border border-white/10 rounded-[26px] p-5 flex items-center gap-5 backdrop-blur-xl">
+              <div className="relative bg-[#150F2D] border border-white/10 rounded-[26px] p-4 md:p-5 flex items-center gap-5 backdrop-blur-xl">
                 <div className="text-purple-300 drop-shadow-[0_0_10px_rgba(216,180,254,0.6)]">
-                  <Wand2 size={40} strokeWidth={1.5} />
+                  <Wand2 size={36} strokeWidth={1.5} />
                 </div>
                 <div className="flex-1">
                   <label className="block text-white font-bold text-sm mb-1">1. Nome da Criança</label>
@@ -98,20 +98,21 @@ export default function CriarPage() {
             {/* Field 2: Idade */}
             <div className="relative group">
               <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-blue-500 rounded-[28px] opacity-75 blur-[2px] transition duration-300 group-hover:opacity-100"></div>
-              <div className="relative bg-[#150F2D] border border-white/10 rounded-[26px] p-5 flex items-center gap-5 backdrop-blur-xl">
-                <div className="text-blue-300 font-black text-[3rem] leading-none drop-shadow-[0_0_15px_rgba(147,197,253,0.6)]" style={{ fontFamily: 'sans-serif' }}>
-                  7
+              <div className="relative bg-[#150F2D] border border-white/10 rounded-[26px] p-4 md:p-5 flex items-center gap-5 backdrop-blur-xl">
+                <div className="text-blue-300 font-black text-[2.6rem] leading-none drop-shadow-[0_0_15px_rgba(147,197,253,0.6)]" style={{ fontFamily: 'sans-serif' }}>
+                  {formData.ageGroup === '2-4' ? '3' : formData.ageGroup === '5-7' ? '7' : formData.ageGroup === '8-10' ? '9' : '12'}
                 </div>
                 <div className="flex-1">
                   <label className="block text-white font-bold text-sm mb-1">2. Idade</label>
                   <select 
-                    className="w-full bg-[#1A133A] border border-blue-500/30 rounded-[12px] h-[44px] px-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-400 appearance-none"
+                    className="w-full bg-[#1A133A] border border-blue-500/30 rounded-[12px] h-[44px] px-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-400 appearance-none cursor-pointer"
                     value={formData.ageGroup}
                     onChange={(e) => setFormData({...formData, ageGroup: e.target.value as any})}
                   >
                     <option value="2-4">2 a 4 anos</option>
                     <option value="5-7">5 a 7 anos</option>
                     <option value="8-10">8 a 10 anos</option>
+                    <option value="11-14">11 a 14 anos</option>
                   </select>
                 </div>
               </div>
@@ -120,9 +121,9 @@ export default function CriarPage() {
             {/* Field 3: Tema */}
             <div className="relative group">
               <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-[28px] opacity-75 blur-[2px] transition duration-300 group-hover:opacity-100"></div>
-              <div className="relative bg-[#150F2D] border border-white/10 rounded-[26px] p-5 flex items-center gap-5 backdrop-blur-xl">
+              <div className="relative bg-[#150F2D] border border-white/10 rounded-[26px] p-4 md:p-5 flex items-center gap-5 backdrop-blur-xl">
                 <div className="text-cyan-300 drop-shadow-[0_0_10px_rgba(103,232,249,0.6)]">
-                  <Castle size={42} strokeWidth={1.5} />
+                  <Castle size={38} strokeWidth={1.5} />
                 </div>
                 <div className="flex-1">
                   <label className="block text-white font-bold text-sm mb-1">3. Tema da Aventura</label>
@@ -141,9 +142,9 @@ export default function CriarPage() {
             {/* Field 4: Emoção */}
             <div className="relative group">
               <div className="absolute -inset-0.5 bg-gradient-to-r from-pink-400 to-orange-400 rounded-[28px] opacity-75 blur-[2px] transition duration-300 group-hover:opacity-100"></div>
-              <div className="relative bg-[#150F2D] border border-white/10 rounded-[26px] p-5 flex items-center gap-5 backdrop-blur-xl">
+              <div className="relative bg-[#150F2D] border border-white/10 rounded-[26px] p-4 md:p-5 flex items-center gap-5 backdrop-blur-xl">
                 <div className="text-yellow-200 drop-shadow-[0_0_15px_rgba(253,224,71,0.6)]">
-                  <Moon size={42} fill="currentColor" strokeWidth={1} />
+                  <Moon size={38} fill="currentColor" strokeWidth={1} />
                 </div>
                 <div className="flex-1">
                   <label className="block text-white font-bold text-sm mb-2">4. Emoção da História</label>
@@ -174,19 +175,19 @@ export default function CriarPage() {
             )}
 
             {/* Submit Button */}
-            <div className="pt-6 pb-10">
+            <div className="pt-4">
               <button 
                 type="submit"
                 disabled={loading}
                 className="relative w-full group"
               >
                 <div className="absolute -inset-1 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 rounded-full blur-[8px] opacity-75 group-hover:opacity-100 transition duration-300 animate-pulse"></div>
-                <div className="relative w-full h-[64px] bg-[#150F2D] rounded-full border-2 border-transparent flex items-center justify-center overflow-hidden" style={{ backgroundClip: 'padding-box' }}>
+                <div className="relative w-full h-[60px] md:h-[64px] bg-[#150F2D] rounded-full border-2 border-transparent flex items-center justify-center overflow-hidden" style={{ backgroundClip: 'padding-box' }}>
                   <div className="absolute inset-0 bg-gradient-to-r from-pink-500/20 to-blue-500/20"></div>
                   {loading ? (
                     <span className="text-white font-extrabold text-xl relative z-10 animate-pulse">Criando Magia... ✨</span>
                   ) : (
-                    <span className="text-white font-extrabold text-[1.3rem] relative z-10 drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]">Criar História Mágica!</span>
+                    <span className="text-white font-extrabold text-[1.2rem] md:text-[1.3rem] relative z-10 drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]">Criar História Mágica!</span>
                   )}
                 </div>
               </button>

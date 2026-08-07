@@ -12,7 +12,7 @@ const ttsClient = new textToSpeech.TextToSpeechClient({
 interface NarrationRequest {
   text:     string;
   language: string;
-  ageGroup: '2-4' | '5-7' | '8-10';
+  ageGroup: '2-4' | '5-7' | '8-10' | '11-14';
 }
 
 export async function generateNarrationGoogle(

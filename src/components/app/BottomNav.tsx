@@ -2,21 +2,20 @@
 
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { House, BookOpen, Wand2, BarChart3, Settings } from 'lucide-react';
+import { House, Wand2, BookOpen, User } from 'lucide-react';
 
 export default function BottomNav() {
   const pathname = usePathname();
 
   const ITEMS = [
-    { id: 'home', path: '/app', icon: <House size={20} />, label: "Início" },
-    { id: 'stories', path: '/app/historias', icon: <BookOpen size={20} />, label: "Histórias" },
-    { id: 'create', path: '/app/criar', icon: <Wand2 size={20} />, label: "Criar" },
-    { id: 'progress', path: '/app/progresso', icon: <BarChart3 size={20} />, label: "Progresso" },
-    { id: 'settings', path: '/app/configuracoes', icon: <Settings size={20} />, label: "Config." },
+    { id: 'home', path: '/app', icon: <House size={22} />, label: "Home" },
+    { id: 'create', path: '/app/criar', icon: <Wand2 size={22} />, label: "Criar" },
+    { id: 'stories', path: '/app/historias', icon: <BookOpen size={22} />, label: "Minhas Histórias" },
+    { id: 'profile', path: '/app/configuracoes', icon: <User size={22} />, label: "Perfil" },
   ];
 
   return (
-    <div className="bottom-nav fixed bottom-0 left-0 w-full bg-[#0B0819]/80 backdrop-blur-xl border-t border-purple-500/20 p-[10px_0_16px] flex justify-around shadow-[0_-10px_30px_rgba(139,92,246,0.15)] z-50 rounded-t-[32px]">
+    <div className="bottom-nav fixed bottom-0 left-0 w-full bg-[#0B0819]/85 backdrop-blur-xl border-t border-purple-500/20 p-[10px_0_16px] flex justify-around shadow-[0_-10px_30px_rgba(139,92,246,0.15)] z-50 rounded-t-[24px]">
       {ITEMS.map((item) => {
         const isActive = pathname === item.path;
         return (

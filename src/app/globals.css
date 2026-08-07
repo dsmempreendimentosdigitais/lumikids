@@ -194,15 +194,13 @@ body {
 .hl-meta  { display:flex; gap:7px; font-size:.65rem; font-weight:700; color:#bbb; }
 .hl-arrow { color:#ddd; font-size:.78rem; }
 
-.bottom-nav { position:sticky; bottom:0; background:#fff; border-top:1px solid rgba(61,90,254,.07); padding:10px 0 16px; display:flex; justify-content:space-around; box-shadow:0 -4px 20px rgba(61,90,254,.08); z-index:10; }
-.bn-item { display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; padding:0 12px; }
-.bn-icon { width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:.95rem; transition:all .2s; }
-.bn-item.active .bn-icon { background:var(--blue); color:#fff; box-shadow:0 4px 12px rgba(61,90,254,.28); }
-.bn-item:not(.active) .bn-icon { background:transparent; color:#ccc; }
-.bn-item:not(.active):hover .bn-icon { background:#F0F2FF; color:var(--blue); }
-.bn-label { font-size:.6rem; font-weight:800; }
-.bn-item.active .bn-label { color:var(--blue); }
-.bn-item:not(.active) .bn-label { color:#ccc; }
+.bottom-nav { position:fixed; bottom:0; left:0; width:100%; background:rgba(11,8,25,0.85); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border-top:1px solid rgba(139,92,246,0.2); padding:10px 0 calc(12px + env(safe-area-inset-bottom)); display:flex; justify-content:space-around; box-shadow:0 -10px 30px rgba(139,92,246,0.15); z-index:50; border-top-left-radius:24px; border-top-right-radius:24px; }
+.bn-item { display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer; padding:0 12px; position:relative; }
+.bn-icon { width:42px; height:42px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; transition:all .3s ease; color:rgba(216,180,254,0.4); }
+.bn-item.active .bn-icon { background:linear-gradient(135deg, #a855f7, #3b82f6); color:#fff; box-shadow:0 0 20px rgba(168,85,247,0.6); }
+.bn-item:not(.active) .bn-icon:hover { background:rgba(255,255,255,0.06); color:rgba(216,180,254,0.9); }
+.bn-label { font-size:.65rem; font-weight:800; tracking:0.5px; color:rgba(216,180,254,0.4); transition:all .3s ease; }
+.bn-item.active .bn-label { color:#d8b4fe; text-shadow:0 0 8px rgba(168,85,247,0.8); }
 
 /* ═══════════════════════
    LANDING
