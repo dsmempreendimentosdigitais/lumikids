@@ -44,22 +44,21 @@ export async function POST(req: NextRequest) {
     story.nanoBananaImageUrl = imageUrl;
 
     if (story.content && Array.isArray(story.content.paragraphs)) {
-      const updatedParagraphs = [];
-      for (let idx = 0; idx < story.content.paragraphs.length; idx++) {
-        const p = story.content.paragraphs[idx];
-        const scenePrompt = p.imagePrompt || `${story.title} - cena ${idx + 1}: ${p.text.slice(0, 100)}`;
-        const pImageUrl = await generateImageWithNanoBanana(
-          body.childName,
-          body.ageGroup,
-          scenePrompt,
-          idx
-        );
-        updatedParagraphs.push({
-          ...p,
-          imageUrl: pImageUrl
-        });
-        await new Promise(resolve => setTimeout(resolve, 250));
-      }
+      const updatedParagraphs = await Promise.all(
+        story.content.paragraphs.map(async (p, idx) => {
+          const scenePrompt = p.imagePrompt || `${story.title} - cena ${idx + 1}: ${p.text.slice(0, 100)}`;
+          const pImageUrl = await generateImageWithNanoBanana(
+            body.childName,
+            body.ageGroup,
+            scenePrompt,
+            idx
+          );
+          return {
+            ...p,
+            imageUrl: pImageUrl
+          };
+        })
+      );
       story.content.paragraphs = updatedParagraphs;
     }
 

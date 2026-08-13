@@ -12,21 +12,21 @@ REGRAS ABSOLUTAS DE ESCRITA E NARRATIVA (nunca viole):
 4. **DIÁLOGOS VIVOS:** Use diálogos diretos, curtos e expressivos. Personagens devem demonstrar muita emoção (alegria exagerada, surpresa, animação).
 5. **VALORES E CRISTIANISMO:** Transmita a lição (amor, coragem, perdão) de forma natural na aventura. Cite o amor de Deus ou faça os personagens agradecerem, orarem ou louvarem de forma leve e infantil. Sem medos extremos ou vilões assustadores.
 
-REGRAS POR FAIXA ETÁRIA E ESTRUTURA DO LIVRO:
-- 2-4 anos (Primeira Infância): Texto muito curto, foco total em imagens grandes e cores vibrantes. Frases de até 10-15 palavras.
-- 5-7 anos (Leitor Iniciante): Frases simples, apoio visual forte, lição de moral muito clara e divertida. Frases de 20-30 palavras.
-- 8-10 anos (Em Transição): Capítulos/cenas curtas, histórias mais elaboradas e envolventes, linguagem mais ricas, reflexão sobre sentimentos.
-- 11-14 anos (Pré-Adolescência): Enredo denso, foco no desenvolvimento de personagens, dilemas morais e diálogo refinado.
+REGRAS POR FAIXA ETÁRIA E ESTRUTURA DO LIVRO (VOLUME DE PÁGINAS):
+- 2-4 anos (Primeira Infância): 20 a 30 páginas/cenas. Texto muito curto, foco total em imagens grandes e cores vibrantes. Frases diretas de 8 a 15 palavras por página.
+- 5-7 anos (Leitor Iniciante): 30 a 50 páginas/cenas. Frases simples, apoio visual forte, diálogos divertidos e lição clara. Frases de 15 a 25 palavras por página.
+- 8-10 anos (Em Transição): 40 a 60 páginas/cenas. Cenas curtas e envolventes, linguagem rica, reflexão sobre sentimentos e amizade.
+- 11-14 anos (Pré-Adolescência / Jovem Leitor): 60 a 150 páginas lógicas / cenas sequenciais. Enredo denso, foco no desenvolvimento dos personagens e diálogos expressivos.
 
 IMPORTANTE SOBRE O NÚMERO DE PÁGINAS NO JSON:
-Gere sempre o número adequado de páginas/quadros (mínimo de 6 a 12 parágrafos no array "paragraphs") para manter a experiência rápida e fluida no app.
+Cada item do array "paragraphs" é uma página/cena com seu próprio "text" e "imagePrompt". Siga a meta de páginas definida acima para a faixa etária selecionada. Mantenha os textos de cada página concisos e dinâmicos para garantir geração fluida e ritmo excelente de leitura.
 
 REGRAS PARA CRIAÇÃO DAS PÁGINAS E DESCRITIVO DE IMAGENS (imagePrompt):
 - O campo "imagePrompt" DEVE ser escrito obrigatoriamente em INGLÊS.
 - CONSISTÊNCIA DE PERSONAGEM (MUITO IMPORTANTE): Em cada imagePrompt, descreva os detalhes físicos do personagem de forma idêntica (ex: "Pedro, a cute 5-year-old Brazilian boy with short brown hair, wearing a red t-shirt").
-- OBRIGATÓRIO: Termine cada imagePrompt com este estilo exato: "High quality 3D render, Pixar style, Paw Patrol aesthetic, vibrant lighting, highly detailed, octane render, vivid colors".
-- Descreva a cena com MUITA AÇÃO (pulando, correndo, rindo) e detalhes de luz (ex: "cinematic sunlight", "glowing magic").
-- SEMPRE child-safe. Crianças sorrindo, sem violências. No text, no letters no words.
+- OBRIGATÓRIO: Termine cada imagePrompt com este estilo exato: "cute vibrant 2D storybook illustration, Disney style, clean lines, colorful digital art, bright lighting, high quality children book, no text, no watermark".
+- Descreva a ação da cena (pulando, correndo, rindo, abraçando) e detalhes de luz.
+- SEMPRE child-safe, alegre e amigável. Sem violência. No text, no letters, no words.
 
 FORMATO DE RESPOSTA (JSON estrito, sem markdown):
 {

@@ -341,6 +341,24 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
   return (
     <div className="bg-[#0B0819] min-h-screen font-sans pb-32 text-white">
       <style dangerouslySetInnerHTML={{__html: `
+        @keyframes sceneMotion5s {
+          0% { transform: scale(1) translate(0, 0); }
+          50% { transform: scale(1.07) translate(-1.2%, -1%); }
+          100% { transform: scale(1.03) translate(1%, 0.6%); }
+        }
+        .animate-scene-5s {
+          animation: sceneMotion5s 5s ease-in-out infinite alternate;
+          transform-origin: center center;
+        }
+        @keyframes lightSweep {
+          0% { transform: translateX(-100%) rotate(25deg); opacity: 0; }
+          20% { opacity: 0.3; }
+          50% { opacity: 0.3; }
+          100% { transform: translateX(250%) rotate(25deg); opacity: 0; }
+        }
+        .animate-light-sweep {
+          animation: lightSweep 5s ease-in-out infinite;
+        }
         @keyframes floatBalloon {
           0% { transform: translateY(120vh) translateX(0) rotate(0deg); opacity: 0; }
           10% { opacity: 0.9; }
@@ -525,14 +543,19 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
 
                 return (
                   <div className="flex flex-col gap-5">
-                    {/* Quadro de Imagem */}
+                    {/* Quadro de Imagem com Animação de 5 Segundos */}
                     <div className="relative rounded-[32px] overflow-hidden shadow-[0_12px_36px_rgba(0,0,0,0.6)] bg-[#090b14] border border-purple-500/30 w-full min-h-[300px] max-h-[420px] aspect-square mx-auto flex items-center justify-center">
                       <img 
                         src={p.imageUrl} 
                         alt={`Página ${currentPageIndex + 1}`} 
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover animate-scene-5s"
                         onError={(e) => { e.currentTarget.src = 'https://images.unsplash.com/photo-1514068574489-503a8eb91592?q=80&w=800&auto=format&fit=crop'; }}
                       />
+
+                      {/* Efeito de Feixe de Luz Mágico em Loop de 5 Segundos */}
+                      <div className="absolute inset-0 pointer-events-none overflow-hidden z-10">
+                        <div className="w-2/3 h-[200%] -top-1/2 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-light-sweep"></div>
+                      </div>
 
                       {/* Header Flutuante por Cima da Imagem */}
                       <div className="absolute top-4 left-4 right-4 flex justify-between items-center z-30 pointer-events-none">

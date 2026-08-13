@@ -10,6 +10,8 @@ export default function CriarPage() {
   const { user } = useAuth();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [progressStage, setProgressStage] = useState('Iniciando magia...');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState<any>(null);
 
@@ -32,7 +34,26 @@ export default function CriarPage() {
     }
     setError('');
     setLoading(true);
+    setProgress(5);
+    setProgressStage('✨ Criando o roteiro com Inteligência Artificial...');
     setSuccess(null);
+
+    // Simulação progressiva da barra de carregamento para feedback do usuário
+    const progressTimer = setInterval(() => {
+      setProgress((prev) => {
+        if (prev < 30) {
+          setProgressStage('✨ Escrevendo páginas e diálogos envolventes...');
+          return prev + 4;
+        } else if (prev < 70) {
+          setProgressStage('🎨 Criando ilustrações 2D vibrantes e nítidas...');
+          return prev + 3;
+        } else if (prev < 92) {
+          setProgressStage('🎙️ Sintetizando narração em áudio de alta definição...');
+          return prev + 1;
+        }
+        return prev;
+      });
+    }, 400);
 
     try {
       const token = await user.getIdToken();
@@ -48,14 +69,20 @@ export default function CriarPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Erro ao gerar história.');
       
+      clearInterval(progressTimer);
+      setProgress(100);
+      setProgressStage('🚀 Tudo pronto! Abrindo sua história mágica...');
+      
       if (data.storyId) {
-        router.push(`/app/historias/${data.storyId}`);
+        setTimeout(() => {
+          router.push(`/app/historias/${data.storyId}`);
+        }, 500);
       } else {
         setSuccess(data);
       }
     } catch (err: any) {
+      clearInterval(progressTimer);
       setError(err.message);
-    } finally {
       setLoading(false);
     }
   };
@@ -77,6 +104,44 @@ export default function CriarPage() {
           </h1>
           <Sparkles className="text-yellow-200 w-8 h-8 drop-shadow-[0_0_10px_rgba(253,224,71,0.8)]" />
         </div>
+        {/* Modal de Carregamento com Barra de Progresso */}
+        {loading && (
+          <div className="fixed inset-0 z-50 bg-[#0B0819]/95 backdrop-blur-xl flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-300">
+            <div className="max-w-md w-full bg-[#150F2D] border-2 border-purple-500/40 rounded-[32px] p-8 shadow-[0_0_50px_rgba(139,92,246,0.4)] relative overflow-hidden">
+              <div className="absolute -top-10 -right-10 w-32 h-32 bg-pink-500/20 rounded-full blur-2xl"></div>
+              <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-blue-500/20 rounded-full blur-2xl"></div>
+              
+              <div className="w-16 h-16 rounded-[22px] bg-gradient-to-tr from-pink-500 to-purple-600 flex items-center justify-center text-white text-3xl mb-6 shadow-[0_0_25px_rgba(217,70,239,0.6)] mx-auto animate-bounce">
+                ✨
+              </div>
+
+              <h2 className="text-2xl font-serif font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-purple-200 to-blue-200 mb-2">
+                Criando História Mágica
+              </h2>
+
+              <p className="text-purple-200/80 text-xs font-semibold mb-6 min-h-[32px]">
+                {progressStage}
+              </p>
+
+              {/* Barra de Progresso */}
+              <div className="w-full bg-[#1A133A] h-4 rounded-full p-0.5 border border-purple-500/30 overflow-hidden mb-3">
+                <div 
+                  className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-400 h-full rounded-full transition-all duration-300 shadow-[0_0_12px_rgba(217,70,239,0.8)]"
+                  style={{ width: `${progress}%` }}
+                ></div>
+              </div>
+
+              <div className="flex justify-between items-center text-[0.7rem] font-bold text-purple-300/70 mb-4 px-1">
+                <span>Gerando ilustrações 2D & áudio</span>
+                <span>{progress}%</span>
+              </div>
+
+              <div className="p-3 bg-purple-950/40 border border-purple-500/20 rounded-2xl text-[0.7rem] text-purple-200/60 font-medium">
+                💡 Só liberamos o seu gibi quando todas as páginas e imagens estiverem 100% perfeitas para leitura!
+              </div>
+            </div>
+          </div>
+        )}
 
         {!success ? (
           <form onSubmit={handleSubmit} className="flex-1 flex flex-col justify-between space-y-4 md:space-y-6">
