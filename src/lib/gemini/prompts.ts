@@ -56,18 +56,32 @@ FORMATO DE RESPOSTA (JSON estrito, sem markdown):
 `;
 
 export function buildStoryUserPrompt(data: GenerateStoryRequest): string {
+  const appearanceDesc = [
+    data.gender ? (data.gender === 'menino' ? 'boy' : 'girl') : '',
+    data.skinTone ? `with ${data.skinTone} skin` : '',
+    data.hairColor && data.hairStyle ? `${data.hairStyle} ${data.hairColor} hair` : data.hairColor ? `${data.hairColor} hair` : '',
+    data.topClothing ? `wearing a ${data.topClothing}` : '',
+    data.bottomClothing ? `and ${data.bottomClothing}` : '',
+    data.accessories ? `with ${data.accessories}` : '',
+    data.characterAppearanceSummary ? `(${data.characterAppearanceSummary})` : ''
+  ].filter(Boolean).join(', ');
+
   return `
 Crie uma história infantil com estas características:
 
 - Nome da criança: ${data.childName}
 - Faixa etária: ${data.ageGroup} anos
-- Tema: ${data.theme}
+- Aparência física exata para consistência visual em todas as páginas: ${appearanceDesc || 'Criança fofa e sorridente'}
+- Tema da aventura: ${data.theme}
 - Emoção inicial da criança: ${data.emotion}
-- Valor a ensinar: ${data.value}
+${data.value ? `- Valor a ensinar: ${data.value}` : ''}
 - Idioma: ${data.language}
-${data.character ? `- Personagem favorito incluir: ${data.character}` : ''}
+${data.character ? `- Personagem secundário/companheiro: ${data.character}` : ''}
 
-A história deve usar o nome "${data.childName}" como personagem principal ou citar a criança.
+REGRAS DE APARÊNCIA DO PERSONAGEM (CRÍTICO):
+Em CADA um dos "imagePrompt" gerados para cada página no JSON, inclua a exata mesma descrição visual em inglês: "${data.childName}, a cute ${data.ageGroup} year old ${appearanceDesc || 'child'}".
+
+A história deve usar o nome "${data.childName}" como personagem principal.
 Responda APENAS com o JSON válido, sem texto antes ou depois.
   `.trim();
 }

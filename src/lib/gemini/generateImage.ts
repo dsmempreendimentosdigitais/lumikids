@@ -38,25 +38,35 @@ function sanitizeSceneForChild(childName: string, scene: string): string {
   return scene;
 }
 
-function buildPrompt(childName: string, ageGroup: string, storyTitleOrScene: string): string {
-  // Estilo 2D Storybook Vibrante (Mais rápido, nítido e sem falhas)
-  const stylePrompt = 'cute vibrant 2D storybook illustration, Disney style, clean lines, colorful digital art, bright lighting, high quality children book';
+function buildPrompt(
+  childName: string, 
+  ageGroup: string, 
+  storyTitleOrScene: string,
+  characterAppearance?: string
+): string {
+  // Estilo 2D Storybook Vibrante Disney/Pixar Nítido
+  const stylePrompt = 'cute vibrant 2D storybook illustration, Disney style, clean lines, colorful digital art, bright lighting, high quality children book art, masterpiece';
 
   // Sanitiza texto para evitar caracteres especiais que quebrem URLs de imagem
   const rawScene = storyTitleOrScene
     .replace(/[*_#~`"']/g, '')
     .replace(/[^\w\sÀ-ÿ,.()\-]/g, ' ')
     .trim()
-    .slice(0, 160); // Limita o tamanho para URLs leves e rápidas
+    .slice(0, 180);
 
   const safeScene = sanitizeSceneForChild(childName, rawScene);
 
+  // Tag de Consistência Visual do Personagem
+  const charTag = characterAppearance && characterAppearance.trim() 
+    ? `${childName}, cute ${ageGroup} year old child with ${characterAppearance}`
+    : `${childName}, cute ${ageGroup} year old child`;
+
   return [
     `2D children storybook scene`,
-    `Character: ${childName}, cute ${ageGroup} year old child`,
-    `Action: ${safeScene}`,
+    `Character visual appearance: ${charTag}`,
+    `Scene action & environment: ${safeScene}`,
     stylePrompt,
-    `no watermark, no text, no captions`
+    `no watermark, no text, no letters, no words, no ugly artifacts`
   ].join(', ');
 }
 
@@ -64,19 +74,25 @@ export async function generateImageWithNanoBanana(
   childName: string,
   ageGroup: string,
   storyTitleOrScene: string,
-  index: number = 0
+  index: number = 0,
+  characterAppearance?: string
 ): Promise<string> {
-  const cleanPrompt = buildPrompt(childName, ageGroup, storyTitleOrScene);
+  const cleanPrompt = buildPrompt(childName, ageGroup, storyTitleOrScene, characterAppearance);
   
-  // A semente varia baseada no nome da criança E no índice da página para garantir imagens diferentes e consistentes
-  const baseSeed = Array.from(childName).reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  const seed = baseSeed + (index * 137);
+  // A semente baseia-se no NOME + APARÊNCIA da criança para travar a consistência visual em todas as páginas
+  const appearanceHash = (characterAppearance || '').split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const nameHash = Array.from(childName).reduce((acc, char) => acc + char.charCodeAt(0), 0);
   
-  // Formatamos a URL direta da imagem usando o modelo Turbo (SDXL Turbo - Ultra rápido 1-2s e sem falhas)
+  // Mantedes o mesmo seed principal para a mesma criança + pequena variação fixa por cena
+  const baseSeed = (nameHash * 1000) + appearanceHash;
+  const seed = baseSeed + (index * 43);
+
   const encodedPrompt = encodeURIComponent(cleanPrompt);
-  const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1024&height=1024&nologo=true&seed=${seed}&model=turbo`;
   
-  console.log(`[generateImage] 2D Turbo gerando via URL direta (Página ${index})...`);
+  // Usamos o modelo FLUX de alta qualidade e rapidez do Pollinations
+  const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1024&height=1024&nologo=true&seed=${seed}&model=flux`;
+  
+  console.log(`[generateImage] FLUX 2D (Página ${index}, Seed ${seed}) gerando URL: ${imageUrl.slice(0, 90)}...`);
   
   return imageUrl;
 }

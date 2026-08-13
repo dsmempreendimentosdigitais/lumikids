@@ -31,15 +31,26 @@ export async function POST(req: NextRequest) {
     // 3. Dados do request
     const body: GenerateStoryRequest = await req.json();
 
+    // 3.5 Construir tag de aparência consistente para o gerador de imagem
+    const charAppearance = body.characterAppearanceSummary || [
+      body.gender ? (body.gender === 'menino' ? 'boy' : 'girl') : '',
+      body.skinTone ? `${body.skinTone} skin` : '',
+      body.hairColor && body.hairStyle ? `${body.hairStyle} ${body.hairColor} hair` : body.hairColor ? `${body.hairColor} hair` : '',
+      body.topClothing ? `wearing ${body.topClothing}` : '',
+      body.bottomClothing ? `and ${body.bottomClothing}` : '',
+      body.accessories ? `with ${body.accessories}` : ''
+    ].filter(Boolean).join(', ');
+
     // 4. Gerar história com Gemini
     const story = await generateStoryWithGemini(body);
 
-    // 4.5 Gerar imagem com Nano Banana para a capa e para cada parágrafo/página
+    // 4.5 Gerar imagem FLUX para a capa e para cada parágrafo/página
     const imageUrl = await generateImageWithNanoBanana(
       body.childName,
       body.ageGroup,
       story.title,
-      0
+      0,
+      charAppearance
     );
     story.nanoBananaImageUrl = imageUrl;
 
@@ -51,7 +62,8 @@ export async function POST(req: NextRequest) {
             body.childName,
             body.ageGroup,
             scenePrompt,
-            idx
+            idx,
+            charAppearance
           );
           return {
             ...p,

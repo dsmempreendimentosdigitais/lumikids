@@ -7,6 +7,16 @@ export interface GenerateStoryRequest {
   character?: string;
   language: 'pt-BR' | 'en-US' | 'es-ES' | 'fr-FR' | 'de-DE' | 'it-IT';
   includeBiblicalValues?: boolean;
+  
+  // Opções de Aparência do Personagem para Consistência Visual
+  gender?: 'menino' | 'menina';
+  hairColor?: string;
+  hairStyle?: string;
+  skinTone?: string;
+  topClothing?: string;
+  bottomClothing?: string;
+  accessories?: string;
+  characterAppearanceSummary?: string;
 }
 
 export interface GeneratedStoryResponse {
