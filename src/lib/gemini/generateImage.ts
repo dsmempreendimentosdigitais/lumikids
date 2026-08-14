@@ -70,6 +70,9 @@ function buildPrompt(
   ].join(', ');
 }
 
+const CLOUDFLARE_WORKER_URL = process.env.CLOUDFLARE_WORKER_URL || '';
+const CLOUDFLARE_WORKER_API_KEY = process.env.CLOUDFLARE_WORKER_API_KEY || '';
+
 export async function generateImageWithNanoBanana(
   childName: string,
   ageGroup: string,
@@ -79,20 +82,44 @@ export async function generateImageWithNanoBanana(
 ): Promise<string> {
   const cleanPrompt = buildPrompt(childName, ageGroup, storyTitleOrScene, characterAppearance);
   
-  // A semente baseia-se no NOME + APARÊNCIA da criança para travar a consistência visual em todas as páginas
+  // Seed constante baseado no NOME + APARÊNCIA da criança para travar a consistência visual em todas as páginas
   const appearanceHash = (characterAppearance || '').split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
   const nameHash = Array.from(childName).reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  
-  // Mantedes o mesmo seed principal para a mesma criança + pequena variação fixa por cena
   const baseSeed = (nameHash * 1000) + appearanceHash;
   const seed = baseSeed + (index * 43);
 
+  // TENTATIVA 1: Cloudflare Worker AI Privado (Se configurado)
+  if (CLOUDFLARE_WORKER_URL && CLOUDFLARE_WORKER_API_KEY) {
+    try {
+      console.log(`[generateImage] Tentando Cloudflare Worker AI para página ${index}...`);
+      const response = await fetch(CLOUDFLARE_WORKER_URL, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${CLOUDFLARE_WORKER_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt: cleanPrompt }),
+        signal: AbortSignal.timeout(8000) // Timeout de 8s para não travar
+      });
+
+      if (response.ok) {
+        const buffer = await response.arrayBuffer();
+        if (buffer.byteLength > 1000) {
+          const base64 = Buffer.from(buffer).toString('base64');
+          console.log(`[generateImage] ✨ Sucesso via Cloudflare Worker AI (${buffer.byteLength} bytes)!`);
+          return `data:image/jpeg;base64,${base64}`;
+        }
+      }
+    } catch (cfErr: any) {
+      console.warn(`[generateImage] Worker Cloudflare falhou/timeout. Usando Fallback Pollinations:`, cfErr.message);
+    }
+  }
+
+  // TENTATIVA 2 (FALLBACK): Pollinations FLUX 2D
   const encodedPrompt = encodeURIComponent(cleanPrompt);
-  
-  // Usamos o modelo FLUX de alta qualidade e rapidez do Pollinations
   const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1024&height=1024&nologo=true&seed=${seed}&model=flux`;
   
-  console.log(`[generateImage] FLUX 2D (Página ${index}, Seed ${seed}) gerando URL: ${imageUrl.slice(0, 90)}...`);
+  console.log(`[generateImage] Pollinations FLUX 2D (Página ${index}, Seed ${seed}): ${imageUrl.slice(0, 90)}...`);
   
   return imageUrl;
 }
