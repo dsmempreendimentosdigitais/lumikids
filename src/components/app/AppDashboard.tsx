@@ -5,6 +5,7 @@ import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { Sparkles, Play, ChevronRight, Crown, Wand2, Target, BookOpen, Moon } from 'lucide-react';
+import Logo from '@/components/ui/Logo';
 
 const ageData = {
   '2-4':   { title: 'O Leãozinho Corajoso', meta: '🍼 Bebês • 3 min • 2–4 anos' },
@@ -49,10 +50,7 @@ export default function AppDashboard() {
       {/* Header Area */}
       <div className="pt-8 px-6 pb-6 relative z-10 max-w-2xl mx-auto">
         <div className="flex justify-between items-center mb-6">
-          <div className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-300 to-blue-300 font-serif drop-shadow-lg flex items-center gap-2">
-            Lumi<em className="not-italic text-yellow-300">kids</em>
-            <Sparkles className="w-5 h-5 text-yellow-300" />
-          </div>
+          <Logo size="md" />
           
           <div className="flex items-center gap-2.5">
             <button

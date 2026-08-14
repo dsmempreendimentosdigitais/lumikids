@@ -65,14 +65,11 @@ export async function generateStoryWithGemini(
 ): Promise<GeneratedStory> {
   const prompt = `${SYSTEM_PROMPT_STORY}\n\n${buildStoryUserPrompt(data)}`;
 
-  // Lista robusta de modelos para failover automático em caso de 503 (High Demand) ou 429
+  // Lista com nomes corretos de modelos do Gemini API
   const modelsToTry = [
-    'gemini-3.5-flash',
-    'gemini-3.1-flash-lite',
-    'gemini-2.5-flash',
     'gemini-2.0-flash',
-    'gemini-flash-latest',
-    'gemini-2.5-pro'
+    'gemini-1.5-flash',
+    'gemini-1.5-pro'
   ];
 
   for (const modelName of modelsToTry) {
@@ -80,7 +77,10 @@ export async function generateStoryWithGemini(
       console.log(`Tentando gerar história com o modelo: ${modelName}...`);
       const model = genAI.getGenerativeModel({
         model: modelName,
-        generationConfig: defaultGenerationConfig,
+        generationConfig: {
+          ...defaultGenerationConfig,
+          maxOutputTokens: 8192, // Garante espaço para até 50+ páginas em JSON
+        },
         safetySettings: defaultSafetySettings,
       });
 

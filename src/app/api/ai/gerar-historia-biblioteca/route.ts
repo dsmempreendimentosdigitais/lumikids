@@ -51,11 +51,6 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 5. Se já foi gerada, apenas retorna
-    if (!story.isPlaceholder) {
-      return NextResponse.json({ storyId, story });
-    }
-
     // Usar o nome do corpo da requisição ou fallback
     const finalChildName = childName ? childName.trim() : name;
 

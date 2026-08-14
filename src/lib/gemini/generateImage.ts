@@ -44,8 +44,8 @@ function buildPrompt(
   storyTitleOrScene: string,
   characterAppearance?: string
 ): string {
-  // Estilo 2D Storybook Vibrante Disney/Pixar Nítido
-  const stylePrompt = 'cute vibrant 2D storybook illustration, Disney style, clean lines, colorful digital art, bright lighting, high quality children book art, masterpiece';
+  // Estilo 2D Storybook Vibrante Disney Nítido, Cheio de Vida e Brilho
+  const stylePrompt = 'cute vibrant 2D storybook illustration, Disney style, clean lines, bright joyful lighting, full of life and color, magical glowing sparkles, masterpiece children book illustration';
 
   // Sanitiza texto para evitar caracteres especiais que quebrem URLs de imagem
   const rawScene = storyTitleOrScene
@@ -56,17 +56,17 @@ function buildPrompt(
 
   const safeScene = sanitizeSceneForChild(childName, rawScene);
 
-  // Tag de Consistência Visual do Personagem
+  // Tag de Consistência Visual do Personagem acompanhado de familiares, bichinhos ou brinquedos fofos
   const charTag = characterAppearance && characterAppearance.trim() 
-    ? `${childName}, cute ${ageGroup} year old child with ${characterAppearance}`
-    : `${childName}, cute ${ageGroup} year old child`;
+    ? `${childName}, cute ${ageGroup} year old child with ${characterAppearance}, happily surrounded by loving family, friendly siblings, plush toys or cute pets`
+    : `${childName}, cute ${ageGroup} year old child, happily surrounded by loving family, friendly siblings, plush toys or cute pets`;
 
   return [
-    `2D children storybook scene`,
+    `2D children storybook scene full of warmth and joy`,
     `Character visual appearance: ${charTag}`,
     `Scene action & environment: ${safeScene}`,
     stylePrompt,
-    `no watermark, no text, no letters, no words, no ugly artifacts`
+    `cheerful colorful background, bright daylight, no watermark, no text, no letters, no words`
   ].join(', ');
 }
 

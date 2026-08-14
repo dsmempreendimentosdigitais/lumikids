@@ -88,6 +88,30 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
   const [showNameForm, setShowNameForm] = useState(false);
   const [isVideoPaused, setIsVideoPaused] = useState(true);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartX(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX === null) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const diffX = touchStartX - touchEndX;
+
+    if (diffX > 45) {
+      // Arrastar para a esquerda -> Próxima página
+      if (currentPageIndex < displayParagraphs.length) {
+        setCurrentPageIndex(prev => prev + 1);
+      }
+    } else if (diffX < -45) {
+      // Arrastar para a direita -> Página anterior
+      if (currentPageIndex > 0) {
+        setCurrentPageIndex(prev => prev - 1);
+      }
+    }
+    setTouchStartX(null);
+  };
 
   const traditionalNames = [
     'João', 'Maria', 'Carlos', 'Roberto', 'Naiara', 'Pedro', 'Ana', 'Lucas', 'Julia', 
@@ -121,7 +145,7 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
     if (!story?.content?.paragraphs) return [];
     const list: { text: string; imageUrl: string; originalIndex: number; subIndex: number; totalSubs: number }[] = [];
     story.content.paragraphs.forEach((p: any, pIndex: number) => {
-      const img = p.imageUrl || story.nanoBananaImageUrl || 'https://images.unsplash.com/photo-1514068574489-503a8eb91592?q=80&w=800&auto=format&fit=crop';
+      const img = p.imageUrl || story.nanoBananaImageUrl || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="%23150F2D"/><stop offset="100%" stop-color="%230B0819"/></linearGradient></defs><rect width="800" height="800" fill="url(%23g)"/><circle cx="400" cy="350" r="120" fill="%238B5CF6" opacity="0.3"/><text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" fill="%23F3E8FF" font-size="72" font-family="serif">✨</text><text x="50%" y="60%" dominant-baseline="middle" text-anchor="middle" fill="%23D8B4FE" font-size="28" font-family="sans-serif" font-weight="bold">Ilustração Mágica Lumikids</text></svg>';
       const splits = splitParagraphIntoSubtitles(p.text, img);
       splits.forEach((sp, sIndex) => {
         list.push({
@@ -194,33 +218,48 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-20 min-h-screen bg-[#F0F2FF]">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+      <div className="flex flex-col justify-center items-center py-20 min-h-screen bg-[#0B0819] text-white">
+        <div className="w-12 h-12 rounded-full border-4 border-purple-900/30 border-t-pink-500 animate-spin mb-4 drop-shadow-[0_0_15px_rgba(236,72,153,0.6)]"></div>
+        <span className="text-sm font-bold text-purple-200/80 animate-pulse">Carregando magia... ✨</span>
       </div>
     );
   }
 
   if (!story && !showNameForm && !generating) {
     return (
-      <div className="p-6 text-center pt-20 bg-[#F0F2FF] min-h-screen">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">História não encontrada</h2>
-        <Link href="/app/historias" className="text-blue-600 font-bold underline">Voltar para Biblioteca</Link>
+      <div className="p-6 text-center pt-28 bg-[#0B0819] min-h-screen text-white flex flex-col items-center justify-center">
+        <div className="max-w-md w-full bg-[#150F2D] border border-purple-500/30 rounded-[32px] p-8 shadow-[0_0_40px_rgba(139,92,246,0.3)] backdrop-blur-xl">
+          <h2 className="text-2xl font-serif font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-purple-200 to-blue-200 mb-4">
+            História não encontrada
+          </h2>
+          <Link href="/app/historias" className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-pink-500 to-blue-500 text-white font-extrabold text-sm shadow-[0_0_15px_rgba(217,70,239,0.5)] transition-all hover:scale-105">
+            Voltar para Biblioteca
+          </Link>
+        </div>
       </div>
     );
   }
 
   if (showNameForm) {
     return (
-      <div className="p-6 text-center pt-20 bg-[#F0F2FF] min-h-screen flex flex-col justify-center items-center font-sans">
-        <div className="bg-white rounded-[32px] p-8 max-w-md w-full shadow-[0_20px_50px_rgba(61,90,254,.15)] border border-blue-100 relative">
-          <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white text-[0.65rem] font-bold uppercase tracking-wider py-1 px-4 rounded-full shadow-md">
+      <div className="p-6 text-center pt-20 bg-[#0B0819] min-h-screen flex flex-col justify-center items-center font-sans text-white relative overflow-hidden">
+        {/* Background Starry Glows */}
+        <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 50% 30%, rgba(139, 92, 246, 0.25), transparent 70%)' }}></div>
+
+        <div className="bg-[#150F2D] rounded-[32px] p-8 max-w-md w-full shadow-[0_0_50px_rgba(139,92,246,0.4)] border border-purple-500/40 relative z-10 backdrop-blur-xl">
+          <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-pink-500 to-purple-600 text-white text-[0.65rem] font-black uppercase tracking-wider py-1 px-4 rounded-full shadow-[0_0_12px_rgba(217,70,239,0.6)]">
             Nova Aventura
           </div>
-          <div className="w-16 h-16 rounded-[22px] bg-gradient-to-tr from-[#3D5AFE] to-[#5C6BC0] text-white flex items-center justify-center text-3xl mx-auto mb-6 mt-2 shadow-lg shadow-blue-500/20">
+          
+          <div className="w-16 h-16 rounded-[22px] bg-gradient-to-tr from-pink-500 to-purple-600 text-white flex items-center justify-center text-3xl mx-auto mb-6 mt-2 shadow-[0_0_20px_rgba(217,70,239,0.5)]">
             ✨
           </div>
-          <h2 className="text-2xl font-black text-[#283593] mb-2 leading-tight">Quem viverá a aventura?</h2>
-          <p className="text-gray-500 font-semibold text-xs mb-6">
+
+          <h2 className="text-2xl font-serif font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-purple-200 to-blue-200 mb-2 leading-tight">
+            Quem viverá a aventura?
+          </h2>
+
+          <p className="text-purple-200/80 font-semibold text-xs mb-6">
             Insira o nome da criança para personalizarmos a história ou use um nome tradicional brasileiro aleatório!
           </p>
           
@@ -231,13 +270,13 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
                 required
                 value={childNameInput}
                 onChange={(e) => setChildNameInput(e.target.value)}
-                placeholder="Ex: Samuel, Naiara..."
-                className="flex-1 bg-[#F5F7FF] border-none rounded-[16px] h-[52px] px-4 font-bold text-sm text-[#333] focus:ring-2 focus:ring-blue-500 transition-all outline-none"
+                placeholder="Ex: Samuel, Manuela..."
+                className="flex-1 bg-[#1A133A] border border-purple-500/30 rounded-[16px] h-[52px] px-4 font-bold text-sm text-white placeholder-purple-200/30 focus:ring-2 focus:ring-purple-400 transition-all outline-none"
               />
               <button
                 type="button"
                 onClick={handleRandomName}
-                className="px-4 h-[52px] rounded-[16px] bg-[#E8EAF6] text-[#3D5AFE] font-extrabold text-xs hover:bg-blue-100 transition-all whitespace-nowrap"
+                className="px-4 h-[52px] rounded-[16px] bg-purple-500/20 border border-purple-400/40 text-purple-200 font-extrabold text-xs hover:bg-purple-500/30 transition-all whitespace-nowrap"
               >
                 🎲 Aleatório
               </button>
@@ -246,13 +285,13 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
             <button
               type="submit"
               disabled={!childNameInput.trim()}
-              className="w-full h-[54px] rounded-[99px] font-extrabold text-white bg-[linear-gradient(135deg,#3D5AFE,#5C6BC0)] shadow-lg shadow-blue-500/30 hover:-translate-y-[2px] active:translate-y-0 transition-all disabled:opacity-50 disabled:pointer-events-none text-sm"
+              className="w-full h-[54px] rounded-[99px] font-extrabold text-white bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 shadow-[0_0_20px_rgba(217,70,239,0.5)] hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:pointer-events-none text-sm"
             >
-              Criar História Mágica <i className="fas fa-wand-magic-sparkles ml-1"></i>
+              Criar História Mágica ✨
             </button>
           </form>
           
-          <Link href="/app/historias" className="block mt-5 text-xs font-bold text-gray-400 hover:underline">
+          <Link href="/app/historias" className="block mt-5 text-xs font-bold text-purple-300/60 hover:text-purple-200 hover:underline transition-colors">
             Voltar para Biblioteca
           </Link>
         </div>
@@ -483,7 +522,7 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
         )}
 
         {displayParagraphs.length > 0 ? (
-          <div>
+          <div onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} className="select-none">
             {currentPageIndex === displayParagraphs.length ? (
               /* Slide Final: Moral da História & Missão */
               <div className="relative rounded-[32px] overflow-hidden shadow-[0_12px_36px_rgba(0,0,0,0.5)] bg-gradient-to-tr from-[#120F28] via-[#1a153a] to-[#2a1f56] border border-purple-500/30 min-h-[385px] md:min-h-[450px] p-6 text-white flex flex-col justify-between">
@@ -549,7 +588,7 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
                         src={p.imageUrl} 
                         alt={`Página ${currentPageIndex + 1}`} 
                         className="w-full h-full object-cover animate-scene-5s"
-                        onError={(e) => { e.currentTarget.src = 'https://images.unsplash.com/photo-1514068574489-503a8eb91592?q=80&w=800&auto=format&fit=crop'; }}
+                        onError={(e) => { e.currentTarget.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="%23150F2D"/><stop offset="100%" stop-color="%230B0819"/></linearGradient></defs><rect width="800" height="800" fill="url(%23g)"/><circle cx="400" cy="350" r="120" fill="%238B5CF6" opacity="0.3"/><text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" fill="%23F3E8FF" font-size="72" font-family="serif">✨</text><text x="50%" y="60%" dominant-baseline="middle" text-anchor="middle" fill="%23D8B4FE" font-size="28" font-family="sans-serif" font-weight="bold">Ilustração Mágica Lumikids</text></svg>'; }}
                       />
 
                       {/* Efeito de Feixe de Luz Mágico em Loop de 5 Segundos */}
@@ -619,34 +658,21 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
               })()
             )}
 
-            {/* Controles de Navegação do Carrossel */}
-            <div className="flex items-center justify-between mt-6 w-full gap-4">
+            {/* Controles de Navegação Sleek Dark Neon + Suporte a Touch Swipe */}
+            <div className="flex items-center justify-between mt-6 w-full gap-3 px-1">
               <button
                 disabled={currentPageIndex === 0}
                 onClick={() => setCurrentPageIndex(prev => prev - 1)}
-                className="h-11 px-5 rounded-full font-bold text-xs flex items-center gap-2 border bg-white text-gray-700 shadow-sm transition-all hover:bg-gray-50 active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
+                className="h-12 px-5 rounded-full font-extrabold text-xs flex items-center gap-2 border border-purple-500/40 bg-[#150F2D]/90 text-purple-200 shadow-[0_0_15px_rgba(139,92,246,0.2)] transition-all hover:bg-purple-900/40 active:scale-95 disabled:opacity-20 disabled:pointer-events-none"
               >
-                <i className="fas fa-arrow-left"></i> Anterior
+                <i className="fas fa-arrow-left text-pink-400"></i> Anterior
               </button>
 
-              <div className="hidden sm:flex justify-center items-center gap-1.5">
-                {Array.from({ length: displayParagraphs.length + 1 }).map((_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setCurrentPageIndex(idx)}
-                    className={`h-2 rounded-full transition-all duration-300 ${
-                      currentPageIndex === idx 
-                        ? 'w-5 bg-blue-600 shadow-md' 
-                        : 'w-2 bg-gray-300 hover:bg-gray-400'
-                    }`}
-                    aria-label={`Ir para a página ${idx + 1}`}
-                  />
-                ))}
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-300 to-purple-200 bg-[#150F2D] px-4 py-2 rounded-full border border-purple-500/30 shadow-[0_0_15px_rgba(217,70,239,0.25)]">
+                  {currentPageIndex === displayParagraphs.length ? 'Final 🌟' : `${currentPageIndex + 1} / ${displayParagraphs.length}`}
+                </span>
               </div>
-
-              <span className="sm:hidden text-xs font-black text-[#283593] bg-[#E8EAF6] px-4 py-1.5 rounded-full shadow-inner">
-                {currentPageIndex === displayParagraphs.length ? 'Final 🌟' : `${currentPageIndex + 1} / ${displayParagraphs.length}`}
-              </span>
 
               <button
                 onClick={() => {
@@ -656,7 +682,7 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
                     setCurrentPageIndex(prev => prev + 1);
                   }
                 }}
-                className="h-11 px-6 rounded-full font-black text-xs flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md hover:scale-[1.02] active:scale-95 transition-all"
+                className="h-12 px-6 rounded-full font-extrabold text-xs flex items-center gap-2 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-600 text-white shadow-[0_0_20px_rgba(217,70,239,0.4)] hover:scale-[1.03] active:scale-95 transition-all border border-pink-400/30"
               >
                 {currentPageIndex === displayParagraphs.length ? (
                   <>Reler <i className="fas fa-redo"></i></>
