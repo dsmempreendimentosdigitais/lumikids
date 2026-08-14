@@ -4,6 +4,10 @@ import { db } from '@/lib/firebase/config';
 import { doc, getDoc } from 'firebase/firestore';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
+import InteractiveDragRescue from '@/components/educational/InteractiveDragRescue';
+import InteractiveCounting from '@/components/educational/InteractiveCounting';
+import InteractiveShapeMatch from '@/components/educational/InteractiveShapeMatch';
+import InteractiveMoralChoice from '@/components/educational/InteractiveMoralChoice';
 
 // Função para detectar efeitos visuais baseados nas palavras da história
 function getDynamicEffects(text: string): string[] {
@@ -143,7 +147,7 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
   // useMemo DEVE estar antes de qualquer return condicional (Rules of Hooks)
   const displayParagraphs = useMemo(() => {
     if (!story?.content?.paragraphs) return [];
-    const list: { text: string; imageUrl: string; originalIndex: number; subIndex: number; totalSubs: number }[] = [];
+    const list: { text: string; imageUrl: string; originalIndex: number; subIndex: number; totalSubs: number; interactiveChallenge?: any }[] = [];
     story.content.paragraphs.forEach((p: any, pIndex: number) => {
       const img = p.imageUrl || story.nanoBananaImageUrl || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="%23150F2D"/><stop offset="100%" stop-color="%230B0819"/></linearGradient></defs><rect width="800" height="800" fill="url(%23g)"/><circle cx="400" cy="350" r="120" fill="%238B5CF6" opacity="0.3"/><text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" fill="%23F3E8FF" font-size="72" font-family="serif">✨</text><text x="50%" y="60%" dominant-baseline="middle" text-anchor="middle" fill="%23D8B4FE" font-size="28" font-family="sans-serif" font-weight="bold">Ilustração Mágica Lumikids</text></svg>';
       const splits = splitParagraphIntoSubtitles(p.text, img);
@@ -153,7 +157,8 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
           imageUrl: sp.imageUrl,
           originalIndex: pIndex,
           subIndex: sIndex,
-          totalSubs: splits.length
+          totalSubs: splits.length,
+          interactiveChallenge: p.interactiveChallenge
         });
       });
     });
@@ -653,6 +658,39 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
                       <div className="absolute top-0 right-0 w-16 h-16 bg-purple-100 rounded-full blur-2xl opacity-60 pointer-events-none"></div>
                       <p className={fontStyleClass}>{p.text}</p>
                     </div>
+
+                    {/* Renderizador de Desafios Educativos Interativos (Lumikids Educa) */}
+                    {p.interactiveChallenge && (
+                      <div className="w-full">
+                        {p.interactiveChallenge.type === 'drag_rescue' && (
+                          <InteractiveDragRescue 
+                            instruction={p.interactiveChallenge.instruction}
+                            itemEmoji={p.interactiveChallenge.itemEmoji}
+                            targetEmoji={p.interactiveChallenge.targetEmoji}
+                          />
+                        )}
+                        {p.interactiveChallenge.type === 'counting' && (
+                          <InteractiveCounting 
+                            instruction={p.interactiveChallenge.instruction}
+                            targetCount={p.interactiveChallenge.targetCount}
+                            itemEmoji={p.interactiveChallenge.itemEmoji}
+                          />
+                        )}
+                        {p.interactiveChallenge.type === 'shape_match' && (
+                          <InteractiveShapeMatch 
+                            instruction={p.interactiveChallenge.instruction}
+                            targetShape={p.interactiveChallenge.targetShape}
+                          />
+                        )}
+                        {p.interactiveChallenge.type === 'moral_choice' && (
+                          <InteractiveMoralChoice 
+                            question={p.interactiveChallenge.question}
+                            optionA={p.interactiveChallenge.optionA}
+                            optionB={p.interactiveChallenge.optionB}
+                          />
+                        )}
+                      </div>
+                    )}
                   </div>
                 );
               })()
