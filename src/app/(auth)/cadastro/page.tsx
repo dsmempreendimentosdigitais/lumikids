@@ -1,8 +1,10 @@
 'use client';
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Logo from '@/components/ui/Logo';
 
 export default function CadastroPage() {
   const { signUpWithEmail, signInWithGoogle, loading, user } = useAuth();
@@ -49,7 +51,7 @@ export default function CadastroPage() {
 
     try {
       await signUpWithEmail(formData.email, formData.password, formData.name, formData.phone);
-      router.push('/app'); // Redirecionar após criar a conta logada
+      router.push('/app');
     } catch (err: any) {
       const errorCode = err.code || '';
       const errorMessage = err.message || '';
@@ -69,54 +71,62 @@ export default function CadastroPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F0F2FF] flex items-center justify-center p-4">
-      <div className="max-w-[400px] w-full bg-white rounded-[24px] p-8" style={{ boxShadow: '0 12px 40px rgba(61,90,254,.17)' }}>
-        <div className="text-center mb-6">
-          <div className="w-[48px] h-[48px] rounded-[14px] flex items-center justify-center text-white text-[1.2rem] mx-auto mb-4" style={{ background: 'linear-gradient(135deg, #3D5AFE, #5C6BC0)' }}>
-             ✦
-          </div>
-          <h1 className="text-[1.8rem] font-black text-[#283593] leading-[1.15] tracking-[-1px] mb-2">Crie sua conta</h1>
-          <p className="text-[#666] text-[0.85rem] font-semibold">Junte-se ao Lumikids hoje.</p>
+    <div className="min-h-screen bg-[#0B0819] flex items-center justify-center p-4 text-white relative overflow-hidden font-sans">
+      {/* Background Starry Glows */}
+      <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 50% 30%, rgba(139, 92, 246, 0.25), transparent 70%)' }}></div>
+
+      <div className="max-w-[420px] w-full bg-[#150F2D] border border-purple-500/40 rounded-[32px] p-8 shadow-[0_0_50px_rgba(139,92,246,0.4)] backdrop-blur-xl relative z-10">
+        
+        <div className="text-center mb-6 flex flex-col items-center">
+          <Logo size="lg" className="mb-4" />
+          <h1 className="text-2xl font-serif font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-purple-200 to-blue-200 mb-1">
+            Crie sua conta mágica
+          </h1>
+          <p className="text-purple-200/80 text-xs font-semibold">Junte-se ao Lumikids hoje mesmo.</p>
         </div>
 
-        {error && <div className="bg-red-50 text-red-500 p-3 rounded-[12px] text-sm font-bold text-center mb-4">{error}</div>}
+        {error && (
+          <div className="bg-red-500/20 border border-red-500/40 text-red-200 p-3 rounded-2xl text-xs font-bold text-center mb-4">
+            {error}
+          </div>
+        )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3.5">
           <div>
-            <label className="text-xs font-bold text-[#283593] ml-2 block mb-1">NOME COMPLETO</label>
+            <label className="text-xs font-bold text-purple-200 ml-2 block mb-1">NOME COMPLETO</label>
             <input 
               type="text" required 
-              className="w-full bg-[#f8f9ff] border-2 border-transparent h-[48px] rounded-[14px] px-4 font-bold text-[#333] focus:border-blue-500 focus:bg-white outline-none transition-all"
+              className="w-full bg-[#1A133A] border border-purple-500/30 h-[48px] rounded-[16px] px-4 font-bold text-white placeholder-purple-200/30 focus:ring-2 focus:ring-purple-400 outline-none transition-all text-sm"
               placeholder="Ex: João da Silva"
               value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})}
             />
           </div>
 
           <div>
-            <label className="text-xs font-bold text-[#283593] ml-2 block mb-1">E-MAIL</label>
+            <label className="text-xs font-bold text-purple-200 ml-2 block mb-1">E-MAIL</label>
             <input 
               type="email" required 
-              className="w-full bg-[#f8f9ff] border-2 border-transparent h-[48px] rounded-[14px] px-4 font-bold text-[#333] focus:border-blue-500 focus:bg-white outline-none transition-all"
+              className="w-full bg-[#1A133A] border border-purple-500/30 h-[48px] rounded-[16px] px-4 font-bold text-white placeholder-purple-200/30 focus:ring-2 focus:ring-purple-400 outline-none transition-all text-sm"
               placeholder="seu@email.com"
               value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})}
             />
           </div>
 
           <div>
-            <label className="text-xs font-bold text-[#283593] ml-2 block mb-1">TELEFONE (WHATSAPP)</label>
+            <label className="text-xs font-bold text-purple-200 ml-2 block mb-1">TELEFONE (WHATSAPP)</label>
             <input 
               type="tel" required 
-              className="w-full bg-[#f8f9ff] border-2 border-transparent h-[48px] rounded-[14px] px-4 font-bold text-[#333] focus:border-blue-500 focus:bg-white outline-none transition-all"
+              className="w-full bg-[#1A133A] border border-purple-500/30 h-[48px] rounded-[16px] px-4 font-bold text-white placeholder-purple-200/30 focus:ring-2 focus:ring-purple-400 outline-none transition-all text-sm"
               placeholder="(11) 99999-9999"
               value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})}
             />
           </div>
 
           <div>
-            <label className="text-xs font-bold text-[#283593] ml-2 block mb-1">SENHA</label>
+            <label className="text-xs font-bold text-purple-200 ml-2 block mb-1">SENHA</label>
             <input 
               type="password" required minLength={6}
-              className="w-full bg-[#f8f9ff] border-2 border-transparent h-[48px] rounded-[14px] px-4 font-bold text-[#333] focus:border-blue-500 focus:bg-white outline-none transition-all"
+              className="w-full bg-[#1A133A] border border-purple-500/30 h-[48px] rounded-[16px] px-4 font-bold text-white placeholder-purple-200/30 focus:ring-2 focus:ring-purple-400 outline-none transition-all text-sm"
               placeholder="Mínimo 6 caracteres"
               value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})}
             />
@@ -124,27 +134,27 @@ export default function CadastroPage() {
 
           <button 
             type="submit" disabled={isSubmitting || loading}
-            className="w-full h-[52px] rounded-[99px] font-extrabold flex items-center justify-center bg-[linear-gradient(135deg,#3D5AFE,#5C6BC0)] text-white shadow-[0_4px_16px_rgba(61,90,254,.35)] hover:-translate-y-[2px] transition-all mt-6"
+            className="w-full h-[54px] rounded-[99px] font-extrabold flex items-center justify-center bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-600 text-white shadow-[0_0_20px_rgba(217,70,239,0.5)] hover:scale-[1.02] active:scale-95 transition-all mt-5 cursor-pointer border border-pink-400/30 text-sm"
           >
-            {isSubmitting ? 'Criando...' : 'Começar Grátis'}
+            {isSubmitting ? 'Criando conta...' : 'Começar Grátis ✨'}
           </button>
         </form>
 
-        <div className="relative flex py-5 items-center">
-          <div className="flex-grow border-t border-gray-200"></div>
-          <span className="flex-shrink-0 mx-4 text-gray-400 text-xs font-bold">OU</span>
-          <div className="flex-grow border-t border-gray-200"></div>
+        <div className="relative flex py-4 items-center">
+          <div className="flex-grow border-t border-purple-500/30"></div>
+          <span className="flex-shrink-0 mx-4 text-purple-300/60 text-xs font-bold">OU</span>
+          <div className="flex-grow border-t border-purple-500/30"></div>
         </div>
 
         <button 
           onClick={handleGoogleLogin} disabled={loading} type="button"
-          className="w-full h-[52px] rounded-[99px] font-extrabold flex items-center justify-center gap-[10px] bg-white border-2 border-gray-100 text-gray-600 hover:bg-gray-50 transition-all font-sans"
+          className="w-full h-[50px] rounded-[99px] font-extrabold flex items-center justify-center gap-[10px] bg-[#1F183D] border border-purple-400/30 text-white hover:scale-[1.02] active:scale-95 transition-all text-sm"
         >
-          <i className="fab fa-google text-red-500"></i> Entrar com Google
+          <i className="fab fa-google text-red-400"></i> Entrar com Google
         </button>
 
-        <div className="mt-6 text-center text-[0.8rem] text-gray-500 font-bold">
-          Já tem conta? <Link href="/login" className="text-blue-600">Fazer Login</Link>
+        <div className="mt-5 text-center text-xs text-purple-200/80 font-semibold">
+          Já tem uma conta? <Link href="/login" className="text-pink-300 font-bold hover:underline">Fazer Login</Link>
         </div>
       </div>
     </div>

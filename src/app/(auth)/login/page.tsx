@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Logo from '@/components/ui/Logo';
 
 export default function LoginPage() {
   const { signInWithGoogle, signInWithEmail, user, loading: authLoading } = useAuth();
@@ -39,7 +40,6 @@ export default function LoginPage() {
     setIsLoggingIn(true);
 
     try {
-      // Se não contiver '@', assumimos que é um nome de usuário e completamos com @lumikids.app
       const email = emailOrUsername.includes('@') 
         ? emailOrUsername.trim().toLowerCase()
         : `${emailOrUsername.trim().toLowerCase()}@lumikids.app`;
@@ -62,32 +62,37 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-[100dvh] bg-[#F0F2FF] flex items-center justify-center p-4" style={{ fontFamily: 'var(--font-nunito), "Nunito", sans-serif' }}>
-      <div className="max-w-[400px] w-full bg-white rounded-[24px] p-8" style={{ boxShadow: '0 12px 40px rgba(61,90,254,.17)' }}>
+    <div className="min-h-[100dvh] bg-[#0B0819] flex items-center justify-center p-4 text-white relative overflow-hidden font-sans">
+      {/* Background Starry Glows */}
+      <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 50% 30%, rgba(139, 92, 246, 0.25), transparent 70%)' }}></div>
+      <div className="absolute top-[10%] left-[10%] w-2 h-2 bg-pink-400 rounded-full shadow-[0_0_12px_rgba(244,114,182,0.8)] animate-pulse"></div>
+      <div className="absolute bottom-[20%] right-[15%] w-3 h-3 bg-purple-400 rounded-full shadow-[0_0_15px_rgba(192,132,252,0.8)] animate-pulse" style={{ animationDelay: '1s' }}></div>
+
+      <div className="max-w-[420px] w-full bg-[#150F2D] border border-purple-500/40 rounded-[32px] p-8 shadow-[0_0_50px_rgba(139,92,246,0.4)] backdrop-blur-xl relative z-10">
         
-        <div className="text-center mb-6">
-          <div className="w-[48px] h-[48px] rounded-[14px] flex items-center justify-center text-white text-[1.2rem] mx-auto mb-4" style={{ background: 'linear-gradient(135deg, #3D5AFE, #5C6BC0)' }}>
-             ✦
-          </div>
-          <h1 className="text-[1.8rem] font-black text-[#283593] leading-[1.15] tracking-[-1px] mb-2">Bem-vindo ao<br/>Lumi<em>kids</em></h1>
-          <p className="text-[#666] text-[0.85rem] font-semibold">
-            Entre na sua conta para criar novas histórias.
+        <div className="text-center mb-6 flex flex-col items-center">
+          <Logo size="lg" className="mb-4" />
+          <h1 className="text-2xl font-serif font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-purple-200 to-blue-200 mb-1">
+            Bem-vindo de volta!
+          </h1>
+          <p className="text-purple-200/80 text-xs font-semibold">
+            Entre na sua conta para criar novas histórias mágicas.
           </p>
         </div>
 
         {error && (
-          <div className="bg-red-50 text-red-500 p-3 rounded-[12px] text-xs font-bold text-center mb-4">
+          <div className="bg-red-500/20 border border-red-500/40 text-red-200 p-3 rounded-2xl text-xs font-bold text-center mb-4">
             {error}
           </div>
         )}
 
         <form onSubmit={handleEmailLogin} className="space-y-4">
           <div>
-            <label className="text-xs font-bold text-[#283593] ml-2 block mb-1">E-MAIL OU USUÁRIO</label>
+            <label className="text-xs font-bold text-purple-200 ml-2 block mb-1">E-MAIL OU USUÁRIO</label>
             <input 
               type="text" 
               required 
-              className="w-full bg-[#f8f9ff] border-2 border-transparent h-[48px] rounded-[14px] px-4 font-bold text-[#333] focus:border-blue-500 focus:bg-white outline-none transition-all placeholder:font-normal text-sm"
+              className="w-full bg-[#1A133A] border border-purple-500/30 h-[50px] rounded-[16px] px-4 font-bold text-white placeholder-purple-200/30 focus:ring-2 focus:ring-purple-400 outline-none transition-all text-sm"
               placeholder="Ex: lumikids ou seu@email.com"
               value={emailOrUsername} 
               onChange={e => setEmailOrUsername(e.target.value)}
@@ -95,11 +100,11 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label className="text-xs font-bold text-[#283593] ml-2 block mb-1">SENHA</label>
+            <label className="text-xs font-bold text-purple-200 ml-2 block mb-1">SENHA</label>
             <input 
               type="password" 
               required 
-              className="w-full bg-[#f8f9ff] border-2 border-transparent h-[48px] rounded-[14px] px-4 font-bold text-[#333] focus:border-blue-500 focus:bg-white outline-none transition-all placeholder:font-normal text-sm"
+              className="w-full bg-[#1A133A] border border-purple-500/30 h-[50px] rounded-[16px] px-4 font-bold text-white placeholder-purple-200/30 focus:ring-2 focus:ring-purple-400 outline-none transition-all text-sm"
               placeholder="Sua senha"
               value={password} 
               onChange={e => setPassword(e.target.value)}
@@ -109,29 +114,29 @@ export default function LoginPage() {
           <button 
             type="submit" 
             disabled={authLoading || isLoggingIn}
-            className="w-full h-[52px] rounded-[99px] font-extrabold flex items-center justify-center bg-[linear-gradient(135deg,#3D5AFE,#5C6BC0)] text-white shadow-[0_4px_16px_rgba(61,90,254,.35)] hover:-translate-y-[2px] transition-all mt-6 cursor-pointer"
+            className="w-full h-[54px] rounded-[99px] font-extrabold flex items-center justify-center bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-600 text-white shadow-[0_0_20px_rgba(217,70,239,0.5)] hover:scale-[1.02] active:scale-95 transition-all mt-6 cursor-pointer border border-pink-400/30 text-sm"
           >
-            {isLoggingIn ? 'Entrando...' : 'Entrar'}
+            {isLoggingIn ? 'Entrando...' : 'Entrar na Conta'}
           </button>
         </form>
 
         <div className="relative flex py-5 items-center">
-          <div className="flex-grow border-t border-gray-200"></div>
-          <span className="flex-shrink-0 mx-4 text-gray-400 text-xs font-bold">OU</span>
-          <div className="flex-grow border-t border-gray-200"></div>
+          <div className="flex-grow border-t border-purple-500/30"></div>
+          <span className="flex-shrink-0 mx-4 text-purple-300/60 text-xs font-bold">OU</span>
+          <div className="flex-grow border-t border-purple-500/30"></div>
         </div>
 
         <button 
           onClick={handleGoogleLogin} 
           disabled={authLoading || isLoggingIn} 
           type="button"
-          className="w-full h-[52px] rounded-[99px] font-extrabold flex items-center justify-center gap-[10px] transition-all hover:-translate-y-[2px] bg-white border-2 border-gray-100 text-gray-600 cursor-pointer"
+          className="w-full h-[52px] rounded-[99px] font-extrabold flex items-center justify-center gap-[10px] transition-all hover:scale-[1.02] active:scale-95 bg-[#1F183D] border border-purple-400/30 text-white cursor-pointer shadow-md text-sm"
         >
-          <i className="fab fa-google text-red-500"></i> Entrar com Google
+          <i className="fab fa-google text-red-400"></i> Entrar com Google
         </button>
 
-        <div className="mt-6 text-center text-[0.8rem] text-gray-500 font-bold">
-          Não tem conta? <Link href="/cadastro" className="text-blue-600">Cadastre-se</Link>
+        <div className="mt-6 text-center text-xs text-purple-200/80 font-semibold">
+          Não tem uma conta? <Link href="/cadastro" className="text-pink-300 font-bold hover:underline">Cadastre-se grátis</Link>
         </div>
       </div>
     </div>

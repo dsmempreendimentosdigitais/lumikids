@@ -18,6 +18,9 @@ function initFirebaseAdmin() {
       }),
       storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
     });
+    
+    // Ignora propriedades com valor undefined no Firestore (ex: bibleReference)
+    admin.firestore().settings({ ignoreUndefinedProperties: true });
   } catch (error) {
     console.error('Firebase admin initialization error', error);
   }
