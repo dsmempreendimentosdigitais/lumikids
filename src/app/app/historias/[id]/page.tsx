@@ -696,40 +696,87 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
               })()
             )}
 
-            {/* Controles de Navegação Sleek Dark Neon + Suporte a Touch Swipe */}
-            <div className="flex items-center justify-between mt-6 w-full gap-3 px-1">
-              <button
-                disabled={currentPageIndex === 0}
-                onClick={() => setCurrentPageIndex(prev => prev - 1)}
-                className="h-12 px-5 rounded-full font-extrabold text-xs flex items-center gap-2 border border-purple-500/40 bg-[#150F2D]/90 text-purple-200 shadow-[0_0_15px_rgba(139,92,246,0.2)] transition-all hover:bg-purple-900/40 active:scale-95 disabled:opacity-20 disabled:pointer-events-none"
-              >
-                <i className="fas fa-arrow-left text-pink-400"></i> Anterior
-              </button>
-
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-300 to-purple-200 bg-[#150F2D] px-4 py-2 rounded-full border border-purple-500/30 shadow-[0_0_15px_rgba(217,70,239,0.25)]">
-                  {currentPageIndex === displayParagraphs.length ? 'Final 🌟' : `${currentPageIndex + 1} / ${displayParagraphs.length}`}
+            {/* Controles de Navegação Estilo Audiobook (Inspirado no Readmio) + Touch Swipe */}
+            <div className="flex flex-col items-center justify-center mt-6 w-full bg-[#150F2D]/80 backdrop-blur-xl p-5 rounded-[32px] border border-purple-500/20 shadow-[0_15px_40px_rgba(139,92,246,0.15)]">
+              
+              {/* Topo: Contadores de Página */}
+              <div className="flex items-center justify-between w-full mb-3 px-3">
+                <span className="text-[0.65rem] font-black text-purple-300/50 uppercase tracking-widest">
+                  Página {currentPageIndex === displayParagraphs.length ? displayParagraphs.length : currentPageIndex + 1}
+                </span>
+                <span className="text-[0.65rem] font-black text-purple-300/50 uppercase tracking-widest">
+                  {displayParagraphs.length} Páginas
                 </span>
               </div>
 
-              <button
-                onClick={() => {
-                  if (currentPageIndex === displayParagraphs.length) {
-                    setCurrentPageIndex(0); // Reset
-                  } else {
-                    setCurrentPageIndex(prev => prev + 1);
-                  }
-                }}
-                className="h-12 px-6 rounded-full font-extrabold text-xs flex items-center gap-2 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-600 text-white shadow-[0_0_20px_rgba(217,70,239,0.4)] hover:scale-[1.03] active:scale-95 transition-all border border-pink-400/30"
-              >
-                {currentPageIndex === displayParagraphs.length ? (
-                  <>Reler <i className="fas fa-redo"></i></>
-                ) : currentPageIndex === displayParagraphs.length - 1 ? (
-                  <>Fim 🌟 <i className="fas fa-arrow-right"></i></>
-                ) : (
-                  <>Próximo <i className="fas fa-arrow-right"></i></>
-                )}
-              </button>
+              {/* Barra de Progresso Dinâmica */}
+              <div className="w-full h-[6px] bg-purple-900/40 rounded-full mb-6 overflow-hidden">
+                <div 
+                  className="h-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 rounded-full transition-all duration-500 ease-out"
+                  style={{ width: `${(Math.min(currentPageIndex, displayParagraphs.length - 1) / Math.max(1, displayParagraphs.length - 1)) * 100}%` }}
+                ></div>
+              </div>
+
+              {/* Botões de Controle (Estilo Player) */}
+              <div className="flex items-center justify-center gap-6 w-full px-2">
+                
+                {/* Botão Voltar (Estilo Rewind/Skip Back) */}
+                <button
+                  disabled={currentPageIndex === 0}
+                  onClick={() => setCurrentPageIndex(prev => prev - 1)}
+                  className="w-14 h-14 flex flex-col items-center justify-center rounded-full text-purple-300 transition-all hover:bg-purple-800/30 hover:scale-105 active:scale-95 disabled:opacity-20 disabled:pointer-events-none disabled:hover:bg-transparent disabled:hover:scale-100"
+                >
+                  <i className="fas fa-backward-step text-xl mb-1"></i>
+                  <span className="text-[0.55rem] font-bold opacity-70">Voltar</span>
+                </button>
+
+                {/* Botão Principal Central (Avançar Página / Reler) */}
+                <button
+                  onClick={() => {
+                    if (currentPageIndex === displayParagraphs.length) {
+                      setCurrentPageIndex(0); // Reset
+                    } else {
+                      setCurrentPageIndex(prev => prev + 1);
+                    }
+                  }}
+                  className="w-[84px] h-[84px] flex flex-col items-center justify-center rounded-full bg-gradient-to-br from-pink-500 via-purple-500 to-indigo-600 text-white shadow-[0_8px_30px_rgba(217,70,239,0.4)] hover:scale-105 active:scale-95 transition-all border-[6px] border-[#0B0819]"
+                >
+                  {currentPageIndex >= displayParagraphs.length - 1 ? (
+                    <>
+                      <i className="fas fa-redo text-2xl mb-1"></i>
+                      <span className="text-[0.6rem] font-black tracking-wider">Reler</span>
+                    </>
+                  ) : (
+                    <>
+                      <i className="fas fa-play text-2xl mb-1 ml-1"></i>
+                      <span className="text-[0.6rem] font-black tracking-wider">Próxima</span>
+                    </>
+                  )}
+                </button>
+
+                {/* Botão Avançar / Fim */}
+                <button
+                  disabled={currentPageIndex >= displayParagraphs.length}
+                  onClick={() => {
+                    if (currentPageIndex < displayParagraphs.length) {
+                      setCurrentPageIndex(prev => prev + 1);
+                    }
+                  }}
+                  className="w-14 h-14 flex flex-col items-center justify-center rounded-full text-purple-300 transition-all hover:bg-purple-800/30 hover:scale-105 active:scale-95 disabled:opacity-20 disabled:pointer-events-none disabled:hover:bg-transparent disabled:hover:scale-100"
+                >
+                  {currentPageIndex === displayParagraphs.length - 1 ? (
+                    <>
+                      <i className="fas fa-star text-xl text-yellow-400 mb-1"></i>
+                      <span className="text-[0.55rem] font-bold opacity-70">Fim</span>
+                    </>
+                  ) : (
+                    <>
+                      <i className="fas fa-forward-step text-xl mb-1"></i>
+                      <span className="text-[0.55rem] font-bold opacity-70">Pular</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         ) : (

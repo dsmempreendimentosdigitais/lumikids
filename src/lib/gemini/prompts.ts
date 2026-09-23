@@ -87,6 +87,10 @@ REGRAS DE APARÊNCIA DO PERSONAGEM (CRÍTICO):
 Em CADA um dos "imagePrompt" gerados para cada página no JSON, inclua a exata mesma descrição visual em inglês: "${data.childName}, a cute ${data.ageGroup} year old ${appearanceDesc || 'child'}".
 
 A história deve usar o nome "${data.childName}" como personagem principal.
+
+ATENÇÃO CRÍTICA (PUNIÇÃO SE DESCUMPRIR):
+Você DEVE gerar uma história longa e completa. O array "paragraphs" DEVE conter NO MÍNIMO 30 ITENS (30 páginas). NUNCA gere menos de 30 parágrafos. Histórias curtas de 4 a 6 páginas estão proibidas e serão rejeitadas. Crie um enredo longo, com começo, meio e fim bem desenvolvidos em pelo menos 30 passos/cenas.
+
 Responda APENAS com o JSON válido, sem texto antes ou depois.
   `.trim();
 }

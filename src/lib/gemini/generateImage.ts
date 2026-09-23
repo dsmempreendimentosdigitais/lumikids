@@ -115,11 +115,12 @@ export async function generateImageWithNanoBanana(
     }
   }
 
-  // TENTATIVA 2 (FALLBACK): Pollinations FLUX 2D
+  // TENTATIVA 2 (FALLBACK): Pollinations FLUX 3D
   const encodedPrompt = encodeURIComponent(cleanPrompt);
-  const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1024&height=1024&nologo=true&seed=${seed}&model=flux`;
+  // Utiliza model=flux-3d para garantir o render estilo CGI/Pixar/Patrulha Canina
+  const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1024&height=1024&nologo=true&seed=${seed}&model=flux-3d&enhance=false`;
   
-  console.log(`[generateImage] Pollinations FLUX 2D (Página ${index}, Seed ${seed}): ${imageUrl.slice(0, 90)}...`);
+  console.log(`[generateImage] Pollinations FLUX 3D (Página ${index}, Seed ${seed}): ${imageUrl.slice(0, 90)}...`);
   
   return imageUrl;
 }
