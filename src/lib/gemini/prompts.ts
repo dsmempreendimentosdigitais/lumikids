@@ -23,9 +23,9 @@ Inclua em 1 a 3 páginas da história o campo "interactiveChallenge" para o leit
 
 REGRAS PARA DESCRITIVO DE IMAGENS (imagePrompt):
 - O campo "imagePrompt" DEVE ser escrito obrigatoriamente em INGLÊS.
-- CONSISTÊNCIA DE PERSONAGEM (CRÍTICO): Em CADA imagePrompt, inclua a mesma descrição física completa (ex: "Filipe, cute 4 year old boy with short black hair, fair skin, green t-shirt, khaki shorts").
-- OBRIGATÓRIO: Termine cada imagePrompt com: "cute vibrant 2D storybook illustration, Disney style, clean lines, colorful digital art, bright lighting, high quality children book, no text, no watermark".
-- NUNCA use "3D Pixar" ou foto realista. Use sempre "cute 2D storybook illustration".
+- CONSISTÊNCIA DE PERSONAGEM (CRÍTICO): Em CADA imagePrompt, inclua a mesma descrição física completa (ex: "Filipe, cute 3D animated 4 year old boy with short black hair, fair skin, green t-shirt, khaki shorts").
+- OBRIGATÓRIO: Termine cada imagePrompt com: "3D Paw Patrol Pixar CGI animation style, 3D digital cartoon render, rich detailed scenery, high contrast, vivid saturated colors, bright sunny daylight, cinematic glowing highlights, crisp clean 3D character design, highly expressive 3D animated character, Octane Render, no text, no watermark".
+- NUNCA use estilo 2D plano ou foto realista. Use sempre "3D Paw Patrol Pixar CGI animation style".
 - SEMPRE child-safe. No text, no letters, no words.
 
 FORMATO DE RESPOSTA (JSON estrito, sem markdown):
@@ -36,7 +36,7 @@ FORMATO DE RESPOSTA (JSON estrito, sem markdown):
     { 
       "index": 0, 
       "text": "Texto da página 1.", 
-      "imagePrompt": "Detailed description in English with exact character tags. Ex: Filipe, cute 4 year old boy with short black hair, fair skin, green t-shirt, khaki shorts, running happily in a vibrant green park. cute vibrant 2D storybook illustration, Disney style, clean lines, colorful digital art, bright lighting, no text, no watermark",
+      "imagePrompt": "Detailed description in English with exact character tags. Ex: Filipe, cute 3D animated 4 year old boy with short black hair, fair skin, green t-shirt, khaki shorts, running happily in a vibrant green park. 3D Paw Patrol Pixar CGI animation style, 3D digital cartoon render, rich detailed scenery, high contrast, vivid saturated colors, bright sunny daylight, crisp clean 3D character design, no text, no watermark",
       "isHighlight": false,
       "interactiveChallenge": {
         "type": "counting",

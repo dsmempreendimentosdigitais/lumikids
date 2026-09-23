@@ -44,8 +44,8 @@ function buildPrompt(
   storyTitleOrScene: string,
   characterAppearance?: string
 ): string {
-  // Estilo 2D Storybook Vibrante Disney Nítido, Cheio de Vida e Brilho
-  const stylePrompt = 'cute vibrant 2D storybook illustration, Disney style, clean lines, bright joyful lighting, full of life and color, magical glowing sparkles, masterpiece children book illustration';
+  // Estilo 3D Pixar Paw Patrol (Patrulha Canina) CGI Render - Rico em elementos, luz, brilho e contraste
+  const stylePrompt = '3D Paw Patrol Pixar CGI animation style, 3D digital cartoon render, rich detailed scenery, high contrast, vivid saturated colors, bright sunny daylight, cinematic glowing highlights, crisp clean 3D character design, highly expressive 3D animated character, Octane Render, masterpiece animation';
 
   // Sanitiza texto para evitar caracteres especiais que quebrem URLs de imagem
   const rawScene = storyTitleOrScene
@@ -58,15 +58,15 @@ function buildPrompt(
 
   // Tag de Consistência Visual do Personagem acompanhado de familiares, bichinhos ou brinquedos fofos
   const charTag = characterAppearance && characterAppearance.trim() 
-    ? `${childName}, cute ${ageGroup} year old child with ${characterAppearance}, happily surrounded by loving family, friendly siblings, plush toys or cute pets`
-    : `${childName}, cute ${ageGroup} year old child, happily surrounded by loving family, friendly siblings, plush toys or cute pets`;
+    ? `${childName}, cute 3D animated ${ageGroup} year old child with ${characterAppearance}, happily surrounded by loving family, friendly siblings, cute pets or toys`
+    : `${childName}, cute 3D animated ${ageGroup} year old child, happily surrounded by loving family, friendly siblings, cute pets or toys`;
 
   return [
-    `2D children storybook scene full of warmth and joy`,
+    `3D animated Paw Patrol Pixar style scene full of life and color`,
     `Character visual appearance: ${charTag}`,
     `Scene action & environment: ${safeScene}`,
     stylePrompt,
-    `cheerful colorful background, bright daylight, no watermark, no text, no letters, no words`
+    `cheerful vibrant background, clear sky, sunny daylight, no text, no letters, no words, no watermark`
   ].join(', ');
 }
 

@@ -505,34 +505,49 @@ export default function CriarPage() {
               </div>
             </div>
 
-            {/* Bloco 5: Emoção */}
-            <div className="relative group">
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-pink-400 to-orange-400 rounded-[28px] opacity-75 blur-[2px] transition duration-300 group-hover:opacity-100"></div>
+            {/* Bloco 5: Emoção da História */}
+            <div className="relative group mb-6">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-pink-400 via-orange-400 to-yellow-400 rounded-[28px] opacity-75 blur-[2px] transition duration-300 group-hover:opacity-100"></div>
               <div className="relative bg-[#150F2D] border border-white/10 rounded-[26px] p-4 md:p-5 backdrop-blur-xl">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="text-yellow-200 drop-shadow-[0_0_15px_rgba(253,224,71,0.6)]">
-                    <Moon size={28} fill="currentColor" strokeWidth={1} />
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="text-yellow-200 drop-shadow-[0_0_15px_rgba(253,224,71,0.6)]">
+                      <Moon size={28} fill="currentColor" strokeWidth={1} />
+                    </div>
+                    <div>
+                      <h3 className="block text-white font-bold text-sm">5. Emoção da História</h3>
+                      <p className="text-[0.7rem] text-purple-200/60 font-medium">Selecione o sentimento principal da aventura</p>
+                    </div>
                   </div>
-                  <label className="block text-white font-bold text-sm">5. Emoção da História</label>
                 </div>
 
-                <div className="flex flex-wrap gap-2 max-h-[120px] overflow-y-auto pr-1">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 pt-1">
                   {[
-                    'Feliz', 'Curioso', 'Valente', 'Engraçado', 
-                    'Calmo', 'Amoroso', 'Corajoso', 'Aventureiro', 
-                    'Criativo', 'Empático', 'Sonhador'
+                    { label: 'Feliz', emoji: '😊' },
+                    { label: 'Curioso', emoji: '🔍' },
+                    { label: 'Valente', emoji: '🦁' },
+                    { label: 'Engraçado', emoji: '😂' },
+                    { label: 'Calmo', emoji: '🧘' },
+                    { label: 'Amoroso', emoji: '❤️' },
+                    { label: 'Corajoso', emoji: '🛡️' },
+                    { label: 'Aventureiro', emoji: '🚀' },
+                    { label: 'Criativo', emoji: '🎨' },
+                    { label: 'Empático', emoji: '🤝' },
+                    { label: 'Sonhador', emoji: '⭐' },
+                    { label: 'Inspirador', emoji: '✨' }
                   ].map(em => (
                     <button
-                      key={em}
+                      key={em.label}
                       type="button"
-                      onClick={() => setFormData({...formData, emotion: em})}
-                      className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
-                        formData.emotion === em 
-                        ? 'bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-[0_0_12px_rgba(217,70,239,0.6)] scale-105' 
-                        : 'bg-[#1A133A] text-purple-200/70 border border-purple-500/20 hover:bg-purple-900/30'
+                      onClick={() => setFormData({...formData, emotion: em.label})}
+                      className={`h-[42px] px-3 rounded-xl font-extrabold text-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 ${
+                        formData.emotion === em.label 
+                        ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-[0_0_15px_rgba(217,70,239,0.7)] scale-105 border border-white/40' 
+                        : 'bg-[#1A133A] text-purple-200/80 border border-purple-500/20 hover:bg-purple-900/40 hover:text-white'
                       }`}
                     >
-                      {em}
+                      <span>{em.emoji}</span>
+                      <span>{em.label}</span>
                     </button>
                   ))}
                 </div>
