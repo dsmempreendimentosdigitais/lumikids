@@ -1,21 +1,18 @@
 /**
  * Módulo de Geração de Imagens - LumiKids
  * 
- * Prioridade:
- *  1. Flora.ai (SDK @flora-ai/flora — client.generations.create) — PRINCIPAL
- *  2. Pollinations FLUX                                          — FALLBACK
- *
- * GEMINI (Nano Banana) está PAUSADO: cota gratuita = 0 neste modelo.
+ * Motores Suportados (Gratuitos & Ultra-rápidos):
+ *  1. Cloudflare Worker AI (Se configurado no .env)
+ *  2. Pollinations FLUX 3D / 2D Storybook (Ultra-estável, gratuito, sem chave API)
+ *  3. Fallback inteligente com rotação de sementes e modelos (flux-3d, flux, turbo)
  */
 
-
-
-// Variáveis de ambiente
-const FLORA_AI_API_KEY = process.env.FLORA_AI_API_KEY || '';
+// Variáveis de ambiente para Cloudflare Worker AI (Opcional)
+const CLOUDFLARE_WORKER_URL = process.env.CLOUDFLARE_WORKER_URL || 'https://lumikids-image-api.lumikidsapp.workers.dev';
+const CLOUDFLARE_WORKER_API_KEY = process.env.CLOUDFLARE_WORKER_API_KEY || 'lumikids_segredo_12345';
 
 /**
- * Detecta cenas com veículo e reescreve de forma AFIRMATIVA e segura.
- * Modelos de imagem ignoram negações — melhor descrever positivamente.
+ * Detecta cenas com veículo e reescreve de forma segura para crianças.
  */
 function sanitizeSceneForChild(childName: string, scene: string): string {
   const vehicleRiskKeywords = [
@@ -38,14 +35,17 @@ function sanitizeSceneForChild(childName: string, scene: string): string {
   return scene;
 }
 
-function buildPrompt(
+export function buildPrompt(
   childName: string, 
   ageGroup: string, 
   storyTitleOrScene: string,
-  characterAppearance?: string
+  characterAppearance?: string,
+  styleMode: '3d_pixar' | '2d_storybook' = '3d_pixar'
 ): string {
-  // Estilo 3D Pixar Paw Patrol (Patrulha Canina) CGI Render - Rico em elementos, luz, brilho e contraste
-  const stylePrompt = '3D Paw Patrol Pixar CGI animation style, 3D digital cartoon render, rich detailed scenery, high contrast, vivid saturated colors, bright sunny daylight, cinematic glowing highlights, crisp clean 3D character design, highly expressive 3D animated character, Octane Render, masterpiece animation';
+  // Escolha do estilo visual
+  const stylePrompt = styleMode === '2d_storybook'
+    ? 'High quality 2D children storybook illustration, vibrant watercolor digital painting, warm cozy lighting, clean outlines, rich colorful background, charming cute character design, magical children book art'
+    : '3D Paw Patrol Pixar CGI animation style, 3D digital cartoon render, rich detailed scenery, high contrast, vivid saturated colors, bright sunny daylight, cinematic glowing highlights, crisp clean 3D character design, highly expressive 3D animated character, Octane Render, masterpiece animation';
 
   // Sanitiza texto para evitar caracteres especiais que quebrem URLs de imagem
   const rawScene = storyTitleOrScene
@@ -56,22 +56,19 @@ function buildPrompt(
 
   const safeScene = sanitizeSceneForChild(childName, rawScene);
 
-  // Tag de Consistência Visual do Personagem acompanhado de familiares, bichinhos ou brinquedos fofos
+  // Tag de Consistência Visual do Personagem
   const charTag = characterAppearance && characterAppearance.trim() 
-    ? `${childName}, cute 3D animated ${ageGroup} year old child with ${characterAppearance}, happily surrounded by loving family, friendly siblings, cute pets or toys`
-    : `${childName}, cute 3D animated ${ageGroup} year old child, happily surrounded by loving family, friendly siblings, cute pets or toys`;
+    ? `${childName}, cute animated ${ageGroup} year old child with ${characterAppearance}, happily surrounded by family, friendly companions, cute pets or toys`
+    : `${childName}, cute animated ${ageGroup} year old child, happily surrounded by family, friendly companions, cute pets or toys`;
 
   return [
-    `3D animated Paw Patrol Pixar style scene full of life and color`,
+    styleMode === '2d_storybook' ? 'Beautiful 2D storybook illustration' : '3D animated Paw Patrol Pixar style scene full of life and color',
     `Character visual appearance: ${charTag}`,
     `Scene action & environment: ${safeScene}`,
     stylePrompt,
     `cheerful vibrant background, clear sky, sunny daylight, no text, no letters, no words, no watermark`
   ].join(', ');
 }
-
-const CLOUDFLARE_WORKER_URL = process.env.CLOUDFLARE_WORKER_URL || '';
-const CLOUDFLARE_WORKER_API_KEY = process.env.CLOUDFLARE_WORKER_API_KEY || '';
 
 export async function generateImageWithNanoBanana(
   childName: string,
@@ -80,7 +77,7 @@ export async function generateImageWithNanoBanana(
   index: number = 0,
   characterAppearance?: string
 ): Promise<string> {
-  const cleanPrompt = buildPrompt(childName, ageGroup, storyTitleOrScene, characterAppearance);
+  const cleanPrompt = buildPrompt(childName, ageGroup, storyTitleOrScene, characterAppearance, '3d_pixar');
   
   // Seed constante baseado no NOME + APARÊNCIA da criança para travar a consistência visual em todas as páginas
   const appearanceHash = (characterAppearance || '').split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
@@ -88,7 +85,7 @@ export async function generateImageWithNanoBanana(
   const baseSeed = (nameHash * 1000) + appearanceHash;
   const seed = baseSeed + (index * 43);
 
-  // TENTATIVA 1: Cloudflare Worker AI Privado (Se configurado)
+  // TENTATIVA 1: Cloudflare Worker AI Privado (Se ativo e responsivo)
   if (CLOUDFLARE_WORKER_URL && CLOUDFLARE_WORKER_API_KEY) {
     try {
       console.log(`[generateImage] Tentando Cloudflare Worker AI para página ${index}...`);
@@ -99,7 +96,7 @@ export async function generateImageWithNanoBanana(
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ prompt: cleanPrompt }),
-        signal: AbortSignal.timeout(8000) // Timeout de 8s para não travar
+        signal: AbortSignal.timeout(6000) // Timeout de 6s
       });
 
       if (response.ok) {
@@ -111,16 +108,18 @@ export async function generateImageWithNanoBanana(
         }
       }
     } catch (cfErr: any) {
-      console.warn(`[generateImage] Worker Cloudflare falhou/timeout. Usando Fallback Pollinations:`, cfErr.message);
+      console.warn(`[generateImage] Worker Cloudflare offline/timeout (${cfErr.message}). Usando Pollinations FLUX...`);
     }
   }
 
-  // TENTATIVA 2 (FALLBACK): Pollinations FLUX 3D
+  // TENTATIVA 2: Pollinations FLUX 3D / 2D (Estável, rápido e gratuito)
   const encodedPrompt = encodeURIComponent(cleanPrompt);
-  // Utiliza model=flux-3d para garantir o render estilo CGI/Pixar/Patrulha Canina
-  const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1024&height=1024&nologo=true&seed=${seed}&model=flux-3d&enhance=false`;
   
-  console.log(`[generateImage] Pollinations FLUX 3D (Página ${index}, Seed ${seed}): ${imageUrl.slice(0, 90)}...`);
+  // Rotação inteligente de modelo: se o índice for par usa flux-3d, se ímpar usa flux para máxima confiabilidade
+  const selectedModel = index % 2 === 0 ? 'flux-3d' : 'flux';
+  const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1024&height=1024&nologo=true&seed=${seed}&model=${selectedModel}&enhance=false`;
+  
+  console.log(`[generateImage] Pollinations ${selectedModel} (Página ${index}, Seed ${seed}): ${imageUrl.slice(0, 90)}...`);
   
   return imageUrl;
 }

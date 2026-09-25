@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { Sparkles, Play, ChevronRight, Crown, Wand2, Target, BookOpen, Moon } from 'lucide-react';
 import Logo from '@/components/ui/Logo';
+import CollectionsGrid from '@/components/app/CollectionsGrid';
 
 const ageData = {
   '2-4':   { title: 'O Leãozinho Corajoso', meta: '🍼 Bebês • 3 min • 2–4 anos' },
@@ -125,10 +126,13 @@ export default function AppDashboard() {
           </Link>
         )}
 
-        {/* Categories Section */}
+        {/* Trilhas de Conhecimento */}
+        <CollectionsGrid />
+
+        {/* Quick Actions Section */}
         <div>
           <div className="flex justify-between items-center mb-4">
-            <h4 className="text-xs font-black text-purple-300 uppercase tracking-widest">Explorar Mágica</h4>
+            <h4 className="text-xs font-black text-purple-300 uppercase tracking-widest">Ações Rápidas</h4>
             <Link href="/app/historias" className="text-xs text-blue-400 font-bold hover:text-blue-300">Ver todas</Link>
           </div>
           

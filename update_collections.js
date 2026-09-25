@@ -1,4 +1,6 @@
-'use client';
+const fs = require('fs');
+const path = 'src/components/app/CollectionsGrid.tsx';
+const content = `'use client';
 
 import React from 'react';
 import Link from 'next/link';
@@ -7,105 +9,94 @@ import { BookOpen, Crown, Shield, Landmark, Lightbulb, HeartHandshake, Trees, Co
 export const KNOWLEDGE_TRAILS = [
   { 
     id: 'mitologia-grega', 
-    emoji: 'üèõÔ∏è', 
+    emoji: '???', 
     title: 'Mitologia Grega', 
-    desc: 'H√©rcules, Perseu e li√ß√µes cl√°ssicas de coragem', 
+    desc: 'HÈrcules, Perseu e liÁıes cl·ssicas de coragem', 
     gradient: 'from-amber-500 to-orange-600', 
     borderColor: 'border-amber-500/30',
-    icon: 'Landmark' 
+    icon: Landmark 
   },
   { 
     id: 'biblia-kids', 
-    emoji: 'üìñ', 
-    title: 'Hist√≥rias da B√≠blia', 
-    desc: 'Davi, Arca de No√©, Par√°bolas e f√© viva', 
+    emoji: '??', 
+    title: 'HistÛrias da BÌblia', 
+    desc: 'Davi, Arca de NoÈ, Par·bolas e fÈ viva', 
     gradient: 'from-emerald-400 to-teal-600', 
     borderColor: 'border-emerald-500/30',
-    icon: 'BookOpen' 
+    icon: BookOpen 
   },
   { 
     id: 'mulheres-fortes', 
-    emoji: 'üëë', 
+    emoji: '??', 
     title: 'Mulheres Fortes', 
     desc: 'Joana d\'Arc, Princesa Isabel e bravura', 
     gradient: 'from-pink-500 to-rose-600', 
     borderColor: 'border-pink-500/30',
-    icon: 'Crown' 
+    icon: Crown 
   },
   { 
     id: 'biografias-historicas', 
-    emoji: 'üè∞', 
+    emoji: '??', 
     title: 'Biografias Inspiradoras', 
-    desc: 'S√£o Lu√≠s IX, Santos Dumont e grandes l√≠deres', 
+    desc: 'S„o LuÌs IX, Santos Dumont e grandes lÌderes', 
     gradient: 'from-indigo-500 to-purple-600', 
     borderColor: 'border-indigo-500/30',
-    icon: 'Compass' 
+    icon: Compass 
   },
   { 
     id: 'contos-de-herois', 
-    emoji: 'üõ°Ô∏è', 
-    title: 'Contos & F√°bulas', 
-    desc: 'F√°bulas de Esopo, N√°rnia e S√£o Jorge', 
+    emoji: '???', 
+    title: 'Contos & F·bulas', 
+    desc: 'F·bulas de Esopo, N·rnia e S„o Jorge', 
     gradient: 'from-blue-500 to-cyan-600', 
     borderColor: 'border-blue-500/30',
-    icon: 'Shield' 
+    icon: Shield 
   },
   { 
     id: 'inventores-genios', 
-    emoji: 'üî¨', 
-    title: 'Inventores & Ci√™ncia', 
+    emoji: '??', 
+    title: 'Inventores & CiÍncia', 
     desc: 'Grandes mentes e descobertas do mundo', 
     gradient: 'from-yellow-400 to-amber-600', 
     borderColor: 'border-yellow-500/30',
-    icon: 'Lightbulb' 
+    icon: Lightbulb 
   },
   { 
     id: 'virtudes-em-acao', 
-    emoji: '‚ú®', 
-    title: 'Virtudes em A√ß√£o', 
-    desc: 'Verdade, paci√™ncia, autonomia e respeito aos pais', 
+    emoji: '?', 
+    title: 'Virtudes em AÁ„o', 
+    desc: 'Verdade, paciÍncia, autonomia e respeito aos pais', 
     gradient: 'from-purple-400 to-pink-500', 
     borderColor: 'border-purple-500/30',
-    icon: 'HeartHandshake' 
+    icon: HeartHandshake 
   },
   { 
     id: 'natureza-animais', 
-    emoji: 'üåø', 
+    emoji: '??', 
     title: 'Natureza & Animais', 
-    desc: 'Explora√ß√µes do Pantanal e vida selvagem', 
+    desc: 'ExploraÁıes do Pantanal e vida selvagem', 
     gradient: 'from-lime-400 to-emerald-600', 
     borderColor: 'border-lime-500/30',
-    icon: 'Trees' 
+    icon: Trees 
   },
 ];
-
-const ICON_MAP: Record<string, any> = {
-  Landmark,
-  BookOpen,
-  Crown,
-  Compass,
-  Shield,
-  Lightbulb,
-  HeartHandshake,
-  Trees
-};
 
 export default function CollectionsGrid() {
   return (
     <div className="mb-8">
-      <div className="flex justify-between items-baseline mb-4">
+      <div className="flex justify-between items-center mb-4">
         <div>
           <h4 className="text-xs font-black text-purple-300 uppercase tracking-widest flex items-center gap-2">
-            <span>‚ú®</span> Trilhas de Conhecimento & Virtudes
+            <span>?</span> Trilhas de Conhecimento & Virtudes
           </h4>
-          <p className="text-[0.68rem] text-purple-200/50 font-medium">Hist√≥rias inteligentes adaptadas para formar mentes brilhantes</p>
+          <p className="text-[0.68rem] text-purple-200/50 font-medium">HistÛrias inteligentes e educativas adaptadas para formar grandes mentes</p>
         </div>
-        <Link href="/app/historias" className="text-xs text-blue-400 font-bold hover:text-blue-300 whitespace-nowrap">Ver todas</Link>
+        <Link href="/app/historias" className="text-xs text-blue-400 font-bold hover:text-blue-300">Ver todas</Link>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {KNOWLEDGE_TRAILS.map((trail) => {
-          const IconComp = ICON_MAP[trail.icon] || BookOpen;
+          const IconComp = trail.icon;
           return (
             <Link 
               key={trail.id} 
@@ -126,7 +117,7 @@ export default function CollectionsGrid() {
                 </div>
                 <div className="mt-3 flex items-center justify-between text-[0.6rem] font-bold text-pink-400 group-hover:translate-x-1 transition-transform">
                   <span>Explorar Trilha</span>
-                  <span>‚Üí</span>
+                  <span>?</span>
                 </div>
               </div>
             </Link>
@@ -136,3 +127,6 @@ export default function CollectionsGrid() {
     </div>
   );
 }
+`;
+fs.writeFileSync(path, content, 'utf-8');
+console.log('CollectionsGrid updated successfully!');

@@ -487,20 +487,52 @@ export default function CriarPage() {
             {/* Bloco 4: Tema */}
             <div className="relative group">
               <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-[28px] opacity-75 blur-[2px] transition duration-300 group-hover:opacity-100"></div>
-              <div className="relative bg-[#150F2D] border border-white/10 rounded-[26px] p-4 md:p-5 flex items-center gap-4 backdrop-blur-xl">
-                <div className="text-cyan-300 drop-shadow-[0_0_10px_rgba(103,232,249,0.6)]">
-                  <Castle size={32} strokeWidth={1.5} />
+              <div className="relative bg-[#150F2D] border border-white/10 rounded-[26px] p-4 md:p-5 backdrop-blur-xl">
+                <div className="flex items-center gap-4 mb-3">
+                  <div className="text-cyan-300 drop-shadow-[0_0_10px_rgba(103,232,249,0.6)]">
+                    <Castle size={32} strokeWidth={1.5} />
+                  </div>
+                  <div className="flex-1">
+                    <label className="block text-white font-bold text-sm mb-1">4. Tema da Aventura</label>
+                    <input 
+                      type="text" 
+                      required
+                      className="w-full bg-[#1A133A] border border-cyan-500/30 rounded-[12px] h-[44px] px-4 text-white placeholder-cyan-200/30 focus:outline-none focus:ring-2 focus:ring-cyan-400 text-sm font-medium"
+                      placeholder="Ex: Os 12 Trabalhos de Hércules, Davi e Golias, Joana d'Arc..."
+                      value={formData.theme}
+                      onChange={(e) => setFormData({...formData, theme: e.target.value})}
+                    />
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <label className="block text-white font-bold text-sm mb-1">4. Tema da Aventura</label>
-                  <input 
-                    type="text" 
-                    required
-                    className="w-full bg-[#1A133A] border border-cyan-500/30 rounded-[12px] h-[44px] px-4 text-white placeholder-cyan-200/30 focus:outline-none focus:ring-2 focus:ring-cyan-400 text-sm font-medium"
-                    placeholder="Ex: Floresta Mágica, Reino dos Dinossauros, Espaço"
-                    value={formData.theme}
-                    onChange={(e) => setFormData({...formData, theme: e.target.value})}
-                  />
+
+                {/* Atalhos para Trilhas de Conhecimento */}
+                <div>
+                  <span className="block text-[0.68rem] text-purple-200/60 font-bold mb-2">✨ Ou escolha uma Trilha de Conhecimento:</span>
+                  <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+                    {[
+                      { name: '🏛️ Mitologia Grega', value: 'Mitologia Grega: Os Trabalhos de Hércules e lições de virtude' },
+                      { name: '📖 Histórias da Bíblia', value: 'História Bíblica: Davi e Golias com lições de fé' },
+                      { name: '👑 Mulheres Fortes', value: 'Mulheres Fortes: Joana d\'Arc e coragem moral' },
+                      { name: '🏰 Biografias', value: 'Biografia Histórica: Santos Dumont e a invenção' },
+                      { name: '🛡️ Contos & Fábulas', value: 'Fábulas Clássicas: O Leão e o Rato e compaixão' },
+                      { name: '🔬 Ciência', value: 'Grandes Inventores: Albert Einstein e curiosidade' },
+                      { name: '✨ Virtudes', value: 'Virtudes no dia a dia: Verdade, paciência e respeito' },
+                      { name: '🌿 Natureza', value: 'Natureza do Brasil: Vida selvagem no Pantanal' }
+                    ].map((t) => (
+                      <button
+                        key={t.name}
+                        type="button"
+                        onClick={() => setFormData({...formData, theme: t.value})}
+                        className={`px-3 py-1.5 rounded-full text-[0.68rem] font-bold whitespace-nowrap transition-all border ${
+                          formData.theme === t.value 
+                          ? 'bg-cyan-500/30 border-cyan-400 text-cyan-200 shadow-[0_0_10px_rgba(103,232,249,0.4)]' 
+                          : 'bg-[#1A133A] border-purple-500/20 text-purple-200/70 hover:bg-purple-900/40 hover:text-white'
+                        }`}
+                      >
+                        {t.name}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
