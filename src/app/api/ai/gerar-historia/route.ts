@@ -74,32 +74,36 @@ export async function POST(req: NextRequest) {
       story.content.paragraphs = updatedParagraphs;
     }
 
-    // 5. Gerar narração com Google Cloud TTS
-    const audioBuffer = await generateNarrationGoogle({
-      text:     story.content.text,
-      language: body.language,
-      ageGroup: body.ageGroup,
-    });
+    // 5. Gerar narração com Google Cloud TTS (opcional - fallback gracioso)
+    let audioUrl = '';
+    try {
+      const audioBuffer = await generateNarrationGoogle({
+        text:     story.content.text,
+        language: body.language,
+        ageGroup: body.ageGroup,
+      });
 
-    // 6. Salvar áudio no Firebase Storage
-    const audioPath = `ai-audio/${uid}/${Date.now()}.mp3`;
-    const bucket    = adminStorage.bucket();
-    const file      = bucket.file(audioPath);
-    await file.save(Buffer.from(audioBuffer), { contentType: 'audio/mpeg' });
-    await file.makePublic();
-    
-    // Tornar público se configurado no bucket, ou usar signed URL
-    const audioUrl = `https://storage.googleapis.com/${bucket.name}/${audioPath}`;
+      if (audioBuffer && audioBuffer.length > 0) {
+        const audioPath = `ai-audio/${uid}/${Date.now()}.mp3`;
+        const bucket    = adminStorage.bucket();
+        const file      = bucket.file(audioPath);
+        await file.save(Buffer.from(audioBuffer), { contentType: 'audio/mpeg' });
+        await file.makePublic();
+        audioUrl = `https://storage.googleapis.com/${bucket.name}/${audioPath}`;
+      }
+    } catch (ttsErr: any) {
+      console.warn('[gerar-historia] Áudio TTS não gerado (billing/storage opcional):', ttsErr.message);
+    }
 
     // 7. Salvar história no Firestore
     const storyRef = adminDb.collection('stories').doc();
-    await storyRef.set({
+    const storyPayload = {
       ...story,
       id:              storyRef.id,
       category:        'ai-personalizada',
       ageGroups:       [body.ageGroup],
       language:        body.language,
-      audio:           { [body.language]: { url: audioUrl, duration: 0, voiceName: '' } },
+      audio:           audioUrl ? { [body.language]: { url: audioUrl, duration: 0, voiceName: '' } } : {},
       nanoBananaImageUrl: imageUrl,
       isAIGenerated:   true,
       generatedForUid: uid,
@@ -109,7 +113,9 @@ export async function POST(req: NextRequest) {
       viewCount:       0,
       createdAt:       new Date(),
       publishedAt:     new Date(),
-    });
+    };
+
+    await storyRef.set(storyPayload);
 
     return NextResponse.json({ storyId: storyRef.id, story, audioUrl });
 

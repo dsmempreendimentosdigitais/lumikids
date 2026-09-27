@@ -98,21 +98,26 @@ export async function POST(req: NextRequest) {
       storyGenerated.content.paragraphs = updatedParagraphs;
     }
 
-    // 9. Gerar Áudio
-    const audioBuffer = await generateNarrationGoogle({
-      text: storyGenerated.content.text,
-      language: 'pt-BR',
-      ageGroup: requestPayload.ageGroup,
-    });
+    // 9. Gerar Áudio (Opcional - Graceful Fallback)
+    let audioUrl = '';
+    try {
+      const audioBuffer = await generateNarrationGoogle({
+        text: storyGenerated.content.text,
+        language: 'pt-BR',
+        ageGroup: requestPayload.ageGroup,
+      });
 
-    // 10. Salvar áudio no Firebase Storage
-    const audioPath = `ai-audio/${uid}/${Date.now()}.mp3`;
-    const bucket = adminStorage.bucket();
-    const file = bucket.file(audioPath);
-    await file.save(Buffer.from(audioBuffer), { contentType: 'audio/mpeg' });
-    await file.makePublic();
-
-    const audioUrl = `https://storage.googleapis.com/${bucket.name}/${audioPath}`;
+      if (audioBuffer && audioBuffer.length > 0) {
+        const audioPath = `ai-audio/${uid}/${Date.now()}.mp3`;
+        const bucket = adminStorage.bucket();
+        const file = bucket.file(audioPath);
+        await file.save(Buffer.from(audioBuffer), { contentType: 'audio/mpeg' });
+        await file.makePublic();
+        audioUrl = `https://storage.googleapis.com/${bucket.name}/${audioPath}`;
+      }
+    } catch (ttsErr: any) {
+      console.warn('[gerar-historia-biblioteca] Áudio TTS não gerado (billing opcional):', ttsErr.message);
+    }
 
     // 11. Salvar história atualizada no Firestore
     const updatedStoryData = {
@@ -123,7 +128,7 @@ export async function POST(req: NextRequest) {
       mission: storyGenerated.mission || story.mission || null,
       reflection: storyGenerated.reflection || story.reflection || null,
       coverEmoji: storyGenerated.coverEmoji || story.coverEmoji || '📖',
-      audio: { 'pt-BR': { url: audioUrl, duration: 0, voiceName: '' } },
+      audio: audioUrl ? { 'pt-BR': { url: audioUrl, duration: 0, voiceName: '' } } : {},
       nanoBananaImageUrl: imageUrl,
       isPlaceholder: false,
       updatedAt: new Date()
