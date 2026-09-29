@@ -35,15 +35,14 @@ if (admin.apps.length === 0) {
 
 const db = admin.firestore();
 
-// Função para gerar URL de ilustração 2D limpa sem marcas d'água
+// Função para gerar URL do proxy de imagem 2D limpa
 function generate2DImageUrl(promptText, seed) {
-  const stylePrompt = 'Masterpiece 2D children storybook illustration, digital watercolor painting, warm cozy lighting, clean crisp lineart, rich colorful background, charming fairytale book art, highly detailed, beautiful classic children book aesthetic';
-  const cleanPrompt = `Beautiful 2D storybook illustration of ${promptText.replace(/[*_#~`"']/g, '').trim()}, ${stylePrompt}, clear sky, no text, no letters, no words, no watermark, no logo`;
-  const encodedPrompt = encodeURIComponent(cleanPrompt);
-  return `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1024&height=1024&nologo=true&seed=${seed}&model=flux&enhance=false`;
+  const cleanPrompt = promptText.replace(/[*_#~`"']/g, '').trim();
+  const encoded = encodeURIComponent(cleanPrompt);
+  return `/api/ai/image?prompt=${encoded}&seed=${seed}`;
 }
 
-// Conjunto mestre de histórias clássicas completas
+// Conjunto mestre de histórias clássicas completas (10-18 páginas cada)
 const MASTER_CLASSIC_STORIES = [
   // ==========================================
   // 1. MITOLOGIA GREGA
@@ -78,7 +77,7 @@ const MASTER_CLASSIC_STORIES = [
   {
     title: 'Perseu e o Escudo de Bronze',
     category: 'mitologia-grega',
-    ageGroups: ['5-7', '8-10'],
+    ageGroups: ['5-7', '8-10', '11-14'],
     coverEmoji: '🛡️',
     coverColor: '#2563EB',
     value: 'coragem e sabedoria',
@@ -86,9 +85,18 @@ const MASTER_CLASSIC_STORIES = [
     missionDesc: 'Pense antes de agir hoje! Use a sabedoria para responder com educação a qualquer momento difícil.',
     reflectionQuestion: 'Como a sabedoria nos ajuda a vencer o medo quando encontramos algo assustador?',
     paragraphs: [
-      { text: "O jovem Perseu recebeu uma missão muito difícil na antiga Grécia, mas não estava sozinho. A deusa Atena lhe presenteou com um escudo de bronze brilhante como um espelho.", prompt: "Young Perseus receiving a polished bronze shield from a wise goddess in ancient Greece, sunny courtyard, 2D storybook illustration" },
-      { text: "Com prudência e inteligência, Perseu usou o reflexo no escudo para guiar seus passos com segurança, vencendo o perigo sem se deixar paralisar pelo medo.", prompt: "Perseus holding up his shiny shield reflection calmly in ancient stone ruins, 2D storybook illustration" },
-      { text: "Ao retornar vitorioso ao vilarejo, Perseu usou sua dádiva para proteger sua amada mãe e trazer a paz de volta a todo o reino.", prompt: "Perseus hugging his mother happily in a sunlit Greek palace garden, 2D storybook illustration" }
+      { text: "Na vibrante Grécia Antiga, o jovem Perseu vivia com sua querida mãe, Danae, na tranquila ilha de Serifos. Ele era um rapaz conhecido por sua lealdade e bom coração.", prompt: "Young Perseus standing in a sunny Greek coastal village with turquoise sea and olive trees, 2D storybook illustration" },
+      { text: "Um dia, um governante injusto colocou Perseu diante de um grande desafio: ele precisaria viajar até terras distantes para buscar o reflexo da sabedoria e proteger sua família.", prompt: "Young Perseus talking to an old wise scholar holding a ancient scroll in a sunny Greek courtyard, 2D storybook illustration" },
+      { text: "Sentado à beira do Mar Egeu, Perseu buscou forças na oração e na serenidade. Ele sabia que a coragem não é a ausência de medo, mas a decisão de fazer o bem.", prompt: "Perseus sitting on a stone by the sea watching bright sunbeams on blue waves, 2D storybook illustration" },
+      { text: "Sensibilizada com a nobreza de seu coração, a deusa da sabedoria, Atena, apareceu em um raio de luz suave e presenteou Perseu com um escudo de bronze perfeitamente polido.", prompt: "Athena giving a gleaming polished bronze shield to young Perseus in a sunlit garden, 2D storybook illustration" },
+      { text: "'Este escudo brilhará como um espelho', explicou Atena. 'Ele ajudará você a enxergar os obstáculos com clareza sem se deixar cegar pela ilusão ou pelo pavor.'", prompt: "Young Perseus admiring the reflection of clouds in his shiny golden bronze shield, 2D storybook illustration" },
+      { text: "O deus Hermes também lhe entregou sandálias aladas que permitiam caminhar com agilidade e leveza sobre os vales e montanhas.", prompt: "Hermes handing winged sandals to Perseus under a clear blue sky, 2D storybook illustration" },
+      { text: "Usando as sandálias aladas, Perseu voou serenamente sobre ilhas, mares e florestas, aprendendo a contemplar a beleza da criação enquanto cumpria sua jornada.", prompt: "Perseus flying gracefully above green Greek islands and blue ocean with white clouds, 2D storybook illustration" },
+      { text: "Ao chegar à caverna de sombras onde os perigos se escondiam, Perseu lembrou-se das orientações de Atena: não olhar diretamente para a escuridão, mas usar a luz do escudo.", prompt: "Perseus holding up his mirror shield inside a warm stone passage, seeing clear reflections, 2D storybook illustration" },
+      { text: "Olhando apenas pelo reflexo do bronze reluzente, Perseu caminhou com passos firmes e precisos, superando o desafio com extrema prudência e sem derramar nenhuma lágrima de hesitação.", prompt: "Perseus stepping carefully guided by shield reflection in sunny archway, 2D storybook illustration" },
+      { text: "Na viagem de volta, Perseu avistou a jovem Andrade acorrentada em uma rocha à beira-mar, prestes a ser atingida pelas ondas de uma tempestade gerada pelo mar agitado.", prompt: "Young Andromeda standing safely on a sunny beach near gentle sea waves, 2D storybook illustration" },
+      { text: "Com bravura e agilidade, Perseu usou sua sabedoria e as ferramentas divinas para resgatar Andrade e levá-la em segurança de volta ao reino.", prompt: "Perseus helping young Andromeda onto his wooden sailboat under bright sunshine, 2D storybook illustration" },
+      { text: "Ao retornar a Serifos, Perseu libertou sua mãe e usou o escudo de bronze para restaurar a paz em todo o vilarejo, provando que a inteligência e a virtude sempre vencem a força desmedida.", prompt: "Perseus hugging his mother Danae happily in a flower-filled village square with cheering people, 2D storybook illustration" }
     ]
   },
   {
@@ -102,9 +110,18 @@ const MASTER_CLASSIC_STORIES = [
     missionDesc: 'Ajude alguém da sua família a encontrar algo perdido hoje com atenção e carinho!',
     reflectionQuestion: 'Por que planejar bem os nossos passos nos impede de ficar perdidos nos problemas?',
     paragraphs: [
-      { text: "Teseu viajou até a ilha de Creta para salvar seu povo das profundezas do grande Labirinto de pedra.", prompt: "Theseus holding a golden ball of yarn in an ancient Greek port, 2D storybook illustration" },
-      { text: "A jovem Ariadne lhe entregou um novelo de fio de seda dourado, orientando-o a desenrolar o fio a cada passo dado.", prompt: "Ariadne handing a golden thread ball to young Theseus, sunny courtyard, 2D storybook illustration" },
-      { text: "Com passos cuidadosos e seguindo a trilha do fio, Teseu cumpriu o desafio e guiou todos em segurança de volta à luz do sol.", prompt: "Theseus leading young friends out of a stone archway into bright daylight, 2D storybook illustration" }
+      { text: "O jovem Teseu cresceu na cidade de Atenas, onde aprendeu desde cedo a valorizar a justiça, a verdade e o cuidado com as outras pessoas.", prompt: "Young Theseus walking through sunny marble streets of ancient Athens with blue sky, 2D storybook illustration" },
+      { text: "Quando soube que os jovens de seu vilarejo eram levados todos os anos para o Labirinto da ilha de Creta, Teseu voluntariou-se com coragem para resolver o problema.", prompt: "Theseus speaking bravely to King Aegus in a sunlit palace court, 2D storybook illustration" },
+      { text: "Teseu embarcou em um grande navio com velas brancas e navegou pelas águas cristalinas do Mar Egeu até desembarcar no porto de Creta.", prompt: "Ancient Greek sailboat with white sails gliding on turquoise sea under bright sun, 2D storybook illustration" },
+      { text: "Ao chegar ao palácio do rei Minos, a bondosa princesa Ariadne percebeu a nobreza de Teseu e decidiu ajudá-lo a encontrar a saída do temido Labirinto.", prompt: "Princess Ariadne greeting young Theseus in a sunny palace garden filled with roses, 2D storybook illustration" },
+      { text: "Ariadne entregou a Teseu um pequeno novelo de fio de seda dourado e disse: 'Prenda a ponta na entrada e desenrole o fio a cada passo dado'.", prompt: "Ariadne handing a golden thread ball to young Theseus with a warm gentle smile, 2D storybook illustration" },
+      { text: "Teseu agradeceu o conselho valioso e amarrou firmemente a extremidade do fio dourado no grande portão de bronze do Labirinto.", prompt: "Theseus tying a shiny gold thread to a wooden archway entrance, 2D storybook illustration" },
+      { text: "Caminhando pelos intermináveis corredores de pedra, Teseu mantinha a mão no fio dourado, avançando com tranquilidade e sem pressa.", prompt: "Theseus holding golden thread walking through sunlit stone hallways, 2D storybook illustration" },
+      { text: "No coração do Labirinto, Teseu encontrou o lendário Minotauro. Com destreza e calma, Teseu conseguiu pacificá-lo sem causar destruição.", prompt: "Theseus standing calmly before a large peaceful horned creature in a sunny courtyard, 2D storybook illustration" },
+      { text: "Cumprida a missão, era hora de retornar. Enquanto os outros temiam estar perdidos, Teseu simplesmente começou a rebobinar o fio dourado.", prompt: "Theseus carefully rolling back the shiny golden thread ball in stone corridors, 2D storybook illustration" },
+      { text: "Passo a passo, o fio brilhante guiou Teseu e todos os seus companheiros exatamente de volta à porta de entrada.", prompt: "Theseus leading a group of happy children out of stone hallway into bright daylight, 2D storybook illustration" },
+      { text: "Ariadne os esperava no portão com um grande sorriso. Todos celebraram a inteligência e a organização que salvaram o dia.", prompt: "Princess Ariadne cheering happily as young people emerge into sunlit gardens, 2D storybook illustration" },
+      { text: "Teseu retornou a Atenas e tornou-se um rei sábio, ensinando a todo o seu povo que o planejamento cuidadoso nos guia em segurança por qualquer labirinto da vida.", prompt: "King Theseus wearing a laurels crown looking over peaceful ancient Athens at golden sunset, 2D storybook illustration" }
     ]
   },
 
@@ -129,7 +146,7 @@ const MASTER_CLASSIC_STORIES = [
       { text: "Mesmo vivendo no palácio, Ester manteve seu coração simples e continuou ouvindo os bons conselhos de Mardoqueu.", prompt: "Queen Esther reading a scroll near a sunlit palace window with white curtains, 2D storybook illustration" },
       { text: "Um dia, um oficial influente chamado Hamã planejou um decreto injusto contra todo o povo de Ester.", prompt: "Haman in dark purple cloak showing a sealed parchment scroll to court officials, 2D storybook illustration" },
       { text: "Ao saber do perigo, Mardoqueu enviou uma mensagem a Ester dizendo: 'Quem sabe não foi exatamente para um momento como este que você se tornou rainha?'.", prompt: "Messenger delivering a secret note to Queen Esther in royal gardens, 2D storybook illustration" },
-      { text: "Entrar na presença do rei sem ser chamada era proibido e muito perigoso. Mas Ester decidiu agir com coragem moral para salvar seu povo.", prompt: "Queen Esther praying deeply with eyes closed and hands together in a peaceful bedroom, 2D storybook illustration" },
+      { text: "Entrar na presença do rei sem ser chamada era proibido e muito perigoso. Mas Ester decided agir com coragem moral para salvar seu povo.", prompt: "Queen Esther praying deeply with eyes closed and hands together in a peaceful bedroom, 2D storybook illustration" },
       { text: "Ester pediu a todos que fizessem três dias de oração e união em busca de sabedoria e proteção.", prompt: "People praying together in ancient Persian courtyard under clear blue sky, 2D storybook illustration" },
       { text: "No terceiro dia, Ester vestiu seus trajes reais e caminhou com coragem até o pátio interior diante do trono do rei Assuero.", prompt: "Queen Esther stepping bravely into the grand throne room towards King Ahasuerus, 2D storybook illustration" },
       { text: "Ao ver a rainha, o rei estendeu seu cetro de ouro em sinal de acolhimento e perguntou qual era o seu pedido.", prompt: "King Ahasuerus holding out a golden scepter gently toward Queen Esther, 2D storybook illustration" },
@@ -145,7 +162,7 @@ const MASTER_CLASSIC_STORIES = [
   {
     title: 'Davi e o Gigante Golias',
     category: 'biblia-kids',
-    ageGroups: ['2-4', '5-7', '8-10'],
+    ageGroups: ['2-4', '5-7', '8-10', '11-14'],
     coverEmoji: '👑',
     coverColor: '#16A34A',
     value: 'fé e confiança em Deus',
@@ -153,15 +170,24 @@ const MASTER_CLASSIC_STORIES = [
     missionDesc: 'Escreva ou diga em voz alta três motivos pelos quais você confia em Deus para vencer seus medos!',
     reflectionQuestion: 'Como a fé nos torna fortes mesmo quando nos sentimos pequenininhos diante dos problemas?',
     paragraphs: [
-      { text: "Davi era um jovem pastor de ovelhas que cuidava do seu rebanho com muito amor e responsabilidade nos prados de Israel.", prompt: "Young boy David playing a wooden harp among fluffy white sheep in green hills, 2D storybook illustration" },
-      { text: "Quando um enorme gigante assustou os soldados no vale, o pequeno Davi manteve a calma. Ele sabia que a verdadeira força vem da confiança em Deus.", prompt: "Little David holding a wooden shepherd staff looking calmly at distant hills, 2D storybook illustration" },
-      { text: "Com sua atiradeira de pastor e uma pedra lisa do riacho, Davi venceu o desafio e trouxe a paz de volta para todo o seu povo.", prompt: "Young David standing triumphantly in sunbeams with villagers cheering happily around him, 2D storybook illustration" }
+      { text: "Nos ensolarados campos de Belém, o jovem Davi cuidava das ovelhinhas do seu pai Jessé com enorme amor, responsabilidade e carinho.", prompt: "Young boy David playing a wooden harp among fluffy white sheep in green hills, 2D storybook illustration" },
+      { text: "Enquanto pastoreava, Davi costumava tocar sua harpa de madeira e cantar louvores a Deus sob a sombra das grandes oliveiras.", prompt: "Little David sitting under olive tree playing harp under blue sunny sky, 2D storybook illustration" },
+      { text: "Quando um leão faminto tentou atacar o rebanho, Davi não fugiu: ele orou a Deus e protegeu a ovelhinha com sua coragem de pastor.", prompt: "Young shepherd boy standing protectively in front of fluffy sheep in green meadow, 2D storybook illustration" },
+      { text: "Certo dia, seu pai pediu que ele levasse pães e queijos para seus irmãos mais velhos que estavam no acampamento do exército de Israel.", prompt: "Young David carrying a wicker basket with fresh bread and cheese along a dusty path, 2D storybook illustration" },
+      { text: "Ao chegar ao Vale de Elá, Davi ouviu a voz estrondosa do gigante Golias, que assustava a todos os soldados com grandes ameaças.", prompt: "Large warrior standing across a valley shouting while soldiers watch nervously, 2D storybook illustration" },
+      { text: "Enquanto todos os guerreiros recuavam com medo, o pequeno Davi manteve o coração sereno, sabendo que Deus estava com ele.", prompt: "Young David looking calm and brave standing among nervous soldiers, 2D storybook illustration" },
+      { text: "Davi apresentou-se ao rei Saul e disse com firmeza: 'Não fiquem com medo! Deus me livrou do leão e do urso, e me ajudará hoje também'.", prompt: "Young David talking respectfully to King Saul wearing a gold crown in a tent, 2D storybook illustration" },
+      { text: "O rei tentou vestir Davi com uma pesada armadura de bronze, mas Davi mal conseguia andar. Ele preferiu ir com suas roupas simples de pastor.", prompt: "Young David taking off a heavy metal helmet and smiling simply, 2D storybook illustration" },
+      { text: "Davi caminhou até um riacho límpido no vale e escolheu cinco pedrinhas lisas e arredondadas, colocando-as em sua bolsa de couro.", prompt: "Young David picking up smooth round pebbles from a clear rushing stream, 2D storybook illustration" },
+      { text: "Com seu cajado de madeira em uma mão e sua atiradeira simples na outra, Davi deu passos firmes ao encontro do gigante Golias.", prompt: "Young David holding a wooden staff walking bravely in a sunlit valley, 2D storybook illustration" },
+      { text: "Golias riu ao ver um jovem pastor tão pequeno. Mas Davi respondeu: 'Você vem contra mim com espada e lança, mas eu vou em nome do Senhor!'.", prompt: "Young David standing courageously looking up with faith in a sunny valley, 2D storybook illustration" },
+      { text: "Davi colocou uma pedra na atiradeira, girou-a com precisão e lançou-a. A pedra voou direto e venceu o gigante, trazendo paz a todo o povo.", prompt: "Young David standing triumphantly in golden sunbeams as villagers cheer happily around him, 2D storybook illustration" }
     ]
   },
   {
     title: 'A Arca de Noé',
     category: 'biblia-kids',
-    ageGroups: ['2-4', '5-7'],
+    ageGroups: ['2-4', '5-7', '8-10'],
     coverEmoji: '🌈',
     coverColor: '#0891B2',
     value: 'obediência e esperança',
@@ -169,9 +195,18 @@ const MASTER_CLASSIC_STORIES = [
     missionDesc: 'Desenhe um arco-íris bem colorido e dê de presente para alguém que você ama!',
     reflectionQuestion: 'O que a promessa do arco-íris nos ensina sobre a fidelidade de Deus?',
     paragraphs: [
-      { text: "Noé era um homem justo e temente a Deus. Ele seguiu cada orientação com carinho e construiu uma grande arca de madeira firme.", prompt: "Noah building a big wooden ark with happy animals walking up the wooden ramp, 2D storybook illustration" },
-      { text: "Animais de todas as espécies entraram em pares na arca e foram protegidos durante a grande chuva sobre a Terra.", prompt: "Pairs of lions, giraffes and birds sitting peacefully inside Noah ark, 2D storybook illustration" },
-      { text: "Quando a chuva cessou, uma pomba branca trouxe um ramo verde de oliveira, e um lindo arco-íris brilhou no céu em sinal de esperança.", prompt: "Vibrant rainbow over green hills with animals grazing happily under sunny sky, 2D storybook illustration" }
+      { text: "Há muitos e muitos anos, vivia um homem bom e justo chamado Noé. Ele andava sempre nos caminhos de Deus e cuidava da sua família com amor.", prompt: "Elderly Noah standing peacefully in a green field with a sunny blue sky, 2D storybook illustration" },
+      { text: "Deus falou ao coração de Noé e pediu que ele construísse uma grande arca de madeira firme para proteger a vida na Terra.", prompt: "Noah listening reverently as light shines through clouds in a peaceful meadow, 2D storybook illustration" },
+      { text: "Noé e seus filhos começaram a trabalhar com muita dedicação, cortando tábuas de madeira e passando resina para vedar tudo com perfeição.", prompt: "Noah and his sons sawing wooden planks and building a large wooden ship, 2D storybook illustration" },
+      { text: "Os vizinhos achavam estranho construir um barco enorme no meio da terra seca, mas Noé permaneceu obediente e paciente.", prompt: "Noah smiling kindly and carrying wooden beams while family works together, 2D storybook illustration" },
+      { text: "Quando a arca ficou pronta, animais de todas as espécies começaram a se aproximar em pares, trazidos por uma força especial.", prompt: "Pairs of lions, giraffes, elephants and birds walking peacefully towards the ark, 2D storybook illustration" },
+      { text: "Noé abriu a grande porta de madeira e acolheu com carinho cada casal de animais dentro da grande arca.", prompt: "Noah welcoming gentle giraffes and rabbits up the wooden ramp of the ark, 2D storybook illustration" },
+      { text: "Assim que todos entraram em segurança, as janelas do céu se abriram e uma chuva suave e contínua começou a cair sobre a Terra.", prompt: "Raindrops falling gently on the large wooden ark floating safely on calm water, 2D storybook illustration" },
+      { text: "Dentro da arca, Noé e sua família cuidavam dos animais, alimentando-os com grãos e ervas secas em ambiente quentinho e seguro.", prompt: "Noah feeding hay to horses and rabbits inside a cozy lit wooden room in ark, 2D storybook illustration" },
+      { text: "Após muitos dias, as nuvens escuras foram se dissipando e o sol voltou a brilhar radiante sobre as águas.", prompt: "Bright sun shining through soft white clouds onto calm blue sea around ark, 2D storybook illustration" },
+      { text: "Noé soltou uma pomba branca para saber se a terra já havia secado. Ela retornou à tarde trazendo um raminho verde de oliveira no bico.", prompt: "White dove landing on Noah hand holding a green olive leaf, sunny window, 2D storybook illustration" },
+      { text: "Noé abriu a porta da arca e todos os animais saíram saltando e voando com imensa alegria sobre a grama novinha.", prompt: "Animals running happily out of the ark onto green sunny hills, 2D storybook illustration" },
+      { text: "No céu azul, Deus desenhou um lindo arco-íris de sete cores brilhantes como símbolo eterno de sua promessa, esperança e amor.", prompt: "Vibrant rainbow glowing over green hills with Noah family praising God, golden sunset, 2D storybook illustration" }
     ]
   },
 
@@ -189,15 +224,24 @@ const MASTER_CLASSIC_STORIES = [
     missionDesc: 'Defenda a verdade hoje mesmo que seus colegas pensem diferente de você!',
     reflectionQuestion: 'Como a convicção nos nossos valores nos dá força para liderar com retidão?',
     paragraphs: [
-      { text: "Joana d'Arc cresceu em um pequeno vilarejo no interior da França, cuidando das ovelhas de sua família com grande fé e alegria.", prompt: "Young Joan of Arc standing in a green flower field holding a white banner, sunny sky, 2D storybook illustration" },
-      { text: "Com uma coragem impressionante e amor à sua terra, Joana liderou seu povo a restaurar a paz e a justiça no reino.", prompt: "Joan in shiny silver armor riding a white horse holding banner high, 2D storybook illustration" },
-      { text: "Sua história inspira jovens até hoje a defenderem a verdade com bravura e integridade de caráter.", prompt: "Joan of Arc smiling warmly looking at a peaceful French countryside at sunset, 2D storybook illustration" }
+      { text: "Na pequena e acolhedora aldeia de Domrémy, na França, cresceu a jovem Joana d'Arc. Ela passava seus dias ajudando a cuidar da fazenda e pastoreando as ovelhas.", prompt: "Young Joan of Arc as a simple farm girl walking with sheep in green flower field, 2D storybook illustration" },
+      { text: "Joana tinha um coração profundamente espiritual. Ela costumava orar sob a sombra de uma árvore antiga e escutar a voz da sua consciência.", prompt: "Young Joan praying peacefully near a large oak tree in sunny French countryside, 2D storybook illustration" },
+      { text: "Naquela época, a França enfrentava tempos muito difíceis e tristes por causa de conflitos prolongados que destruíam as colheitas das famílias.", prompt: "Simple French village with thatched roofs under a quiet cloudy sky, 2D storybook illustration" },
+      { text: "Aos dezessete anos, sentindo uma forte determinação no coração, Joana decidiu viajar até a cidade de Chinon para falar com o futuro rei Carlos VII.", prompt: "Young Joan riding a horse along a dirt path through green hills, 2D storybook illustration" },
+      { text: "Os conselheiros reais duvidaram de uma jovem tão simples, mas ao conversarem com Joana, ficaram impressionados com sua clareza, fé e humildade.", prompt: "Joan speaking with deep conviction to court nobles in a stone palace hall, 2D storybook illustration" },
+      { text: "O rei concedeu a Joana uma armadura prateada e um estandarte branco desenhado com lírios dourados para liderar o exército na libertação da cidade de Orléans.", prompt: "Joan wearing shiny silver armor and holding a white lily banner, 2D storybook illustration" },
+      { text: "Joana não lutava com violência ou raiva; ela cavalgava à frente das tropas segurando o estandarte e transmitindo esperança e coragem aos soldados.", prompt: "Joan riding a noble white horse holding her banner high, sunny battlefield, 2D storybook illustration" },
+      { text: "Em poucos dias, com a liderança inspiradora de Joana, a cidade de Orléans foi libertada e o povo voltou a ter paz e segurança.", prompt: "Townspeople in Orléans cheering and throwing flowers as Joan rides through stone gates, 2D storybook illustration" },
+      { text: "Joana acompanhou o príncipe até a catedral de Reims, onde ele foi solenemente coroado Rei da França sob aplausos de toda a nação.", prompt: "Coronation of French king in grand cathedral with stained glass windows and Joan watching, 2D storybook illustration" },
+      { text: "Mesmo enfrentando incompreensões e julgamentos injustos mais tarde, Joana d'Arc nunca abriu mão da sua fé, da sua integridade e do seu amor à verdade.", prompt: "Joan standing bravely with calm expression looking towards bright sunlight, 2D storybook illustration" },
+      { text: "Sua determinação inabalável transformou-a em uma das maiores heroínas da história mundial e padroeira da França.", prompt: "Statue motif of Joan of Arc surrounded by glowing white lilies and sunny blue sky, 2D storybook illustration" },
+      { text: "A história de Joana d'Arc inspira meninas e meninos até hoje a agirem com bravura moral, defendendo o bem e a justiça sem jamais temer.", prompt: "Young girl reading a book under a tree looking at clouds shaped like Joan of Arc, 2D storybook illustration" }
     ]
   },
   {
     title: 'Princesa Isabel',
     category: 'mulheres-fortes',
-    ageGroups: ['5-7', '8-10'],
+    ageGroups: ['5-7', '8-10', '11-14'],
     coverEmoji: '📜',
     coverColor: '#4F46E5',
     value: 'justiça e liberdade',
@@ -205,9 +249,16 @@ const MASTER_CLASSIC_STORIES = [
     missionDesc: 'Inclua um amigo que está sozinho em uma brincadeira hoje!',
     reflectionQuestion: 'Por que o verdadeiro líder usa seu poder para libertar e ajudar os outros?',
     paragraphs: [
-      { text: "A Princesa Isabel estudou muito desde criança para governar com sabedoria, empatia e senso de justiça.", prompt: "Young Princess Isabel studying scrolls in a palace library, 2D storybook illustration" },
-      { text: "No dia 13 de maio de 1888, com uma pena dourada, ela assinou a Lei Áurea, garantindo a liberdade de todas as pessoas no Brasil.", prompt: "Princess Isabel signing an official scroll with a gold feather pen in palace hall, 2D storybook illustration" },
-      { text: "As ruas do país se encheram de flores e comemorações pela vitória da justiça e da igualdade humana.", prompt: "Crowds of happy diverse people throwing colorful flowers in sunny street, 2D storybook illustration" }
+      { text: "No Palácio de São Cristóvão, no Rio de Janeiro, cresceu a Princesa Isabel, filha do imperador Dom Pedro II. Ela era uma menina curiosa e estudiosa.", prompt: "Young Princess Isabel as a child reading a leather book in palace garden, 2D storybook illustration" },
+      { text: "Seus professores ensinavam línguas, história e ciências, mas seu pai fazia questão de ensinar o respeito a todas as pessoas, sem distinção.", prompt: "Emperor Pedro II talking kindly to young Isabel in a palace library, 2D storybook illustration" },
+      { text: "Ao crescer, a Princesa Isabel ficou chocada ao ver que muitas pessoas ainda eram escravizadas no Brasil e viviam sem liberdade.", prompt: "Princess Isabel looking compassionately at working people in historical Rio de Janeiro, 2D storybook illustration" },
+      { text: "Isabel usou sua influência para apoiar artistas, escritores e movimentos que lutavam pelo fim do cativeiro e pela igualdade humana.", prompt: "Princess Isabel meeting with scholars and abolitionists in a sunlit parlor, 2D storybook illustration" },
+      { text: "Quando assumiu a regência do país na ausência de seu pai, Isabel decidiu que era o momento de tomar uma atitude histórica pela justiça.", prompt: "Princess Isabel sitting at official wooden desk reviewing government documents, 2D storybook illustration" },
+      { text: "No dia 13 de maio de 1888, cercada por deputados e cidadãos, a Princesa Isabel segurou uma linda pena de ouro.", prompt: "Princess Isabel holding a gold fountain pen in grand hall with Brazilian flags, 2D storybook illustration" },
+      { text: "Com gesto firme e coração cheio de compaixão, ela assinou a Lei Áurea, declarando a liberdade imediata e definitiva de todas as pessoas no Brasil.", prompt: "Close up of Princess Isabel signing the golden scroll Lei Aurea with smiling expression, 2D storybook illustration" },
+      { text: "Assim que a notícia se espalhou, milhares de pessoas tomaram as ruas do Rio de Janeiro cantando, dançando e jogando flores de laranjeira.", prompt: "Crowds of diverse happy people celebrating in sunny street with tropical trees and flowers, 2D storybook illustration" },
+      { text: "Por sua coragem e senso de justiça, a Princesa Isabel passou a ser chamada carinhosamente por todo o povo de 'A Redentora'.", prompt: "Princess Isabel smiling warmly receiving a bouquet of yellow roses from townspeople, 2D storybook illustration" },
+      { text: "Sua vida nos ensina que o verdadeiro poder de um líder deve ser usado para promover a liberdade, a dignidade e a paz para todos os seres humanos.", prompt: "Princess Isabel standing gracefully looking out at Guanabara Bay at golden sunset, 2D storybook illustration" }
     ]
   },
 
@@ -225,14 +276,22 @@ const MASTER_CLASSIC_STORIES = [
     missionDesc: 'Ofereça ajuda para carregar algo pesado para seus pais hoje!',
     reflectionQuestion: 'O que significa servir aos outros de coração aberto?',
     paragraphs: [
-      { text: "O rei Luís IX governou a França com muita justiça. Todos os dias, ele abria as portas do palácio para servir refeições aos necessitados.", prompt: "King Louis IX wearing royal cloak serving bread to poor people at long wooden table, 2D storybook illustration" },
-      { text: "Ele ensinou a seus filhos que a verdadeira nobreza não está na coroa, mas em tratar todas as pessoas com respeito e caridade.", prompt: "King Louis smiling warmly hugging a young boy in throne room, 2D storybook illustration" }
+      { text: "No século XIII, o jovem Luís tornou-se Rei da França ainda criança. Sua mãe, a rainha Branca de Castela, educou-o com profundo amor à justiça e à virtude.", prompt: "Young King Louis IX receiving a gold crown while mother smiles lovingly in cathedral, 2D storybook illustration" },
+      { text: "Sua mãe dizia-lhe frequentemente: 'Meu filho, prefiro que você seja um homem justo e temente a Deus a que possua todas as riquezas do mundo'.", prompt: "Queen Blanche talking to young Louis IX in sunlit palace room, 2D storybook illustration" },
+      { text: "Ao crescer, Luís IX governou o país não com ostentação, mas com extrema simplicidade, criando leis que protegiam os camponeses contra abusos dos nobres.", prompt: "King Louis IX listening to poor farmers in a rustic village court, 2D storybook illustration" },
+      { text: "Todos os dias, as portas do seu palácio se abriam para receber centenas de necessitados. O próprio rei servia sopa quentinha e pão a eles com suas mãos.", prompt: "King Louis IX wearing simple tunic serving soup from a iron pot to poor families, 2D storybook illustration" },
+      { text: "Ele fundou o famoso hospital dos Quinze-Vinte em Paris para cuidar de pessoas cegas e enfermas que não tinham onde morar.", prompt: "King Louis IX visiting sick people in a clean sunlit hospital room with white beds, 2D storybook illustration" },
+      { text: "Nas horas vagas, o rei gostava de sentar-se sob a sombra de um grande carvalho no parque de Vincennes para ouvir e resolver as dúvidas do povo.", prompt: "King Louis IX sitting under a big green oak tree listening to citizens calmly, 2D storybook illustration" },
+      { text: "Luís IX promoveu a construção da deslumbrante Sainte-Chapelle em Paris, um monumento de pedra e vitrais coloridos dedicado à oração.", prompt: "Magnificent Sainte-Chapelle stained glass windows shining in sunlight, 2D storybook illustration" },
+      { text: "Mesmo sendo um monarca poderoso, Luís IX vestia-se de forma modesta e fazia questão de lavar os pés dos peregrinos como gesto de profunda humildade.", prompt: "King Louis IX washing feet of elderly traveler with wooden bowl and towel, 2D storybook illustration" },
+      { text: "Por causa de sua vida dedicada inteiramente à caridade, à paz e ao serviço dos mais fracos, ele foi canonizado como São Luís da França.", prompt: "Saint Louis IX with gentle golden light around him holding a wooden cross, 2D storybook illustration" },
+      { text: "Sua biografia lembra a governantes e crianças que a verdadeira nobreza de uma pessoa é medida pelo tamanho do seu coração e pela caridade com o próximo.", prompt: "Children looking up at colorful stained glass window in a peaceful sunny church, 2D storybook illustration" }
     ]
   },
   {
     title: 'Santos Dumont e o Avião',
     category: 'biografias-historicas',
-    ageGroups: ['5-7', '8-10'],
+    ageGroups: ['5-7', '8-10', '11-14'],
     coverEmoji: '✈️',
     coverColor: '#0284C7',
     value: 'criatividade e perseverança',
@@ -240,9 +299,16 @@ const MASTER_CLASSIC_STORIES = [
     missionDesc: 'Crie um aviãozinho de papel e tente fazê-lo voar o mais longe possível!',
     reflectionQuestion: 'Como a curiosidade e o trabalho contínuo transformam sonhos em invenções reais?',
     paragraphs: [
-      { text: "Quando garoto nas fazendas de Minas Gerais, Alberto Santos Dumont olhava para o céu e desenhava mapas de máquinas voadoras.", prompt: "Young Santos Dumont sitting under a tree drawing airships in a notebook, 2D storybook illustration" },
-      { text: "Trabalhando com dedicação e testes contínuos, Dumont construiu o 14-Bis e realizou o primeiro voo homologado do mundo em Paris.", prompt: "14-Bis biplane flying gracefully over Eiffel Tower in sunny Paris, 2D storybook illustration" },
-      { text: "Sua invenção aproximou os continentes e mostrou o valor da inventividade brasileira para toda a humanidade.", prompt: "Santos Dumont smiling proudly standing next to his airplane model, 2D storybook illustration" }
+      { text: "Nas belas colinas da Fazenda Cabangu, em Minas Gerais, cresceu o pequeno Alberto Santos Dumont. Ele era um menino calmo e fascinado pelo céu.", prompt: "Young Santos Dumont as a child sitting on a wooden fence looking at fluffy clouds, 2D storybook illustration" },
+      { text: "Enquanto lia os livros de aventura de Júlio Verne, Alberto olhava para os pássaros e dentes-de-leão voando com o vento, sonhando em voar um dia.", prompt: "Young Santos Dumont reading a book under a tree while dandelion seeds float in air, 2D storybook illustration" },
+      { text: "No oficina da fazenda do seu pai, Alberto adorava consertar as máquinas de café e criar pequenos balões de papel colorido.", prompt: "Young Santos Dumont building miniature paper balloons in a sunny wooden workshop, 2D storybook illustration" },
+      { text: "Ao ficar adulto, Santos Dumont mudou-se para Paris, a capital dos inventores, disfarçando seus cadernos com esquemas de dirigíveis.", prompt: "Santos Dumont sketching airship blueprints at a wooden desk with lamps in Paris, 2D storybook illustration" },
+      { text: "Ele construiu o dirigível N° 6 e realizou um feito incrível: contornou a famosa Torre Eiffel voando nos céus de Paris sob aplausos da multidão.", prompt: "Santos Dumont airship floating gracefully around Eiffel Tower in sunny blue sky, 2D storybook illustration" },
+      { text: "Mas Alberto não parou por aí. Ele queria criar uma máquina mais pesada que o ar, capaz de decolar sozinha por seus próprios meios.", prompt: "Santos Dumont measuring wooden wing frames of his airplane in a hangar, 2D storybook illustration" },
+      { text: "Na sua oficina, trabalhando dia e noite com bambu, seda de balão e fios de cana-de-açúcar, nasceu a histórica aeronave 14-Bis.", prompt: "Santos Dumont adjusting the engine of 14-Bis biplane with tools in sunny hangar, 2D storybook illustration" },
+      { text: "No dia 23 de outubro de 1906, no campo de Bagatelle em Paris, uma multidão curiosa se reuniu para assistir ao grande teste do 14-Bis.", prompt: "Crowd of people in vintage clothes gathered in a green grass field watching 14-Bis, 2D storybook illustration" },
+      { text: "Santos Dumont ligou o motor. O 14-Bis correu pela grama, acelerou e subiu suavemente pelos ares, voando por 60 metros diante de todos!", prompt: "14-Bis biplane flying high over green field with bright blue sky and cheering crowd, 2D storybook illustration" },
+      { text: "Foi o primeiro voo público e homologado de um avião no mundo! Santos Dumont não patenteou suas invenções, doando os projetos para toda a humanidade.", prompt: "Santos Dumont smiling proudly wearing panama hat standing next to his airplane, 2D storybook illustration" }
     ]
   },
 
@@ -252,7 +318,7 @@ const MASTER_CLASSIC_STORIES = [
   {
     title: 'O Leão e o Rato',
     category: 'contos-de-herois',
-    ageGroups: ['2-4', '5-7'],
+    ageGroups: ['2-4', '5-7', '8-10'],
     coverEmoji: '🐭',
     coverColor: '#EA580C',
     value: 'gratidão e respeito',
@@ -260,15 +326,22 @@ const MASTER_CLASSIC_STORIES = [
     missionDesc: 'Trate com carinho alguém menor ou mais jovem que você hoje!',
     reflectionQuestion: 'Por que devemos respeitar a todos, independente do tamanho?',
     paragraphs: [
-      { text: "Um grande leão poupou a vida de um pequeno rato que prometeu ajudar o rei da floresta quando ele precisasse.", prompt: "Big gentle lion smiling down at a tiny brave mouse on his paw, sunny jungle, 2D storybook illustration" },
-      { text: "Dias depois, o leão ficou preso na rede dos caçadores. O ratinho apareceu rapidamente e roeu todas as cordas com seus dentes afiados.", prompt: "Tiny mouse chewing rope netting to free happy lion, bright forest, 2D storybook illustration" },
-      { text: "O leão aprendeu que nenhum ato de gentileza é pequeno demais e que pequenos amigos podem realizar grandes atos de lealdade.", prompt: "Lion and mouse sitting happily together in a sunny forest clearing, 2D storybook illustration" }
+      { text: "Um grande e majestoso leão dormia tranquilamente sob a sombra acolhedora de uma árvore gigante na savana africana.", prompt: "Large fluffy lion sleeping peacefully under a big tree in sunny green savanna, 2D storybook illustration" },
+      { text: "Um pequenino ratinho do campo, correndo alegremente entre as folhagens, acabou passando sem querer por cima do nariz do leão.", prompt: "Tiny cute brown mouse running across grass near sleeping lion, 2D storybook illustration" },
+      { text: "O leão acordou assustado, soltou um bocejo grande e colocou sua pata enorme sobre o rabo do pequenino ratinho.", prompt: "Big gentle lion looking down at tiny mouse trapped under his soft paw, 2D storybook illustration" },
+      { text: "O ratinho tremeu e pediu com voz fininha: 'Por favor, rei da floresta, poupe minha vida! Prometo que um dia poderei retribuir sua bondade'.", prompt: "Tiny mouse looking up with polite pleading eyes at big lion, 2D storybook illustration" },
+      { text: "O leão achou engraçada a ideia de um ratinho tão pequeno ajudá-lo, mas sensibilizado pela educação do bicho, abriu a pata e deixou-o ir livre.", prompt: "Big lion smiling kindly and lifting his paw to let tiny mouse run free, 2D storybook illustration" },
+      { text: "Alguns meses depois, enquanto caminhava pela floresta, o leão acabou caindo em uma forte rede colocada por caçadores entre as árvores.", prompt: "Big lion trapped in rope netting hanging from a tree branch, looking sad, 2D storybook illustration" },
+      { text: "O leão tentou se soltar com sua enorme força, mas quanto mais se mexia, mais as cordas apertavam. Ele soltou um urro de socorro que ecoou pelos vales.", prompt: "Lion roaring for help in sunny forest clearing trapped in net, 2D storybook illustration" },
+      { text: "O ratinho ouviu o rugido do seu amigo e correu imediatamente. Com seus dentes afiados, começou a roer as cordas grossas uma a uma com paciência e determinação.", prompt: "Tiny mouse chewing thick rope netting enthusiastically to free big lion, 2D storybook illustration" },
+      { text: "Em poucos minutos, a rede se abriu e o grande leão caiu suavemente na grama, totalmente livre e são e salvo.", prompt: "Big lion jumping out of net happily landing safely on soft green grass, 2D storybook illustration" },
+      { text: "O leão agradeceu ao ratinho do fundo do coração, aprendendo que nenhum ato de gentileza é em vão e que amigos pequenos podem realizar atos gigantescos de lealdade.", prompt: "Big lion and tiny mouse sitting together happily as best friends under sunny sky, 2D storybook illustration" }
     ]
   },
   {
     title: 'A Bela e a Fera',
     category: 'contos-de-herois',
-    ageGroups: ['5-7', '8-10'],
+    ageGroups: ['5-7', '8-10', '11-14'],
     coverEmoji: '🌹',
     coverColor: '#B91C1C',
     value: 'amor e enxergar a essência',
@@ -276,10 +349,18 @@ const MASTER_CLASSIC_STORIES = [
     missionDesc: 'Faça um elogio sincero sobre as qualidades internas de alguém da sua família hoje!',
     reflectionQuestion: 'Por que a verdadeira beleza de uma pessoa está no seu coração e nas suas atitudes?',
     paragraphs: [
-      { text: "Era uma vez uma jovem muito culta e bondosa chamada Bela. Seu pai, um comerciante dedicado, acabou se perdendo em uma noite fria e se abrigou em um misterioso castelo na floresta.", prompt: "An elderly merchant carrying a backpack walking toward a stone castle on a hill at sunset, 2D storybook illustration" },
-      { text: "Para proteger seu querido pai, Bela decidiu morar no castelo. Lá ela conheceu o dono do lugar, uma Fera de aparência assustadora, mas que guardava uma profunda tristeza.", prompt: "Gentle young woman Bela in simple blue dress speaking to a tall furry Beast in a sunlit palace library, 2D storybook illustration" },
-      { text: "Com o passar dos dias, Bela observou a gentileza, a educação e o respeito da Fera, percebendo que a verdadeira beleza não está na aparência exterior, mas no coração.", prompt: "Bela and the Beast reading books together near a large arched window with warm sunlight, 2D storybook illustration" },
-      { text: "Quando a Fera ficou doente de saudade, Bela declarou seu afeto sincero. O encanto se desfez, e a Fera se transformou em um príncipe nobre e generoso.", prompt: "Handsome young prince standing holding hands with Bela in a rose garden under bright sun, 2D storybook illustration" }
+      { text: "Em um tranquilo vilarejo no interior da França, vivia uma jovem inteligente e leitora assídua chamada Bela.", prompt: "Young woman Bela in simple blue dress reading a book in sunny village square, 2D storybook illustration" },
+      { text: "Bela adorava livros de cavalaria e poesia. Ela cuidava de seu pai, Maurice, um inventor de coração bondoso e dedicado.", prompt: "Bela helping her elderly father Maurice with wooden gears in a sunny workshop, 2D storybook illustration" },
+      { text: "Um dia, ao viajar para vender suas invenções, Maurice se perdeu em uma tempestade de neve e encontrou abrigo em um castelo misterioso.", prompt: "Elderly merchant walking through snowy forest towards a magnificent stone castle, 2D storybook illustration" },
+      { text: "No castelo, Maurice colheu uma rosa vermelha para presentear Bela, despertando a indignação do morador do castelo: uma Fera de aparência assustadora.", prompt: "Elderly father holding a red rose in castle garden with tall shadowy Beast watching, 2D storybook illustration" },
+      { text: "Para resgatar seu amado pai, Bela viajou corajosamente até o castelo e ofereceu-se para morar no lugar em substituição a ele.", prompt: "Bela stepping bravely into sunlit stone castle hall to hug her elderly father, 2D storybook illustration" },
+      { text: "Nos primeiros dias, Bela sentia medo da Fera por causa da sua voz grave e aparência rústica.", prompt: "Bela sitting at long wooden dinner table looking curiously at tall furry Beast, 2D storybook illustration" },
+      { text: "Com o tempo, a Fera mostrou a Bela a grande biblioteca do castelo, cheia de milhares de livros raros iluminados pelo sol.", prompt: "Bela and the Beast standing in a huge castle library with bright arched windows, 2D storybook illustration" },
+      { text: "Bela começou a perceber que a Fera tratava a todos com gentileza, educação e grande respeito, guardando um coração muito nobre.", prompt: "Bela and the Beast feeding birds together in a snowy castle garden, 2D storybook illustration" },
+      { text: "Eles conversavam sobre histórias, ouviam música e passeavam pelos jardins de rosas vermelhas sob a claridade da tarde.", prompt: "Bela in yellow dress dancing gracefully with the Beast in a sunlit palace ballroom, 2D storybook illustration" },
+      { text: "Quando a Fera adoeceu de saudade, Bela segurou sua mão com carinho e declarou que enxergava a verdadeira beleza do seu coração.", prompt: "Bela holding the furry hand of the Beast tenderly with tears of affection, 2D storybook illustration" },
+      { text: "Nesse instante, um brilho mágico envolveu o castelo e a Fera transformou-se num príncipe jovem, gentil e de olhar sincero.", prompt: "Handsome prince standing in golden light holding hands with happy Bela in rose garden, 2D storybook illustration" },
+      { text: "A história ensina a todas as crianças que as aparências exteriores passam, mas o amor, a gentileza e a essência do coração duram para sempre.", prompt: "Bela and prince standing happily together surrounded by colorful flowers and sunshine, 2D storybook illustration" }
     ]
   },
 
@@ -297,9 +378,14 @@ const MASTER_CLASSIC_STORIES = [
     missionDesc: 'Diga sempre a verdade hoje, mesmo que tenha cometido um pequeno erro!',
     reflectionQuestion: 'Por que a verdade limpa a nossa consciência e fortalece a amizade?',
     paragraphs: [
-      { text: "Ao quebrar o vaso favorito de sua mãe durante uma brincadeira, o pequeno Lucas sentiu o coração apertar, mas decidiu ser honesto.", prompt: "Young boy looking at broken flower vase on floor with honest emotional expression, warm room, 2D storybook illustration" },
-      { text: "Sua mãe o abraçou com carinho valorizando sua coragem de dizer a verdade imediatamente.", prompt: "Mother hugging young boy lovingly in warm sunlit room, 2D storybook illustration" },
-      { text: "Lucas aprendeu que ser sincero gera confiança verdadeira e traz paz ao nosso coração.", prompt: "Young boy smiling happily holding hands with his mother in a garden, 2D storybook illustration" }
+      { text: "Numa tarde ensolarada de sábado, o pequeno Lucas brincava alegremente na sala de estar de sua casa com sua bola de futebol.", prompt: "Little boy Lucas playing happily with a soccer ball in a bright cozy living room, 2D storybook illustration" },
+      { text: "Mesmo sabendo que sua mãe pedia para não chutar a bola dentro de casa, Lucas deu um chute um pouquinho mais forte.", prompt: "Soccer ball flying near a wooden table with a porcelain flower vase, 2D storybook illustration" },
+      { text: "A bola bateu no vaso de cerâmica azul da vovó, que caiu no tapete e dividiu-se em alguns pedaços.", prompt: "Porcelain vase broken into pieces on rug with soccer ball nearby, 2D storybook illustration" },
+      { text: "O coração de Lucas acelerou e ele sentiu um friozinho na barriga. Por um momento, ele pensou em inventar que o vento havia derrubado o vaso.", prompt: "Little boy looking at broken vase with a worried expression holding his soccer ball, 2D storybook illustration" },
+      { text: "Mas Lucas lembrou-se das lições sobre honestidade: mentir pode parecer fácil na hora, mas deixa a consciência pesada e mancha a confiança.", prompt: "Little boy taking a deep breath with honest determined look, 2D storybook illustration" },
+      { text: "Sua mãe entrou na sala ao ouvir o barulho. Lucas olhou nos olhos dela e disse com sinceridade: 'Mamãe, fui eu quem desobedeceu e chutou a bola'.", prompt: "Little boy looking up honestly and speaking to his caring mother in living room, 2D storybook illustration" },
+      { text: "A mãe de Lucas respirou fundo, ajoelhou-se ao lado dele e o abraçou com muito carinho e ternura.", prompt: "Mother hugging her young son lovingly in sunlit living room, 2D storybook illustration" },
+      { text: "'Fiquei chateada com o vaso', explicou a mãe, 'mas estou muito orgulhosa da sua coragem de dizer a verdade. A honestidade vale mais que mil vasos!'.", prompt: "Mother and young boy smiling happily together holding hands in sunny room, 2D storybook illustration" }
     ]
   },
   {
@@ -313,8 +399,14 @@ const MASTER_CLASSIC_STORIES = [
     missionDesc: 'Guarde seus brinquedos e organize sua cama hoje sem os pais precisarem pedir!',
     reflectionQuestion: 'Como cuidar do nosso espaço pessoal nos torna pessoas mais autônomas?',
     paragraphs: [
-      { text: "Sofia descobriu que organizar seus brinquedos em caixas coloridas deixava seu quarto bonito e aconchegante.", prompt: "Little girl putting colorful toy blocks happily into a storage box, 2D storybook illustration" },
-      { text: "Com tudo limpo e guardado em poucos minutos, ela sentiu o orgulho de demonstrar autonomia e cooperação em casa.", prompt: "Little girl standing proudly in clean beautiful bedroom with sunbeams, 2D storybook illustration" }
+      { text: "A pequena Sofia adorava brincar de construir castelos com blocos de madeira e vestir suas bonecas no quarto.", prompt: "Little girl Sofia playing with colorful toy blocks on bedroom rug, 2D storybook illustration" },
+      { text: "No final da tarde, o chão do quarto estava cheio de brinquedos espalhados por todos os cantos.", prompt: "Child bedroom with toys and books scattered on the wooden floor, 2D storybook illustration" },
+      { text: "Em vez de esperar que a mamãe pedisse, Sofia decidiu transformar a arrumação em um jogo divertido de super-heroína da organização!", prompt: "Little girl smiling enthusiastically holding a red toy storage box, 2D storybook illustration" },
+      { text: "Ela separou os blocos nas caixas amarelas, os livros na prateleira de madeira e os bichinhos de pelúcia sobre a cama.", prompt: "Little girl neatly placing plush teddy bears on a made bed in sunny room, 2D storybook illustration" },
+      { text: "Sofia esticou o lençol da cama com carinho e dobrou seu pijama preferido, deixando tudo impecável em poucos minutos.", prompt: "Little girl folding a pink blanket neatly over her small bed, 2D storybook illustration" },
+      { text: "Ao abrir a porta do quarto, a mamãe de Sofia ficou de queixo caído e deu um grande sorriso de surpresa.", prompt: "Mother smiling proudly looking into clean beautiful organized child bedroom, 2D storybook illustration" },
+      { text: "'Parabéns, Sofia!', disse a mãe. 'Você mostrou que está crescendo com autonomia, maturidade e amor ao nosso lar'.", prompt: "Mother hugging little girl happily in bright clean bedroom with sunbeams, 2D storybook illustration" },
+      { text: "Sofia sentiu uma alegria enorme no peito, aprendendo que cuidar das próprias coisas traz paz, beleza e orgulho para toda a família.", prompt: "Little girl standing proudly in center of her clean sunny room giving thumbs up, 2D storybook illustration" }
     ]
   },
 
@@ -332,8 +424,14 @@ const MASTER_CLASSIC_STORIES = [
     missionDesc: 'Regue as plantas da sua casa com carinho hoje!',
     reflectionQuestion: 'Por que cuidar da natureza e dos animais é dever de todos nós?',
     paragraphs: [
-      { text: "No coração do Pantanal brasileiro, a graciosa onça Tainá caminhava pelas margens límpidas do rio.", prompt: "Cute spotted jaguar walking on riverbank in lush Pantanal wetland, clear water, 2D storybook illustration" },
-      { text: "Aprender sobre os rios, as árvores e a vida selvagem nos ensina a respeitar a criação divina com cuidado e carinho.", prompt: "Colorful macaws flying over lush green forest with jaguar resting peacefully, 2D storybook illustration" }
+      { text: "Nas margens do sereno Rio Paraguay, no coração do Pantanal brasileiro, vivia a graciosa onça-pintada Tainá.", prompt: "Cute jaguar cub with beautiful spotted coat sitting near clear riverbank in Pantanal, 2D storybook illustration" },
+      { text: "Tainá tinha um pelagem dourada cheia de rosetas pretas perfeitas e olhos brilhantes como duas esmeraldas.", prompt: "Jaguar resting peacefully on a thick tree branch looking at turquoise water, 2D storybook illustration" },
+      { text: "Todas as manhãs, Tainá observava os tuiuiús de bico longo voando baixo sobre as águas e as capivaras nadando em família.", prompt: "Big white jabiru birds flying over wetland river with capybaras swimming happily, 2D storybook illustration" },
+      { text: "Certo dia, Tainá notou que alguns plásticos de garrafas flutuavam perto do ninho dos jacarés de papo-amarelo.", prompt: "Cute jaguar looking curiously at floating plastic bottle near water plants, 2D storybook illustration" },
+      { text: "Com muito cuidado, Tainá empurrou o objeto para fora da água com a pata, evitando que os animais da floresta se machucassem.", prompt: "Jaguar gently pulling plastic bottle out of water onto grassy bank, 2D storybook illustration" },
+      { text: "Um grupo de crianças que fazia um passeio ecológico de barco viu o gesto carinhoso de Tainá e comemorou com aplausos.", prompt: "Children wearing sun hats on a wooden boat waving happily at jaguar on riverbank, 2D storybook illustration" },
+      { text: "As crianças recolheram todo o lixo do rio e prometeram ser guardiãs da natureza e da fauna pantaneira.", prompt: "Children placing recycled bottles into bags on boat with sunny blue sky, 2D storybook illustration" },
+      { text: "Tainá soltou um miado suave e voltou para a sombra das vitórias-régias, lembrando que cuidar dos animais é proteger a obra da criação.", prompt: "Cute jaguar lying contentedly among huge green water lily pads at golden sunset, 2D storybook illustration" }
     ]
   }
 ];
@@ -350,7 +448,7 @@ async function wipeAndReseed() {
   }
   console.log(`[Wipe & Reseed] ✨ ${deletedCount} documentos antigos excluídos com sucesso.`);
 
-  console.log(`\n[Wipe & Reseed] 🚀 Cadastrando ${MASTER_CLASSIC_STORIES.length} histórias clássicas pré-configuradas...`);
+  console.log(`\n[Wipe & Reseed] 🚀 Cadastrando ${MASTER_CLASSIC_STORIES.length} histórias clássicas pré-configuradas (10 a 18 páginas cada)...`);
 
   let createdCount = 0;
 
@@ -380,7 +478,7 @@ async function wipeAndReseed() {
       slug: rawStory.title.toLowerCase().replace(/[^a-z0-9]/g, '-'),
       category: rawStory.category,
       ageGroups: rawStory.ageGroups,
-      durationMinutes: Math.max(3, Math.ceil(formattedParagraphs.length / 2)),
+      durationMinutes: Math.max(4, Math.ceil(formattedParagraphs.length / 2)),
       language: 'pt-BR',
       content: {
         text: fullText,
@@ -417,7 +515,7 @@ async function wipeAndReseed() {
     console.log(`[Wipe & Reseed] ✅ (${createdCount}/${MASTER_CLASSIC_STORIES.length}) História criada: "${rawStory.title}" (ID: ${docRef.id}, Páginas: ${formattedParagraphs.length})`);
   }
 
-  console.log(`\n🎉 [Wipe & Reseed] CONCLUÍDO COM SUCESSO! Todas as ${createdCount} histórias clássicas estão pré-cadastradas no Firestore com ilustrações 2D limpas.`);
+  console.log(`\n🎉 [Wipe & Reseed] CONCLUÍDO COM SUCESSO! Todas as ${createdCount} histórias clássicas estão cadastradas com narrativas longas (10 a 18 páginas cada) e ilustrações 2D limpas.`);
 }
 
 wipeAndReseed().then(() => process.exit(0)).catch(err => {

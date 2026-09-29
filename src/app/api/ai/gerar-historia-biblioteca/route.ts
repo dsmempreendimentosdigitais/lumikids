@@ -53,9 +53,9 @@ export async function POST(req: NextRequest) {
     // Usar o nome do corpo da requisição ou fallback
     const finalChildName = childName ? childName.trim() : name;
 
-    // 5. Se a história JÁ POSSUI conteúdo completo (não é placeholder e tem 4+ páginas), não sobrescreve com fallback!
-    if (!story.isPlaceholder && story.content?.paragraphs && story.content.paragraphs.length >= 4) {
-      console.log(`[gerar-historia-biblioteca] História "${story.title}" já está completa (${story.content.paragraphs.length} páginas). Retornando diretamente.`);
+    // 5. Se a história JÁ POSSUI conteúdo completo (não é placeholder), não sobrescreve com AI fallback!
+    if (!story.isPlaceholder && story.content?.paragraphs && story.content.paragraphs.length >= 2) {
+      console.log(`[gerar-historia-biblioteca] História "${story.title}" já está cadastrada (${story.content.paragraphs.length} páginas). Retornando diretamente.`);
       return NextResponse.json({ storyId, story });
     }
 

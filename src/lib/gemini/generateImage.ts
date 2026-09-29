@@ -36,8 +36,8 @@ export function buildPrompt(
   styleMode: '2d_storybook' | '3d_pixar' = '2d_storybook'
 ): string {
   const stylePrompt = styleMode === '3d_pixar'
-    ? 'High quality 3D digital cartoon render, Pixar Disney animation style, warm glowing sunlight, rich detailed scenery, cute character design, Octane render, masterpiece animation'
-    : 'Masterpiece 2D children storybook illustration, vibrant digital watercolor painting, warm cozy lighting, clean crisp lineart, rich colorful background, charming fairytale book art, highly detailed, beautiful classic children book aesthetic';
+    ? 'High quality 3D digital cartoon render, Pixar animation style, warm glowing sunlight, rich detailed scenery, cute character design, masterpiece'
+    : 'Cute 2D children storybook illustration, vibrant digital watercolor painting, flat vector art, bright sunny colors, cheerful fairytale book style, clean lines, clear sky';
 
   const rawScene = storyTitleOrScene
     .replace(/[*_#~`"']/g, '')
@@ -49,14 +49,14 @@ export function buildPrompt(
 
   const charTag = characterAppearance && characterAppearance.trim() 
     ? `${childName}, cute animated ${ageGroup} year old child with ${characterAppearance}`
-    : `${childName}, cute animated ${ageGroup} year old child`;
+    : `${childName}, cute animated child`;
 
   return [
-    styleMode === '2d_storybook' ? 'Beautiful 2D storybook illustration' : '3D animated scene full of life and color',
-    `Character visual appearance: ${charTag}`,
-    `Scene action & environment: ${safeScene}`,
+    styleMode === '2d_storybook' ? 'Beautiful 2D storybook drawing for kids' : '3D animated scene full of life and color',
+    `Scene: ${safeScene}`,
+    `Character: ${charTag}`,
     stylePrompt,
-    `cheerful vibrant background, sunny daylight, no text, no letters, no words, no watermark, no logo, clean framing`
+    `cheerful background, sunny daylight, no text, no letters, no words, no watermark, no logo`
   ].join(', ');
 }
 
@@ -70,16 +70,15 @@ export async function generateImageWithNanoBanana(
 ): Promise<string> {
   const cleanPrompt = buildPrompt(childName, ageGroup, storyTitleOrScene, characterAppearance, styleMode);
   
-  // Seed constante baseado no NOME + APARÊNCIA da criança para travar a consistência visual em todas as páginas
   const appearanceHash = (characterAppearance || '').split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
   const nameHash = Array.from(childName).reduce((acc, char) => acc + char.charCodeAt(0), 0);
   const baseSeed = (nameHash * 1000) + appearanceHash;
   const seed = baseSeed + (index * 43);
 
-  // TENTATIVA 1: Cloudflare Worker AI Privado (Se ativo)
+  // TENTATIVA 1: Cloudflare Worker AI Privado (Ultra-rápido, 2D de altíssima qualidade)
   if (CLOUDFLARE_WORKER_URL && CLOUDFLARE_WORKER_API_KEY) {
     try {
-      console.log(`[generateImage] Tentando Cloudflare Worker AI para página ${index}...`);
+      console.log(`[generateImage] Gerando imagem via Cloudflare Worker AI (Página ${index})...`);
       const response = await fetch(CLOUDFLARE_WORKER_URL, {
         method: 'POST',
         headers: {
@@ -87,7 +86,7 @@ export async function generateImageWithNanoBanana(
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ prompt: cleanPrompt }),
-        signal: AbortSignal.timeout(6000)
+        signal: AbortSignal.timeout(12000)
       });
 
       if (response.ok) {
@@ -99,18 +98,15 @@ export async function generateImageWithNanoBanana(
         }
       }
     } catch (cfErr: any) {
-      console.warn(`[generateImage] Worker Cloudflare offline/timeout (${cfErr.message}). Usando Pollinations...`);
+      console.warn(`[generateImage] Worker Cloudflare (${cfErr.message}). Usando Pollinations fallback...`);
     }
   }
 
-  // TENTATIVA 2: Pollinations FLUX (2D Storybook de alta qualidade, sem marcas d'água)
+  // TENTATIVA 2: Pollinations (Fallback sem nologo=true ou model=flux para evitar HTTP 402)
   const encodedPrompt = encodeURIComponent(cleanPrompt);
+  const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?seed=${seed}`;
   
-  // Usar model=flux (ou model=turbo) para garantir ilustrações 2D perfeitas sem artefatos 3D
-  const selectedModel = 'flux';
-  const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1024&height=1024&nologo=true&seed=${seed}&model=${selectedModel}&enhance=false`;
-  
-  console.log(`[generateImage] Pollinations ${selectedModel} (Página ${index}, Seed ${seed}): ${imageUrl.slice(0, 90)}...`);
-  
+  console.log(`[generateImage] Pollinations Fallback (Página ${index}): ${imageUrl.slice(0, 90)}...`);
   return imageUrl;
 }
+
