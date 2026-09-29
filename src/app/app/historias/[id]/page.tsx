@@ -468,28 +468,44 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
         }
       `}} />
 
-      <div className="bg-[#120F28]/90 backdrop-blur-xl border-b border-purple-500/20 rounded-b-[40px] p-6 pt-10 shadow-lg relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-purple-600/10 rounded-full blur-3xl -mr-10 -mt-20 z-0"></div>
-        <div className="relative z-10">
-          <Link href="/app/historias" className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-purple-900/40 text-purple-200 mb-6 hover:bg-purple-800/50 transition-colors border border-purple-500/30">
-            <i className="fas fa-arrow-left"></i>
-          </Link>
-          <div className="flex items-center gap-2 mb-2">
-            <div className="text-xs font-bold text-pink-400 uppercase tracking-wider">{story.theme ? story.theme.split(' - ')[0] : 'Aventura Mágica'}</div>
-            {story.isPremium && (
-              <span className="bg-amber-500/20 text-amber-300 text-[0.6rem] font-black px-2 py-0.5 rounded-full border border-amber-500/30 uppercase">
-                Premium 👑
-              </span>
-            )}
+      {/* Sanitiza o título para remover repetições como "- Um aprendizado sobre... para a faixa etária..." */}
+      {(() => {
+        const rawTitle = story.title || '';
+        const cleanTitle = rawTitle
+          .replace(/\s*-\s*Um aprendizado.*$/i, '')
+          .replace(/\s*para a faixa etária.*$/i, '')
+          .replace(/\s*sob as estrelas brilhantes.*$/i, '')
+          .trim();
+
+        return (
+          <div className="bg-[#120F28]/90 backdrop-blur-xl border-b border-purple-500/20 rounded-b-[24px] p-4 pt-4 shadow-lg relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-48 h-48 bg-purple-600/10 rounded-full blur-2xl -mr-10 -mt-10 z-0"></div>
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-2">
+                <Link href="/app/historias" className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-purple-900/40 text-purple-200 hover:bg-purple-800/50 transition-colors border border-purple-500/30 text-xs">
+                  <i className="fas fa-arrow-left"></i>
+                </Link>
+                <div className="flex items-center gap-2">
+                  <span className="text-[0.65rem] font-bold text-pink-400 uppercase tracking-wider">{story.theme ? story.theme.split(' - ')[0] : (story.category || 'História')}</span>
+                  {story.isPremium && (
+                    <span className="bg-amber-500/20 text-amber-300 text-[0.55rem] font-black px-2 py-0.5 rounded-full border border-amber-500/30 uppercase">
+                      Premium 👑
+                    </span>
+                  )}
+                </div>
+              </div>
+              
+              <h1 className="text-base md:text-lg font-bold text-white leading-snug mb-2 font-sans">{cleanTitle}</h1>
+              
+              <div className="flex items-center gap-3 text-[0.68rem] font-bold text-purple-200/70">
+                <span className="flex items-center gap-1"><i className="fas fa-child text-pink-400"></i> {story.ageGroups?.[0] ? `${story.ageGroups[0]} anos` : 'Livre'}</span>
+                <span className="flex items-center gap-1"><i className="fas fa-clock text-pink-400"></i> {story.durationMinutes || 5} min</span>
+                {story.value && <span className="flex items-center gap-1 truncate max-w-[180px]"><i className="fas fa-heart text-pink-400"></i> {story.value}</span>}
+              </div>
+            </div>
           </div>
-          <h1 className="text-3xl font-serif font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-100 via-pink-200 to-white leading-tight mb-4">{story.title}</h1>
-          <div className="flex items-center gap-4 text-xs font-bold text-purple-200/70">
-            <span className="flex items-center gap-1"><i className="fas fa-child text-pink-400"></i> {story.ageGroups?.[0] ? `${story.ageGroups[0]} anos` : 'Livre'}</span>
-            <span className="flex items-center gap-1"><i className="fas fa-clock text-pink-400"></i> {story.durationMinutes || 5} min</span>
-            <span className="flex items-center gap-1"><i className="fas fa-heart text-pink-400"></i> {story.value || 'Valores'}</span>
-          </div>
-        </div>
-      </div>
+        );
+      })()}
 
       <div className="p-6 -mt-4 relative z-20">
         {audioUrl && (

@@ -44,7 +44,6 @@ export async function POST(req: NextRequest) {
       const user = userSnap.data();
       const plan = user?.plan || 'free';
 
-      // Apenas planos familia, familia_plus, premium2 têm acesso a histórias premium
       const allowedPlans = ['familia', 'familia_plus', 'premium2'];
       if (!allowedPlans.includes(plan)) {
         return NextResponse.json({ error: 'Este é um recurso Premium. Faça upgrade para ler esta história!' }, { status: 403 });
@@ -54,29 +53,37 @@ export async function POST(req: NextRequest) {
     // Usar o nome do corpo da requisição ou fallback
     const finalChildName = childName ? childName.trim() : name;
 
-    // 6. Gerar história completa usando o tema do catálogo
+    // 5. Se a história JÁ POSSUI conteúdo completo (não é placeholder e tem 4+ páginas), não sobrescreve com fallback!
+    if (!story.isPlaceholder && story.content?.paragraphs && story.content.paragraphs.length >= 4) {
+      console.log(`[gerar-historia-biblioteca] História "${story.title}" já está completa (${story.content.paragraphs.length} páginas). Retornando diretamente.`);
+      return NextResponse.json({ storyId, story });
+    }
+
+    // 6. Se for um placeholder inédito, gera a história completa com Gemini
     const requestPayload = {
       childName: finalChildName,
       ageGroup: story.ageGroups?.[0] || '5-7',
       theme: story.theme || story.title,
       emotion: 'Alegria',
-      value: story.value || 'Amor',
+      value: story.value || 'Coragem e Sabedoria',
       language: 'pt-BR' as const,
       includeBiblicalValues: true
     };
 
     const storyGenerated = await generateStoryWithGemini(requestPayload);
 
-    // 7. Gerar Imagem de Capa
+    // 7. Gerar Imagem de Capa em estilo 2D Storybook
     const imageUrl = await generateImageWithNanoBanana(
       finalChildName,
       requestPayload.ageGroup,
       storyGenerated.title,
-      0
+      0,
+      undefined,
+      '2d_storybook'
     );
     storyGenerated.nanoBananaImageUrl = imageUrl;
 
-    // 8. Gerar Imagem para cada parágrafo (SEQUENCIAL para evitar erros de concorrência)
+    // 8. Gerar Imagem 2D para cada parágrafo
     if (storyGenerated.content && Array.isArray(storyGenerated.content.paragraphs)) {
       const updatedParagraphs = [];
       for (let idx = 0; idx < storyGenerated.content.paragraphs.length; idx++) {
@@ -86,14 +93,15 @@ export async function POST(req: NextRequest) {
           finalChildName,
           requestPayload.ageGroup,
           scenePrompt,
-          idx
+          idx,
+          undefined,
+          '2d_storybook'
         );
         updatedParagraphs.push({
           ...p,
           imageUrl: pImageUrl
         });
-        // Pequena pausa de 250ms entre gerações para garantir o sucesso das requisições
-        await new Promise(resolve => setTimeout(resolve, 250));
+        await new Promise(resolve => setTimeout(resolve, 200));
       }
       storyGenerated.content.paragraphs = updatedParagraphs;
     }
@@ -123,7 +131,7 @@ export async function POST(req: NextRequest) {
     const updatedStoryData = {
       title: storyGenerated.title,
       content: storyGenerated.content,
-      value: storyGenerated.value || story.value || 'Amor e Sabedoria',
+      value: storyGenerated.value || story.value || 'Coragem e Sabedoria',
       bibleReference: storyGenerated.bibleReference || story.bibleReference || '',
       mission: storyGenerated.mission || story.mission || null,
       reflection: storyGenerated.reflection || story.reflection || null,
