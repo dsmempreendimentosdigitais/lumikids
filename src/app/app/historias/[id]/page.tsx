@@ -47,7 +47,7 @@ function getDynamicEffects(text: string): string[] {
 // Função para quebrar parágrafos longos em legendas menores (até ~130 caracteres)
 function splitParagraphIntoSubtitles(text: string, imageUrl: string) {
   if (!text) return [];
-  if (text.length <= 130) {
+  if (text.length <= 400) {
     return [{ text, imageUrl }];
   }
 
@@ -63,7 +63,7 @@ function splitParagraphIntoSubtitles(text: string, imageUrl: string) {
 
     if (!currentChunk) {
       currentChunk = cleanSentence;
-    } else if ((currentChunk + ' ' + cleanSentence).length <= 130) {
+    } else if ((currentChunk + ' ' + cleanSentence).length <= 400) {
       currentChunk += ' ' + cleanSentence;
     } else {
       chunks.push({ text: currentChunk, imageUrl });
@@ -608,7 +608,7 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
                       <img 
                         src={p.imageUrl} 
                         alt={`Página ${currentPageIndex + 1}`} 
-                        className="w-full h-full object-cover animate-scene-5s"
+                        className="w-full h-full object-cover"
                         onError={(e) => { e.currentTarget.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="%23150F2D"/><stop offset="100%" stop-color="%230B0819"/></linearGradient></defs><rect width="800" height="800" fill="url(%23g)"/><circle cx="400" cy="350" r="120" fill="%238B5CF6" opacity="0.3"/><text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" fill="%23F3E8FF" font-size="72" font-family="serif">✨</text><text x="50%" y="60%" dominant-baseline="middle" text-anchor="middle" fill="%23D8B4FE" font-size="28" font-family="sans-serif" font-weight="bold">Ilustração Lumikids</text></svg>'; }}
                       />
 

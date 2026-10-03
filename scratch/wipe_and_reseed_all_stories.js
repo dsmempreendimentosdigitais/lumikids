@@ -42,11 +42,44 @@ function generate2DImageUrl(promptText, seed) {
   return `/api/ai/image?prompt=${encoded}&seed=${seed}`;
 }
 
-// Conjunto mestre de histórias clássicas completas (10-18 páginas cada)
+// Conjunto mestre de histórias clássicas completas, profundas e detalhadas
 const MASTER_CLASSIC_STORIES = [
   // ==========================================
   // 1. MITOLOGIA GREGA
   // ==========================================
+  {
+    title: 'Teseu e o Fio de Ariadne',
+    category: 'mitologia-grega',
+    ageGroups: ['8-10', '11-14'],
+    coverEmoji: '🧶',
+    coverColor: '#7C3AED',
+    value: 'inteligência e organização',
+    missionTitle: 'Caminho Seguro',
+    missionDesc: 'Ajude alguém da sua família a encontrar algo perdido hoje organizando os passos com calma!',
+    reflectionQuestion: 'Por que o planejamento cuidadoso e a serenidade nos ajudam a resolver os problemas mais difíceis da vida?',
+    paragraphs: [
+      { text: "Na antiga cidade grega de Trezena, o jovem Teseu cresceu sendo educado por sua mãe Aetria e seu avô, o sábio rei Piteu. Ele aprendeu desde cedo que um verdadeiro líder é reconhecido pelo respeito, pela justiça e pelo autocontrole.", prompt: "Young Theseus walking through sunny Greek marble courtyard with olive trees and blue sky, 2D storybook illustration" },
+      { text: "Ao completar dezesseis anos, Teseu conseguiu erguer uma pesada rocha de pedra, encontrando a espada e as sandálias deixadas por seu pai, o Rei Egeu de Atenas. Com coração corajoso, ele decidiu viajar para conhecer a capital.", prompt: "Young Theseus lifting a large stone block revealing a gold sword and sandals, sunny Greek meadow, 2D storybook illustration" },
+      { text: "Durante a longa caminhada pela costa do Istmo de Corinto, Teseu protegeu os viajantes contra bandidos e perigos, mostrando que a verdadeira força deve ser usada sempre para defender os fracos e necessitados.", prompt: "Theseus holding a wooden staff walking along sunny Greek mountain path near blue sea, 2D storybook illustration" },
+      { text: "Ao chegar à grandiosa Atenas, o Rei Egeu reconheceu a espada de seu filho e abraçou-o com profunda emoção diante de toda a corte, declarando Teseu o príncipe herdeiro do reino.", prompt: "King Aegus embracing young Theseus warmly in a sunlit Athenian palace court, 2D storybook illustration" },
+      { text: "Contudo, o ambiente na cidade era de profunda tristeza. Todos os anos, por causa de um antigo tratado, jovens de Atenas eram enviados para a ilha de Creta para entrar no temido Labirinto construído pelo arquiteto Dédalo.", prompt: "Townspeople in ancient Athens gathering in sadness under clear blue sky, 2D storybook illustration" },
+      { text: "Não suportando ver as famílias chorarem, o príncipe Teseu deu um passo à frente perante o Rei Egeu e disse com determinação: 'Pai, eu irei como voluntário. Com inteligência e retidão, trarei a paz de volta à nossa terra'.", prompt: "Young Theseus speaking bravely to his father King Aegus in throne room, 2D storybook illustration" },
+      { text: "O Rei Egeu abençoou o filho e pediu: 'Se você for vitorioso, troque as velas pretas do navio por velas brancas reluzentes na viagem de volta, para que eu saiba de longe que você está vivo e bem'.", prompt: "Ancient Greek sailboat with black sails departing sunny port as elderly king waves, 2D storybook illustration" },
+      { text: "Teseu embarcou na frota e navegou pelas águas cristalinas do Mar Egeu. Durante o trajeto, ele manteve a serenidade, conversando com os outros jovens e incentivando-os a confiar na sabedoria e no bem.", prompt: "Theseus standing calmly on wooden sailboat deck looking over turquoise Mediterranean sea, 2D storybook illustration" },
+      { text: "Ao desembarcarem no movimentado porto de Cnosso, na ilha de Creta, os atenienses foram conduzidos ao imponente palácio real, cujas colunas vermelhas brilhavam sob o sol radiante da tarde.", prompt: "Group of young travelers walking into majestic Cretan palace with red pillars, 2D storybook illustration" },
+      { text: "A jovem princesa Ariadne, filha do Rei Minos, observou o príncipe Teseu da varanda do palácio. Impressionada com sua postura nobre, olhar sincero e amor ao seu povo, Ariadne decidiu ajudá-lo.", prompt: "Princess Ariadne watching young Theseus from palace balcony with warm respectful expression, 2D storybook illustration" },
+      { text: "Naquela mesma noite, Ariadne encontrou-se secretamente com Teseu no jardim de oliveiras. Ela entregou-lhe um pequeno novelo de fio de seda dourado e uma pequena espada de bronze limpa.", prompt: "Princess Ariadne handing a golden thread ball to young Theseus in a sunlit moonlit garden, 2D storybook illustration" },
+      { text: "Ariadne explicou-lhe o conselho do sábio Dédalo: 'Amarre a ponta deste fio dourado logo no portão de entrada. À medida que caminhar pelos corredores escuros, vá desenrolando o novelo sem soltar a guia'.", prompt: "Close up of Ariadne showing golden thread ball to Theseus with soft gentle light, 2D storybook illustration" },
+      { text: "Ariadne continuou: 'Quando sua missão estiver concluída, basta rebobinar o fio de seda dourado. Ele conduzirá seus passos com exatidão de volta à luz, impede qualquer pessoa de se perder'.", prompt: "Theseus holding the shiny golden thread ball attentively listening to Ariadne, 2D storybook illustration" },
+      { text: "Ao alvorecer, Teseu caminhou firme até o imenso portão de bronze do Labirinto. Com todo o cuidado, ele amarrou a ponta do fio de seda em uma argola de ferro encravada na pedra da entrada.", prompt: "Theseus tying golden thread to large stone archway entrance, sunny daylight, 2D storybook illustration" },
+      { text: "Passo a passo, Teseu adentrou os corredores sinuosos de mármore. Enquanto o sol filtrava pelos arcos superiores, ele desenrolava a linha dourada com calma, sem jamais se afobar ou entrar em pânico.", prompt: "Theseus holding golden thread walking through sunlit marble labyrinth hallways, 2D storybook illustration" },
+      { text: "O som de seus passos ecoava nas paredes de pedra. Lembrou-se dos conselhos de seu avô: a calma e a organização vencem o caos, e o medo desaparece quando mantemos o foco no dever justo.", prompt: "Theseus holding a warm lantern and golden thread in arched stone passage, 2D storybook illustration" },
+      { text: "No grande pátio central do Labirinto, iluminado por feixes de luz solar, Teseu encontrou o lendário Minotauro. Com destreza, inteligência e serenidade, Teseu superou o desafio sem violência desnecessária.", prompt: "Theseus standing calmly before a tall peaceful horned guardian in sunlit atrium, 2D storybook illustration" },
+      { text: "Com o objetivo alcançado, Teseu sorriu com gratidão. Ele começou a rebobinar o fio de seda dourado, que resplandecia sob os feixes de luz, mostrando o caminho exato da volta.", prompt: "Theseus rolling back the shiny golden thread ball carefully in marble corridor, 2D storybook illustration" },
+      { text: "Seguindo o fio de ouro, Teseu guiou todos os jovens atenienses com segurança total de volta ao portão de bronze, onde Ariadne os esperava com imensa alegria e alívio.", prompt: "Theseus leading happy young people out of stone archway into bright sunny garden, 2D storybook illustration" },
+      { text: "Todos celebraram a vitória da sabedoria. Teseu retornou a Atenas, trocou as velas do navio por mantos brancos radiantes e tornou-se um rei sábio que ensinou seu povo a planejar cada passo com virtude.", prompt: "King Theseus wearing laurels crown standing on sailboat looking over sunny Athens at golden sunset, 2D storybook illustration" }
+    ]
+  },
   {
     title: 'Os 12 Trabalhos de Hércules',
     category: 'mitologia-grega',
@@ -58,20 +91,21 @@ const MASTER_CLASSIC_STORIES = [
     missionDesc: 'Hoje, antes de se irritar com um desafio, respire fundo três vezes e vença com paciência!',
     reflectionQuestion: 'O que é mais difícil: vencer um grande obstáculo ou controlar o próprio temperamento?',
     paragraphs: [
-      { text: "Na Grécia Antiga, vivia o jovem Hércules, um herói conhecido por sua grande força. Mas Hércules descobriu que a força verdadeira não vem dos músculos, e sim do amor, da sabedoria e do autocontrole.", prompt: "Young Hercules as a brave boy standing in ancient Greece with blue sky and marble pillars, holding a wooden staff, warm 2D storybook illustration" },
-      { text: "O 1º Trabalho foi enfrentar o mítico Leão de Nemeia. Em vez de agir com raiva, Hércules usou sua calma e inteligência para proteger os habitantes sem precisar de violência desnecessária.", prompt: "Young Hercules facing a large golden lion in a sunlit Greek wheat field, brave calm posture, 2D storybook illustration" },
-      { text: "No 2º Trabalho, Hércules enfrentou a Hidra de Lerna no pântano. Percebendo que cada obstáculo exigia estratégia, ele trabalhou unido com seu amigo Iolau, mostrando o valor da cooperação.", prompt: "Young Hercules and his friend holding torches in a misty valley, working together, 2D storybook illustration" },
-      { text: "No 3º Trabalho, Hércules precisou capturar a sagrada Cerva de Cerineia, que tinha chifres de ouro. Durante um ano inteiro, ele a seguiu com enorme paciência sem jamais feri-la.", prompt: "Young Hercules gently approaching a graceful golden-horned deer in a sunlit forest, 2D storybook illustration" },
-      { text: "No 4º Trabalho, Hércules subiu as montanhas geladas de Erimanto. Com serenidade e sem medo do frio, ele guiou o selvagem javali até a neve profunda, amansando a fera com domínio próprio.", prompt: "Young Hercules walking safely in snowy Greek mountains with pine trees, blue winter sky, 2D storybook illustration" },
-      { text: "No 5º Trabalho, o desafio parecia impossível: limpar os gigantescos estábulos do Rei Augias em um único dia. Hércules usou a criatividade e desviou dois rios límpidos que lavaram tudo com perfeição.", prompt: "Young Hercules redirecting two rushing blue rivers with stones to clean a sunny farm, 2D storybook illustration" },
-      { text: "No 6º Trabalho, no lago Estínfalo, Hércules usou címbalos de bronze presenteados por Atena. O som suave fez as aves misteriosas voarem para longe sem machucar ninguém.", prompt: "Young Hercules playing golden cymbals under a sunny sky as colorful birds fly away over a calm lake, 2D storybook illustration" },
-      { text: "No 7º Trabalho, na ilha de Creta, Hércules amansou o grande touro com gestos firmes e tranquilos, navegando de volta pelo Mar Egeu com o animal totalmente pacificado.", prompt: "Young Hercules standing next to a gentle brown bull on a wooden sailboat in turquoise sea, 2D storybook illustration" },
-      { text: "No 8º Trabalho, na Trácia, Hércules resgatou os velozes cavalos de Diomedes, alimentando-os com boa grama e trazendo a paz de volta às fazendas da região.", prompt: "Young Hercules feeding fresh green grass to majestic horses in a sunlit meadow, 2D storybook illustration" },
+      { text: "Na Grécia Antiga, o jovem Hércules cresceu demonstrando uma força extraordinária. Porém, ele aprendeu com seus sábios mestres que a verdadeira heroísmo não vem dos músculos, mas do amor, da serenidade e do domínio próprio.", prompt: "Young Hercules as a brave boy standing in ancient Greece with blue sky and marble pillars, holding a wooden staff, warm 2D storybook illustration" },
+      { text: "Para reparar seus erros da juventude e provar sua nobreza de caráter, Hércules comprometeu-se a realizar doze tarefas desafiadoras impostas pelo Rei Euristeu, mantendo sempre o coração em paz.", prompt: "Young Hercules receiving a wooden scroll from king in Greek palace court, sunny blue sky, 2D storybook illustration" },
+      { text: "No 1º Trabalho, Hércules enfrentou o invulnerável Leão de Nemeia. Com calma e estratégia, ele amansou a fera e usou sua própria lenda para proteger os habitantes da região sem crueldade.", prompt: "Young Hercules facing a large golden lion in a sunlit Greek wheat field, brave calm posture, 2D storybook illustration" },
+      { text: "No 2º Trabalho, Hércules enfrentou a Hidra de Lerna no pântano. Percebendo que cada obstáculo exigia cooperação, trabalhou lado a lado com seu fiel amigo Iolau, mostrando o valor do trabalho em equipe.", prompt: "Young Hercules and his friend holding torches in a misty valley, working together, 2D storybook illustration" },
+      { text: "No 3º Trabalho, Hércules precisou capturar a sagrada Cerva de Cerineia, que tinha chifres de ouro. Durante um ano inteiro, ele a seguiu pelas florestas com enorme paciência sem jamais ferir a graciosa criatura.", prompt: "Young Hercules gently approaching a graceful golden-horned deer in a sunlit forest, 2D storybook illustration" },
+      { text: "No 4º Trabalho, Hércules subiu as montanhas geladas de Erimanto. Com serenidade e resistente ao frio, ele guiou o selvagem javali até a neve profunda, pacificando o animal com paciência inabalável.", prompt: "Young Hercules walking safely in snowy Greek mountains with pine trees, blue winter sky, 2D storybook illustration" },
+      { text: "No 5º Trabalho, o desafio parecia impossível: limpar os gigantescos estábulos do Rei Augias em um único dia. Hércules usou a criatividade e desviu dois rios límpidos que lavaram tudo com perfeita eficiência.", prompt: "Young Hercules redirecting two rushing blue rivers with stones to clean a sunny farm, 2D storybook illustration" },
+      { text: "No 6º Trabalho, no lago Estínfalo, Hércules recebeu címbalos de bronze presenteados pela deusa Atena. O som suave fez as aves misteriosas voarem para longe pacificamente sem ferir ninguém.", prompt: "Young Hercules playing golden cymbals under a sunny sky as colorful birds fly away over a calm lake, 2D storybook illustration" },
+      { text: "No 7º Trabalho, na ilha de Creta, Hércules amansou o grande touro selvagem com gestos firmes e tranquilos, navegando de volta pelo Mar Egeu com o animal totalmente pacificado.", prompt: "Young Hercules standing next to a gentle brown bull on a wooden sailboat in turquoise sea, 2D storybook illustration" },
+      { text: "No 8º Trabalho, na Trácia, Hércules resgatou os velozes cavalos de Diomedes, alimentando-os com boa grama fresca e trazendo a paz de volta às fazendas da região.", prompt: "Young Hercules feeding fresh green grass to majestic horses in a sunlit meadow, 2D storybook illustration" },
       { text: "No 9º Trabalho, Hércules viajou ao reino das Amazonas. Usando palavras de respeito e verdade, ele conquistou a confiança da Rainha Hipólita sem travar nenhuma batalha.", prompt: "Young Hercules speaking respectfully to a queen wearing a golden crown in ancient Greece, 2D storybook illustration" },
-      { text: "No 10º Trabalho, Hércules caminhou por terras distantes até a ilha de Eritreia, mantendo a perseverança firme mesmo sob o calor forte do deserto.", prompt: "Young Hercules walking bravely across a golden desert dune with a clear blue sky, 2D storybook illustration" },
-      { text: "No 11º Trabalho, Hércules encontrou o jardim secreto das Hespérides. Com ajuda e humildade, ele colheu as maçãs douradas da sabedoria para presentear o povo.", prompt: "Young Hercules holding shiny golden apples under a tree with golden fruit, 2D storybook illustration" },
-      { text: "No 12º e último Trabalho, Hércules cumpriu sua missão com a promessa de não usar nenhuma arma. Com afeição e respeito, amansou o guarda Cerberus.", prompt: "Young Hercules gently petting a friendly three-headed dog in a sunlit stone hall, 2D storybook illustration" },
-      { text: "Ao concluir os Doze Trabalhos, Hércules provou que o maior herói não é aquele que vence batalhas com a força bruta, mas sim aquele que domina a si mesmo e coloca seus talentos a serviço do bem.", prompt: "Young Hercules standing heroically on a mountain peak looking over a peaceful Greek village, golden sunset, 2D storybook illustration" }
+      { text: "No 10º Trabalho, Hércules caminhou por terras distantes até a ilha de Eritreia, mantendo a perseverança firme e a mente focada no dever mesmo sob o calor forte do deserto.", prompt: "Young Hercules walking bravely across a golden desert dune with a clear blue sky, 2D storybook illustration" },
+      { text: "No 11º Trabalho, Hércules encontrou o jardim secreto das Hespérides. Com humildade e sabedoria, ele colheu as maçãs douradas para presentear o povo com ensinamentos de vida.", prompt: "Young Hercules holding shiny golden apples under a tree with golden fruit, 2D storybook illustration" },
+      { text: "No 12º e último Trabalho, Hércules cumpriu a promessa de não usar nenhuma arma. Com afeição e respeito, amansou o leal guarda Cerberus, demonstrando que o amor vence o medo.", prompt: "Young Hercules gently petting a friendly three-headed dog in a sunlit stone hall, 2D storybook illustration" },
+      { text: "Ao concluir os Doze Trabalhos, Hércules provou a todo o mundo antigo que o maior herói não é aquele que vence batalhas brutas, mas sim aquele que domina a si mesmo e serve com amor.", prompt: "Young Hercules standing heroically on a mountain peak looking over a peaceful Greek village, golden sunset, 2D storybook illustration" }
     ]
   },
   {
@@ -85,43 +119,17 @@ const MASTER_CLASSIC_STORIES = [
     missionDesc: 'Pense antes de agir hoje! Use a sabedoria para responder com educação a qualquer momento difícil.',
     reflectionQuestion: 'Como a sabedoria nos ajuda a vencer o medo quando encontramos algo assustador?',
     paragraphs: [
-      { text: "Na vibrante Grécia Antiga, o jovem Perseu vivia com sua querida mãe, Danae, na tranquila ilha de Serifos. Ele era um rapaz conhecido por sua lealdade e bom coração.", prompt: "Young Perseus standing in a sunny Greek coastal village with turquoise sea and olive trees, 2D storybook illustration" },
-      { text: "Um dia, um governante injusto colocou Perseu diante de um grande desafio: ele precisaria viajar até terras distantes para buscar o reflexo da sabedoria e proteger sua família.", prompt: "Young Perseus talking to an old wise scholar holding a ancient scroll in a sunny Greek courtyard, 2D storybook illustration" },
-      { text: "Sentado à beira do Mar Egeu, Perseu buscou forças na oração e na serenidade. Ele sabia que a coragem não é a ausência de medo, mas a decisão de fazer o bem.", prompt: "Perseus sitting on a stone by the sea watching bright sunbeams on blue waves, 2D storybook illustration" },
-      { text: "Sensibilizada com a nobreza de seu coração, a deusa da sabedoria, Atena, apareceu em um raio de luz suave e presenteou Perseu com um escudo de bronze perfeitamente polido.", prompt: "Athena giving a gleaming polished bronze shield to young Perseus in a sunlit garden, 2D storybook illustration" },
-      { text: "'Este escudo brilhará como um espelho', explicou Atena. 'Ele ajudará você a enxergar os obstáculos com clareza sem se deixar cegar pela ilusão ou pelo pavor.'", prompt: "Young Perseus admiring the reflection of clouds in his shiny golden bronze shield, 2D storybook illustration" },
-      { text: "O deus Hermes também lhe entregou sandálias aladas que permitiam caminhar com agilidade e leveza sobre os vales e montanhas.", prompt: "Hermes handing winged sandals to Perseus under a clear blue sky, 2D storybook illustration" },
-      { text: "Usando as sandálias aladas, Perseu voou serenamente sobre ilhas, mares e florestas, aprendendo a contemplar a beleza da criação enquanto cumpria sua jornada.", prompt: "Perseus flying gracefully above green Greek islands and blue ocean with white clouds, 2D storybook illustration" },
-      { text: "Ao chegar à caverna de sombras onde os perigos se escondiam, Perseu lembrou-se das orientações de Atena: não olhar diretamente para a escuridão, mas usar a luz do escudo.", prompt: "Perseus holding up his mirror shield inside a warm stone passage, seeing clear reflections, 2D storybook illustration" },
-      { text: "Olhando apenas pelo reflexo do bronze reluzente, Perseu caminhou com passos firmes e precisos, superando o desafio com extrema prudência e sem derramar nenhuma lágrima de hesitação.", prompt: "Perseus stepping carefully guided by shield reflection in sunny archway, 2D storybook illustration" },
-      { text: "Na viagem de volta, Perseu avistou a jovem Andrade acorrentada em uma rocha à beira-mar, prestes a ser atingida pelas ondas de uma tempestade gerada pelo mar agitado.", prompt: "Young Andromeda standing safely on a sunny beach near gentle sea waves, 2D storybook illustration" },
-      { text: "Com bravura e agilidade, Perseu usou sua sabedoria e as ferramentas divinas para resgatar Andrade e levá-la em segurança de volta ao reino.", prompt: "Perseus helping young Andromeda onto his wooden sailboat under bright sunshine, 2D storybook illustration" },
-      { text: "Ao retornar a Serifos, Perseu libertou sua mãe e usou o escudo de bronze para restaurar a paz em todo o vilarejo, provando que a inteligência e a virtude sempre vencem a força desmedida.", prompt: "Perseus hugging his mother Danae happily in a flower-filled village square with cheering people, 2D storybook illustration" }
-    ]
-  },
-  {
-    title: 'Teseu e o Fio de Ariadne',
-    category: 'mitologia-grega',
-    ageGroups: ['8-10', '11-14'],
-    coverEmoji: '🧶',
-    coverColor: '#7C3AED',
-    value: 'inteligência e organização',
-    missionTitle: 'Caminho Seguro',
-    missionDesc: 'Ajude alguém da sua família a encontrar algo perdido hoje com atenção e carinho!',
-    reflectionQuestion: 'Por que planejar bem os nossos passos nos impede de ficar perdidos nos problemas?',
-    paragraphs: [
-      { text: "O jovem Teseu cresceu na cidade de Atenas, onde aprendeu desde cedo a valorizar a justiça, a verdade e o cuidado com as outras pessoas.", prompt: "Young Theseus walking through sunny marble streets of ancient Athens with blue sky, 2D storybook illustration" },
-      { text: "Quando soube que os jovens de seu vilarejo eram levados todos os anos para o Labirinto da ilha de Creta, Teseu voluntariou-se com coragem para resolver o problema.", prompt: "Theseus speaking bravely to King Aegus in a sunlit palace court, 2D storybook illustration" },
-      { text: "Teseu embarcou em um grande navio com velas brancas e navegou pelas águas cristalinas do Mar Egeu até desembarcar no porto de Creta.", prompt: "Ancient Greek sailboat with white sails gliding on turquoise sea under bright sun, 2D storybook illustration" },
-      { text: "Ao chegar ao palácio do rei Minos, a bondosa princesa Ariadne percebeu a nobreza de Teseu e decidiu ajudá-lo a encontrar a saída do temido Labirinto.", prompt: "Princess Ariadne greeting young Theseus in a sunny palace garden filled with roses, 2D storybook illustration" },
-      { text: "Ariadne entregou a Teseu um pequeno novelo de fio de seda dourado e disse: 'Prenda a ponta na entrada e desenrole o fio a cada passo dado'.", prompt: "Ariadne handing a golden thread ball to young Theseus with a warm gentle smile, 2D storybook illustration" },
-      { text: "Teseu agradeceu o conselho valioso e amarrou firmemente a extremidade do fio dourado no grande portão de bronze do Labirinto.", prompt: "Theseus tying a shiny gold thread to a wooden archway entrance, 2D storybook illustration" },
-      { text: "Caminhando pelos intermináveis corredores de pedra, Teseu mantinha a mão no fio dourado, avançando com tranquilidade e sem pressa.", prompt: "Theseus holding golden thread walking through sunlit stone hallways, 2D storybook illustration" },
-      { text: "No coração do Labirinto, Teseu encontrou o lendário Minotauro. Com destreza e calma, Teseu conseguiu pacificá-lo sem causar destruição.", prompt: "Theseus standing calmly before a large peaceful horned creature in a sunny courtyard, 2D storybook illustration" },
-      { text: "Cumprida a missão, era hora de retornar. Enquanto os outros temiam estar perdidos, Teseu simplesmente começou a rebobinar o fio dourado.", prompt: "Theseus carefully rolling back the shiny golden thread ball in stone corridors, 2D storybook illustration" },
-      { text: "Passo a passo, o fio brilhante guiou Teseu e todos os seus companheiros exatamente de volta à porta de entrada.", prompt: "Theseus leading a group of happy children out of stone hallway into bright daylight, 2D storybook illustration" },
-      { text: "Ariadne os esperava no portão com um grande sorriso. Todos celebraram a inteligência e a organização que salvaram o dia.", prompt: "Princess Ariadne cheering happily as young people emerge into sunlit gardens, 2D storybook illustration" },
-      { text: "Teseu retornou a Atenas e tornou-se um rei sábio, ensinando a todo o seu povo que o planejamento cuidadoso nos guia em segurança por qualquer labirinto da vida.", prompt: "King Theseus wearing a laurels crown looking over peaceful ancient Athens at golden sunset, 2D storybook illustration" }
+      { text: "Na vibrante Grécia Antiga, o jovem Perseu vivia com sua querida mãe, Danae, na tranquila ilha de Serifos. Ele era um rapaz conhecido por sua lealdade, bondade e amor à família.", prompt: "Young Perseus standing in a sunny Greek coastal village with turquoise sea and olive trees, 2D storybook illustration" },
+      { text: "Um dia, para proteger sua mãe de imposições injustas do governante local, Perseu comprometeu-se a realizar uma jornada perigosa para obter o reflexo da verdade e restaurar a paz no reino.", prompt: "Young Perseus talking to an old wise scholar holding a ancient scroll in a sunny Greek courtyard, 2D storybook illustration" },
+      { text: "Sentado à beira do Mar Egeu, Perseu buscou forças na oração e na reflexão silenciosa, sabendo que a coragem autêntica é a firme determinação de fazer o que é certo mesmo diante da incerteza.", prompt: "Perseus sitting on a stone by the sea watching bright sunbeams on blue waves, 2D storybook illustration" },
+      { text: "Sensibilizada com a nobreza de seu coração, a deusa da sabedoria, Atena, presenteou Perseu com um escudo de bronze perfeitamente polido que reluzia como um espelho sob a luz do sol.", prompt: "Athena giving a gleaming polished bronze shield to young Perseus in a sunlit garden, 2D storybook illustration" },
+      { text: "'Este escudo refletirá a verdade', ensinou Atena. 'Ele ajudará você a enxergar os obstáculos com clareza sem se deixar paralisar pelo pavor ou por ilusões enganosas'.", prompt: "Young Perseus admiring the reflection of clouds in his shiny golden bronze shield, 2D storybook illustration" },
+      { text: "O deus Hermes presenteou-o com sandálias aladas que permitiam caminhar com agilidade e leveza sobre montanhas e vales, mantendo os passos sempre seguros.", prompt: "Hermes handing winged sandals to Perseus under a clear blue sky, 2D storybook illustration" },
+      { text: "Com as sandálias aladas, Perseu voou serenamente sobre ilhas, mares e florestas, aprendendo a contemplar a beleza da criação enquanto cumpria sua missão com prudência.", prompt: "Perseus flying gracefully above green Greek islands and blue ocean with white clouds, 2D storybook illustration" },
+      { text: "Ao chegar à caverna de pedra onde as sombras se ocultavam, Perseu colocou o escudo de bronze em sua frente, olhando apenas para a imagem refletida no espelho reluzente.", prompt: "Perseus holding up his mirror shield inside a warm stone passage, seeing clear reflections, 2D storybook illustration" },
+      { text: "Guiado pelo reflexo nítido do bronze, Perseu caminhou com serenidade e passos firmes, superando o desafio sem hesitar nem derramar lágrimas de medo.", prompt: "Perseus stepping carefully guided by shield reflection in sunny archway, 2D storybook illustration" },
+      { text: "Na viagem de volta, Perseu resgatou a jovem Andrade na praia, ajudando-a a libertar-se das correntes de uma tempestade e levando-a em segurança em seu barco.", prompt: "Young Andromeda standing safely on a sunny beach near gentle sea waves with Perseus helping her, 2D storybook illustration" },
+      { text: "Ao retornar a Serifos, Perseu reencontrou sua mãe e usou o escudo da sabedoria para estabelecer a paz em todo o vilarejo, provando que a virtude vence qualquer adversidade.", prompt: "Perseus hugging his mother Danae happily in a flower-filled village square with cheering people, 2D storybook illustration" }
     ]
   },
 
@@ -146,7 +154,7 @@ const MASTER_CLASSIC_STORIES = [
       { text: "Mesmo vivendo no palácio, Ester manteve seu coração simples e continuou ouvindo os bons conselhos de Mardoqueu.", prompt: "Queen Esther reading a scroll near a sunlit palace window with white curtains, 2D storybook illustration" },
       { text: "Um dia, um oficial influente chamado Hamã planejou um decreto injusto contra todo o povo de Ester.", prompt: "Haman in dark purple cloak showing a sealed parchment scroll to court officials, 2D storybook illustration" },
       { text: "Ao saber do perigo, Mardoqueu enviou uma mensagem a Ester dizendo: 'Quem sabe não foi exatamente para um momento como este que você se tornou rainha?'.", prompt: "Messenger delivering a secret note to Queen Esther in royal gardens, 2D storybook illustration" },
-      { text: "Entrar na presença do rei sem ser chamada era proibido e muito perigoso. Mas Ester decided agir com coragem moral para salvar seu povo.", prompt: "Queen Esther praying deeply with eyes closed and hands together in a peaceful bedroom, 2D storybook illustration" },
+      { text: "Entrar na presença do rei sem ser chamada era proibido e muito perigoso. Mas Ester decidiu agir com coragem moral para salvar seu povo.", prompt: "Queen Esther praying deeply with eyes closed and hands together in a peaceful bedroom, 2D storybook illustration" },
       { text: "Ester pediu a todos que fizessem três dias de oração e união em busca de sabedoria e proteção.", prompt: "People praying together in ancient Persian courtyard under clear blue sky, 2D storybook illustration" },
       { text: "No terceiro dia, Ester vestiu seus trajes reais e caminhou com coragem até o pátio interior diante do trono do rei Assuero.", prompt: "Queen Esther stepping bravely into the grand throne room towards King Ahasuerus, 2D storybook illustration" },
       { text: "Ao ver a rainha, o rei estendeu seu cetro de ouro em sinal de acolhimento e perguntou qual era o seu pedido.", prompt: "King Ahasuerus holding out a golden scepter gently toward Queen Esther, 2D storybook illustration" },
@@ -448,7 +456,7 @@ async function wipeAndReseed() {
   }
   console.log(`[Wipe & Reseed] ✨ ${deletedCount} documentos antigos excluídos com sucesso.`);
 
-  console.log(`\n[Wipe & Reseed] 🚀 Cadastrando ${MASTER_CLASSIC_STORIES.length} histórias clássicas pré-configuradas (10 a 18 páginas cada)...`);
+  console.log(`\n[Wipe & Reseed] 🚀 Cadastrando ${MASTER_CLASSIC_STORIES.length} histórias clássicas pré-configuradas (narrativas profundas)...`);
 
   let createdCount = 0;
 
@@ -478,7 +486,7 @@ async function wipeAndReseed() {
       slug: rawStory.title.toLowerCase().replace(/[^a-z0-9]/g, '-'),
       category: rawStory.category,
       ageGroups: rawStory.ageGroups,
-      durationMinutes: Math.max(4, Math.ceil(formattedParagraphs.length / 2)),
+      durationMinutes: Math.max(5, Math.ceil(formattedParagraphs.length / 2)),
       language: 'pt-BR',
       content: {
         text: fullText,
@@ -515,7 +523,7 @@ async function wipeAndReseed() {
     console.log(`[Wipe & Reseed] ✅ (${createdCount}/${MASTER_CLASSIC_STORIES.length}) História criada: "${rawStory.title}" (ID: ${docRef.id}, Páginas: ${formattedParagraphs.length})`);
   }
 
-  console.log(`\n🎉 [Wipe & Reseed] CONCLUÍDO COM SUCESSO! Todas as ${createdCount} histórias clássicas estão cadastradas com narrativas longas (10 a 18 páginas cada) e ilustrações 2D limpas.`);
+  console.log(`\n🎉 [Wipe & Reseed] CONCLUÍDO COM SUCESSO! Todas as ${createdCount} histórias clássicas estão cadastradas com narrativas ricas e profundas.`);
 }
 
 wipeAndReseed().then(() => process.exit(0)).catch(err => {
