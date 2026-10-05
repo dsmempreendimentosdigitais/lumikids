@@ -373,466 +373,218 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
   }
 
   const ageGroup = story.ageGroups?.[0] || '5-7';
-  let fontStyleClass = "text-gray-900 font-black text-xl md:text-2xl leading-tight select-none tracking-wide";
-  if (ageGroup === '2-4') {
-    fontStyleClass = "text-gray-900 font-black text-2xl md:text-3xl leading-snug select-none tracking-wide";
-  } else if (ageGroup === '8-10') {
-    fontStyleClass = "text-gray-900 font-extrabold text-lg md:text-xl leading-snug select-none tracking-wide";
-  }
-
   const audioUrl = story.audio?.[story.language || 'pt-BR']?.url;
+  const totalPagesCount = displayParagraphs.length + 2; // Cover (1) + Pages (displayParagraphs.length) + End (1)
 
   return (
-    <div className="bg-[#0B0819] min-h-screen font-sans pb-32 text-white">
-      <style dangerouslySetInnerHTML={{__html: `
-        @keyframes sceneMotion5s {
-          0% { transform: scale(1) translate(0, 0); }
-          50% { transform: scale(1.07) translate(-1.2%, -1%); }
-          100% { transform: scale(1.03) translate(1%, 0.6%); }
-        }
-        .animate-scene-5s {
-          animation: sceneMotion5s 5s ease-in-out infinite alternate;
-          transform-origin: center center;
-        }
-        @keyframes lightSweep {
-          0% { transform: translateX(-100%) rotate(25deg); opacity: 0; }
-          20% { opacity: 0.3; }
-          50% { opacity: 0.3; }
-          100% { transform: translateX(250%) rotate(25deg); opacity: 0; }
-        }
-        .animate-light-sweep {
-          animation: lightSweep 5s ease-in-out infinite;
-        }
-        @keyframes floatBalloon {
-          0% { transform: translateY(120vh) translateX(0) rotate(0deg); opacity: 0; }
-          10% { opacity: 0.9; }
-          90% { opacity: 0.9; }
-          100% { transform: translateY(-120vh) translateX(30px) rotate(15deg); opacity: 0; }
-        }
-        .animate-balloon-slow {
-          animation: floatBalloon 9s linear infinite;
-        }
-        @keyframes twinkleStar {
-          0%, 100% { opacity: 0.3; transform: scale(0.8); }
-          50% { opacity: 1; transform: scale(1.25); }
-        }
-        .animate-star-twinkle {
-          animation: twinkleStar 3s ease-in-out infinite;
-        }
-        @keyframes blowWind {
-          0% { transform: translateX(-100%) skewX(-15deg); opacity: 0; }
-          30% { opacity: 0.25; }
-          70% { opacity: 0.25; }
-          100% { transform: translateX(100%) skewX(-15deg); opacity: 0; }
-        }
-        .animate-wind {
-          animation: blowWind 7s linear infinite;
-        }
-        @keyframes fallPetal {
-          0% { transform: translateY(-10%) translateX(0) rotate(0deg); opacity: 0; }
-          10% { opacity: 0.7; }
-          90% { opacity: 0.7; }
-          100% { transform: translateY(110%) translateX(-50px) rotate(180deg); opacity: 0; }
-        }
-        .animate-petal {
-          animation: fallPetal 8s linear infinite;
-        }
-        @keyframes fallRain {
-          0% { transform: translateY(-20%) translateX(0); opacity: 0.4; }
-          100% { transform: translateY(120%) translateX(-20px); opacity: 0.4; }
-        }
-        .animate-rain {
-          animation: fallRain 1.6s linear infinite;
-        }
-        @keyframes pulseGlow {
-          0%, 100% { opacity: 0.2; transform: scale(1.0); }
-          50% { opacity: 0.55; transform: scale(1.2); }
-        }
-        .animate-glow {
-          animation: pulseGlow 4s ease-in-out infinite;
-        }
-        @keyframes sunbeamFlow {
-          0%, 100% { opacity: 0.12; transform: skewX(-20deg) translateX(-10px); }
-          50% { opacity: 0.28; transform: skewX(-20deg) translateX(15px); }
-        }
-        .animate-sunbeams {
-          animation: sunbeamFlow 6s ease-in-out infinite;
-        }
-        @keyframes floatSparks {
-          0% { transform: translateY(0) translateX(0) scale(0.8); opacity: 0.1; }
-          50% { opacity: 0.85; transform: translateY(-35px) translateX(20px) scale(1.3); }
-          100% { transform: translateY(-70px) translateX(-15px) scale(0.8); opacity: 0.1; }
-        }
-        .animate-sparks {
-          animation: floatSparks 5s ease-in-out infinite;
-        }
-      `}} />
+    <div className="bg-[#F8F7F2] min-h-screen font-sans pb-28 text-[#1A1D20] flex flex-col justify-between select-none">
+      {/* ═══ TOP HEADER (Estilo Readmio) ═══ */}
+      <div className="bg-[#F8F7F2]/90 backdrop-blur-md px-6 py-4 flex items-center justify-between sticky top-0 z-40 border-b border-slate-200/60">
+        <Link 
+          href="/app/historias" 
+          className="w-9 h-9 rounded-full bg-slate-200/60 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition-colors text-base font-bold"
+          title="Fechar leitor"
+        >
+          ✕
+        </Link>
 
-      {/* Sanitiza o título para remover repetições como "- Um aprendizado sobre... para a faixa etária..." */}
-      {(() => {
-        const rawTitle = story.title || '';
-        const cleanTitle = rawTitle
-          .replace(/\s*-\s*Um aprendizado.*$/i, '')
-          .replace(/\s*para a faixa etária.*$/i, '')
-          .replace(/\s*sob as estrelas brilhantes.*$/i, '')
-          .trim();
+        <div className="text-sm font-bold text-slate-600 font-sans tracking-wide">
+          {currentPageIndex === 0 
+            ? `1 / ${totalPagesCount}` 
+            : currentPageIndex === displayParagraphs.length + 1 
+              ? `${totalPagesCount} / ${totalPagesCount}` 
+              : `${currentPageIndex + 1} / ${totalPagesCount}`
+          }
+        </div>
 
-        return (
-          <div className="bg-[#120F28]/90 backdrop-blur-xl border-b border-purple-500/20 rounded-b-[24px] p-4 pt-4 shadow-lg relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-48 h-48 bg-purple-600/10 rounded-full blur-2xl -mr-10 -mt-10 z-0"></div>
-            <div className="relative z-10">
-              <div className="flex items-center justify-between mb-2">
-                <Link href="/app/historias" className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-purple-900/40 text-purple-200 hover:bg-purple-800/50 transition-colors border border-purple-500/30 text-xs">
-                  <i className="fas fa-arrow-left"></i>
-                </Link>
-                <div className="flex items-center gap-2">
-                  <span className="text-[0.65rem] font-bold text-pink-400 uppercase tracking-wider">{story.theme ? story.theme.split(' - ')[0] : (story.category || 'História')}</span>
-                  {story.isPremium && (
-                    <span className="bg-amber-500/20 text-amber-300 text-[0.55rem] font-black px-2 py-0.5 rounded-full border border-amber-500/30 uppercase">
-                      Premium 👑
-                    </span>
-                  )}
-                </div>
-              </div>
-              
-              <h1 className="text-base md:text-lg font-bold text-white leading-snug mb-2 font-sans">{cleanTitle}</h1>
-              
-              <div className="flex items-center gap-3 text-[0.68rem] font-bold text-purple-200/70">
-                <span className="flex items-center gap-1"><i className="fas fa-child text-pink-400"></i> {story.ageGroups?.[0] ? `${story.ageGroups[0]} anos` : 'Livre'}</span>
-                <span className="flex items-center gap-1"><i className="fas fa-clock text-pink-400"></i> {story.durationMinutes || 5} min</span>
-                {story.value && <span className="flex items-center gap-1 truncate max-w-[180px]"><i className="fas fa-heart text-pink-400"></i> {story.value}</span>}
-              </div>
-            </div>
-          </div>
-        );
-      })()}
+        <div className="flex items-center gap-3 text-slate-700">
+          <button 
+            type="button"
+            onClick={() => setIsVideoPaused(!isVideoPaused)}
+            className="w-9 h-9 rounded-full bg-slate-200/60 hover:bg-slate-200 flex items-center justify-center transition-colors text-sm"
+            title="Ouvir Narração"
+          >
+            🔊
+          </button>
+          <span className="text-sm font-serif font-bold text-slate-700 cursor-pointer px-1">AA</span>
+        </div>
+      </div>
 
-      <div className="p-6 -mt-4 relative z-20">
-        {audioUrl && (
-          <div className="bg-[#120F28]/90 backdrop-blur-xl border border-purple-500/30 p-4 rounded-[24px] shadow-[0_8px_24px_rgba(0,0,0,0.4)] mb-8 flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-purple-900/50 text-pink-300 flex justify-center items-center flex-shrink-0 text-xl animate-pulse border border-purple-500/30">
-              <i className="fas fa-headphones"></i>
+      {/* ═══ CONTEÚDO PRINCIPAL DO LEITOR (Estilo Livro Infantil Impresso) ═══ */}
+      <div className="flex-1 max-w-xl w-full mx-auto px-6 py-4 flex flex-col justify-center" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+        
+        {/* SLIDE 1: CAPA COM TÍTULO (Página 1 / Total) */}
+        {currentPageIndex === 0 && (
+          <div className="flex flex-col items-center justify-center min-h-[480px] text-center px-4 py-8 bg-[#FAF9F5] rounded-[32px] border border-slate-200/80 shadow-sm relative overflow-hidden">
+            <div className="w-24 h-[3px] bg-[#0D9488] mb-8 rounded-full"></div>
+            
+            <span className="text-xs font-bold text-[#0D9488] uppercase tracking-widest mb-3">
+              {story.category ? story.category.replace('-', ' ') : 'História Infantil'}
+            </span>
+
+            <h1 className="text-3xl md:text-4xl font-serif font-bold text-slate-900 leading-tight mb-8 max-w-md">
+              {story.title}
+            </h1>
+
+            <div className="w-24 h-[3px] bg-[#0D9488] mb-12 rounded-full"></div>
+
+            <div className="flex items-center justify-center gap-4 text-xs font-medium text-slate-500 mb-8">
+              <span>⏱️ {story.durationMinutes || 5} min</span>
+              <span>•</span>
+              <span>❤️ {story.value || 'Valores Morais'}</span>
             </div>
-            <div className="flex-1 w-full overflow-hidden">
-              <div className="text-xs font-bold text-purple-200 mb-1 flex justify-between">
-                <span>Ouvir história (Auto-Play ativado)</span>
-                <span className="text-[0.65rem] text-pink-400 font-normal">Sincronizado ✨</span>
-              </div>
-              <audio 
-                controls 
-                className="w-full h-8 custom-audio-player outline-none" 
-                controlsList="nodownload"
-                onTimeUpdate={(e) => {
-                  const audio = e.currentTarget;
-                  if (audio.duration && displayParagraphs.length > 0) {
-                    const progress = audio.currentTime / audio.duration;
-                    const targetIndex = Math.min(
-                      Math.floor(progress * displayParagraphs.length),
-                      displayParagraphs.length - 1
-                    );
-                    if (targetIndex !== currentPageIndex) {
-                      setCurrentPageIndex(targetIndex);
-                    }
-                  }
-                }}
-              >
-                <source src={audioUrl} type="audio/mpeg" />
-              </audio>
-            </div>
+
+            <p className="text-xs font-sans text-slate-400 animate-pulse flex items-center gap-1">
+              Deslize para a direita e boa leitura 👈
+            </p>
           </div>
         )}
 
-        {displayParagraphs.length > 0 ? (
-          <div onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} className="select-none">
-            {currentPageIndex === displayParagraphs.length ? (
-              /* Slide Final: Moral da História & Missão */
-              <div className="relative rounded-[32px] overflow-hidden shadow-[0_12px_36px_rgba(0,0,0,0.5)] bg-gradient-to-tr from-[#120F28] via-[#1a153a] to-[#2a1f56] border border-purple-500/30 min-h-[385px] md:min-h-[450px] p-6 text-white flex flex-col justify-between">
-                <div className="text-center mt-4">
-                  <div className="text-5xl mb-2 animate-bounce">🌟</div>
-                  <h2 className="text-2xl font-serif font-black tracking-tight text-yellow-300">Fim da Aventura!</h2>
-                  <p className="text-purple-200/80 text-xs font-bold uppercase tracking-wider mt-1">Parabéns por concluir esta leitura!</p>
+        {/* SLIDES DA HISTÓRIA (Página 2 a N-1) - 1 Imagem 2D por Página + Texto Serif com Drop Cap */}
+        {currentPageIndex > 0 && currentPageIndex <= displayParagraphs.length && (
+          (() => {
+            const pIndex = currentPageIndex - 1;
+            const p = displayParagraphs[pIndex];
+            const isFirstStoryPage = pIndex === 0;
+
+            // Extrai a primeira letra para o Drop Cap da primeira página da história
+            const firstLetter = p.text ? p.text.charAt(0) : '';
+            const restOfText = p.text ? p.text.slice(1) : '';
+
+            return (
+              <div className="flex flex-col gap-6">
+                {/* 1 ILUSTRAÇÃO 2D DE LIVRO IMPRESSO POR PÁGINA */}
+                <div className="w-full rounded-[24px] overflow-hidden shadow-sm border border-slate-200/70 bg-white aspect-square max-h-[350px] mx-auto flex items-center justify-center">
+                  <img 
+                    src={p.imageUrl} 
+                    alt={`Ilustração Página ${currentPageIndex}`} 
+                    className="w-full h-full object-cover"
+                    onError={(e) => { e.currentTarget.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800"><rect width="800" height="800" fill="%23F3F1EA"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%230D9488" font-size="32" font-family="serif">✨ Ilustração Lumikids</text></svg>'; }}
+                  />
                 </div>
 
-                <div className="my-6 space-y-4">
-                  {(story.mission || story.content?.mission) && (
-                    <div className="bg-purple-950/40 backdrop-blur-md p-4 rounded-2xl border border-purple-500/30">
-                      <div className="flex items-center gap-2 mb-1.5 text-yellow-300 font-extrabold text-xs">
-                        <i className="fas fa-star"></i>
-                        <span>MISSÃO DO BEM: {story.mission?.title || 'Missão do Bem'}</span>
-                      </div>
-                      <p className="text-purple-100 text-xs leading-relaxed font-semibold">
-                        {story.mission?.description || story.content?.mission}
-                      </p>
-                    </div>
-                  )}
-
-                  {story.reflection?.question && (
-                    <div className="bg-purple-950/40 backdrop-blur-md p-4 rounded-2xl border border-purple-500/30">
-                      <div className="flex items-center gap-2 mb-1.5 text-cyan-300 font-extrabold text-xs">
-                        <i className="far fa-comments"></i>
-                        <span>VAMOS CONVERSAR?</span>
-                      </div>
-                      <p className="text-purple-100 text-xs leading-relaxed font-semibold">
-                        {story.reflection.question}
-                      </p>
-                    </div>
-                  )}
+                {/* TEXTO ESTILO LIVRO IMPRESSO (Com Capitular na 1ª página) */}
+                <div className="w-full bg-[#FAF9F5] p-6 md:p-8 rounded-[28px] border border-slate-200/70 shadow-sm min-h-[140px] flex items-center">
+                  <p className="font-serif text-lg md:text-xl text-slate-900 leading-relaxed select-none w-full">
+                    {isFirstStoryPage ? (
+                      <>
+                        <span className="float-left text-5xl md:text-6xl font-serif font-bold text-[#0D9488] pr-3 pb-1 leading-none font-bold">
+                          {firstLetter}
+                        </span>
+                        {restOfText}
+                      </>
+                    ) : (
+                      p.text
+                    )}
+                  </p>
                 </div>
 
-                <div className="flex flex-col gap-2 mb-2">
-                  <button 
-                    onClick={() => setCurrentPageIndex(0)}
-                    className="w-full h-11 rounded-full bg-white text-[#120F28] font-black text-xs hover:bg-purple-50 transition-all shadow-md flex items-center justify-center gap-1.5"
-                  >
-                    <i className="fas fa-redo"></i> Reler História
-                  </button>
-                  <Link 
-                    href="/app/historias"
-                    className="w-full h-11 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-black text-xs hover:opacity-90 transition-all shadow-md flex items-center justify-center gap-1.5 border border-purple-400/30"
-                  >
-                    <i className="fas fa-book-open"></i> Ver Outras Histórias
-                  </Link>
-                </div>
-              </div>
-            ) : (
-              /* Página Ativa da História - Layout Separado (Imagem + Balão Abaixo) */
-              (() => {
-                const p = displayParagraphs[currentPageIndex];
-                const activeEffects = getDynamicEffects(p.text);
-                const playStateStyle = { animationPlayState: isVideoPaused ? 'paused' : 'running' } as React.CSSProperties;
-
-                return (
-                  <div className="flex flex-col gap-5">
-                    {/* Quadro de Imagem com Animação de 5 Segundos */}
-                    <div className="relative rounded-[32px] overflow-hidden shadow-[0_12px_36px_rgba(0,0,0,0.6)] bg-[#090b14] border border-purple-500/30 w-full min-h-[300px] max-h-[420px] aspect-square mx-auto flex items-center justify-center">
-                      <img 
-                        src={p.imageUrl} 
-                        alt={`Página ${currentPageIndex + 1}`} 
-                        className="w-full h-full object-cover"
-                        onError={(e) => { e.currentTarget.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="%23150F2D"/><stop offset="100%" stop-color="%230B0819"/></linearGradient></defs><rect width="800" height="800" fill="url(%23g)"/><circle cx="400" cy="350" r="120" fill="%238B5CF6" opacity="0.3"/><text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" fill="%23F3E8FF" font-size="72" font-family="serif">✨</text><text x="50%" y="60%" dominant-baseline="middle" text-anchor="middle" fill="%23D8B4FE" font-size="28" font-family="sans-serif" font-weight="bold">Ilustração Lumikids</text></svg>'; }}
+                {/* Desafios Educativos Interativos se houver */}
+                {p.interactiveChallenge && (
+                  <div className="w-full">
+                    {p.interactiveChallenge.type === 'drag_rescue' && (
+                      <InteractiveDragRescue 
+                        instruction={p.interactiveChallenge.instruction}
+                        itemEmoji={p.interactiveChallenge.itemEmoji}
+                        targetEmoji={p.interactiveChallenge.targetEmoji}
                       />
-
-                      {/* Efeito de Feixe de Luz Mágico em Loop de 5 Segundos */}
-                      <div className="absolute inset-0 pointer-events-none overflow-hidden z-10">
-                        <div className="w-2/3 h-[200%] -top-1/2 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-light-sweep"></div>
-                      </div>
-
-                      {/* Header Flutuante por Cima da Imagem */}
-                      <div className="absolute top-4 left-4 right-4 flex justify-between items-center z-30 pointer-events-none">
-                        <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md text-white text-[0.65rem] font-black uppercase tracking-wider border border-white/20 shadow-lg pointer-events-auto">
-                          <i className="fas fa-book-open text-yellow-300"></i> Página {p.originalIndex + 1} {p.totalSubs > 1 ? `(${p.subIndex + 1}/${p.totalSubs})` : ''}
-                        </div>
-
-                        {isVideoEnabledUser ? (
-                          <button 
-                            type="button"
-                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIsVideoPaused(!isVideoPaused); }}
-                            className={`cursor-pointer backdrop-blur-md text-[0.6rem] font-black px-3.5 py-1.5 rounded-full flex items-center gap-1.5 border transition-all hover:scale-105 active:scale-95 select-none pointer-events-auto shadow-lg z-50 ${
-                              isVideoPaused 
-                                ? 'bg-[#3D5AFE] text-white border-blue-400 shadow-blue-500/30' 
-                                : 'bg-black/60 text-yellow-300 border-yellow-400/30'
-                            }`}
-                            title={isVideoPaused ? 'Clique para dar play no vídeo' : 'Clique para pausar o vídeo'}
-                          >
-                            {isVideoPaused ? (
-                              <>
-                                <i className="fas fa-play text-yellow-300 text-xs"></i>
-                                <span>DAR PLAY NO VÍDEO</span>
-                              </>
-                            ) : (
-                              <>
-                                <i className="fas fa-pause text-gray-300 text-xs"></i>
-                                <span>VÍDEO EM REPRODUÇÃO</span>
-                              </>
-                            )}
-                          </button>
-                        ) : (
-                          <div className="bg-black/60 backdrop-blur-sm text-[0.55rem] font-bold text-white px-2 py-0.5 rounded-full flex items-center gap-1 border border-white/10 pointer-events-auto">
-                            <i className="fas fa-lock text-yellow-400"></i>
-                            VÍDEO (PREMIUM)
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Efeitos dinâmicos sobre a imagem */}
-                      {isVideoEnabledUser && (
-                        <div className="absolute inset-0 pointer-events-none overflow-hidden z-10">
-                          <div className="absolute bottom-20 left-12 w-2.5 h-2.5 bg-yellow-300 rounded-full animate-ping opacity-60" style={playStateStyle}></div>
-                          <div className="absolute top-24 right-20 w-3 h-3 bg-white rounded-full animate-pulse opacity-40" style={playStateStyle}></div>
-                          {activeEffects.includes('balloon') && (
-                            <div className="absolute bottom-0 right-[25%] text-4xl animate-balloon-slow" style={{ ...playStateStyle, animationDelay: '0.8s' }}>🎈</div>
-                          )}
-                          {activeEffects.includes('stars') && (
-                            <div className="absolute top-[12%] left-[20%] text-yellow-300 text-lg animate-star-twinkle" style={playStateStyle}>⭐</div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Balão de Narração / Texto ABAIXO da Imagem (Sem Tampá-la) */}
-                    <div className="w-full bg-white px-6 py-5 rounded-[28px] border-4 border-purple-500/40 shadow-[0_10px_30px_rgba(139,92,246,0.3)] text-center pointer-events-auto overflow-hidden flex items-center justify-center relative min-h-[110px]">
-                      <div className="absolute top-0 right-0 w-16 h-16 bg-purple-100 rounded-full blur-2xl opacity-60 pointer-events-none"></div>
-                      <p className={fontStyleClass}>{p.text}</p>
-                    </div>
-
-                    {/* Renderizador de Desafios Educativos Interativos (Lumikids Educa) */}
-                    {p.interactiveChallenge && (
-                      <div className="w-full">
-                        {p.interactiveChallenge.type === 'drag_rescue' && (
-                          <InteractiveDragRescue 
-                            instruction={p.interactiveChallenge.instruction}
-                            itemEmoji={p.interactiveChallenge.itemEmoji}
-                            targetEmoji={p.interactiveChallenge.targetEmoji}
-                          />
-                        )}
-                        {p.interactiveChallenge.type === 'counting' && (
-                          <InteractiveCounting 
-                            instruction={p.interactiveChallenge.instruction}
-                            targetCount={p.interactiveChallenge.targetCount}
-                            itemEmoji={p.interactiveChallenge.itemEmoji}
-                          />
-                        )}
-                        {p.interactiveChallenge.type === 'shape_match' && (
-                          <InteractiveShapeMatch 
-                            instruction={p.interactiveChallenge.instruction}
-                            targetShape={p.interactiveChallenge.targetShape}
-                          />
-                        )}
-                        {p.interactiveChallenge.type === 'moral_choice' && (
-                          <InteractiveMoralChoice 
-                            question={p.interactiveChallenge.question}
-                            optionA={p.interactiveChallenge.optionA}
-                            optionB={p.interactiveChallenge.optionB}
-                          />
-                        )}
-                      </div>
+                    )}
+                    {p.interactiveChallenge.type === 'counting' && (
+                      <InteractiveCounting 
+                        instruction={p.interactiveChallenge.instruction}
+                        targetCount={p.interactiveChallenge.targetCount}
+                        itemEmoji={p.interactiveChallenge.itemEmoji}
+                      />
                     )}
                   </div>
-                );
-              })()
-            )}
+                )}
+              </div>
+            );
+          })()
+        )}
 
-            {/* Controles de Navegação Estilo Audiobook (Inspirado no Readmio) + Touch Swipe */}
-            <div className="flex flex-col items-center justify-center mt-6 w-full bg-[#150F2D]/80 backdrop-blur-xl p-5 rounded-[32px] border border-purple-500/20 shadow-[0_15px_40px_rgba(139,92,246,0.15)]">
+        {/* SLIDE FINAL: FIM DA HISTÓRIA & AVALIAÇÃO (Estilo Readmio Image 5) */}
+        {currentPageIndex === displayParagraphs.length + 1 && (
+          <div className="flex flex-col items-center justify-between min-h-[480px] text-center p-6 bg-[#FAF9F5] rounded-[32px] border border-slate-200/80 shadow-sm">
+            <div>
+              {/* Miniatura da Capa */}
+              <div className="w-28 h-28 rounded-2xl overflow-hidden shadow-md mx-auto mb-4 border border-slate-200">
+                <img src={story.coverImageUrl || displayParagraphs[0]?.imageUrl} alt={story.title} className="w-full h-full object-cover" />
+              </div>
+
+              <h2 className="text-2xl font-serif font-bold text-slate-900 mb-1">Fim da História</h2>
+              <p className="text-xs text-slate-500 font-sans mb-4">O que achou desta aventura?</p>
+
+              {/* Avaliação em Estrelas (Estilo Readmio) */}
+              <div className="flex justify-center gap-2 text-2xl text-[#F59E0B] mb-6">
+                <span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span>
+              </div>
+            </div>
+
+            {/* Seção "O que fazer agora?" */}
+            <div className="w-full my-4 space-y-3">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">O que fazer agora?</h3>
+
+              {story.reflection?.question && (
+                <div className="bg-white p-4 rounded-2xl border border-slate-200/80 text-left shadow-xs">
+                  <div className="flex items-center gap-2 text-[#0D9488] font-bold text-xs mb-1">
+                    <span>💬 Conversar em Família</span>
+                  </div>
+                  <p className="text-xs font-serif text-slate-700 leading-relaxed">
+                    {story.reflection.question}
+                  </p>
+                </div>
+              )}
+
+              {story.mission?.description && (
+                <div className="bg-white p-4 rounded-2xl border border-slate-200/80 text-left shadow-xs">
+                  <div className="flex items-center gap-2 text-[#F59E0B] font-bold text-xs mb-1">
+                    <span>🌟 Missão do Bem</span>
+                  </div>
+                  <p className="text-xs font-sans text-slate-700 leading-relaxed font-semibold">
+                    {story.mission.description}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Botões de Ação Finais */}
+            <div className="w-full flex flex-col gap-3">
+              <button 
+                onClick={() => setCurrentPageIndex(0)}
+                className="w-full py-3.5 rounded-full bg-[#0D9488] text-white font-bold text-sm hover:bg-[#0F766E] transition-all shadow-md flex items-center justify-center gap-2"
+              >
+                <span>🔄 Reler História</span>
+              </button>
               
-              {/* Topo: Contadores de Página */}
-              <div className="flex items-center justify-between w-full mb-3 px-3">
-                <span className="text-[0.65rem] font-black text-purple-300/50 uppercase tracking-widest">
-                  Página {currentPageIndex === displayParagraphs.length ? displayParagraphs.length : currentPageIndex + 1}
-                </span>
-                <span className="text-[0.65rem] font-black text-purple-300/50 uppercase tracking-widest">
-                  {displayParagraphs.length} Páginas
-                </span>
-              </div>
-
-              {/* Barra de Progresso Dinâmica */}
-              <div className="w-full h-[6px] bg-purple-900/40 rounded-full mb-6 overflow-hidden">
-                <div 
-                  className="h-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 rounded-full transition-all duration-500 ease-out"
-                  style={{ width: `${(Math.min(currentPageIndex, displayParagraphs.length - 1) / Math.max(1, displayParagraphs.length - 1)) * 100}%` }}
-                ></div>
-              </div>
-
-              {/* Botões de Controle (Estilo Player) */}
-              <div className="flex items-center justify-center gap-6 w-full px-2">
-                
-                {/* Botão Voltar (Estilo Rewind/Skip Back) */}
-                <button
-                  disabled={currentPageIndex === 0}
-                  onClick={() => setCurrentPageIndex(prev => prev - 1)}
-                  className="w-14 h-14 flex flex-col items-center justify-center rounded-full text-purple-300 transition-all hover:bg-purple-800/30 hover:scale-105 active:scale-95 disabled:opacity-20 disabled:pointer-events-none disabled:hover:bg-transparent disabled:hover:scale-100"
-                >
-                  <i className="fas fa-backward-step text-xl mb-1"></i>
-                  <span className="text-[0.55rem] font-bold opacity-70">Voltar</span>
-                </button>
-
-                {/* Botão Principal Central (Avançar Página / Reler) */}
-                <button
-                  onClick={() => {
-                    if (currentPageIndex === displayParagraphs.length) {
-                      setCurrentPageIndex(0); // Reset
-                    } else {
-                      setCurrentPageIndex(prev => prev + 1);
-                    }
-                  }}
-                  className="w-[84px] h-[84px] flex flex-col items-center justify-center rounded-full bg-gradient-to-br from-pink-500 via-purple-500 to-indigo-600 text-white shadow-[0_8px_30px_rgba(217,70,239,0.4)] hover:scale-105 active:scale-95 transition-all border-[6px] border-[#0B0819]"
-                >
-                  {currentPageIndex >= displayParagraphs.length - 1 ? (
-                    <>
-                      <i className="fas fa-redo text-2xl mb-1"></i>
-                      <span className="text-[0.6rem] font-black tracking-wider">Reler</span>
-                    </>
-                  ) : (
-                    <>
-                      <i className="fas fa-play text-2xl mb-1 ml-1"></i>
-                      <span className="text-[0.6rem] font-black tracking-wider">Próxima</span>
-                    </>
-                  )}
-                </button>
-
-                {/* Botão Avançar / Fim */}
-                <button
-                  disabled={currentPageIndex >= displayParagraphs.length}
-                  onClick={() => {
-                    if (currentPageIndex < displayParagraphs.length) {
-                      setCurrentPageIndex(prev => prev + 1);
-                    }
-                  }}
-                  className="w-14 h-14 flex flex-col items-center justify-center rounded-full text-purple-300 transition-all hover:bg-purple-800/30 hover:scale-105 active:scale-95 disabled:opacity-20 disabled:pointer-events-none disabled:hover:bg-transparent disabled:hover:scale-100"
-                >
-                  {currentPageIndex === displayParagraphs.length - 1 ? (
-                    <>
-                      <i className="fas fa-star text-xl text-yellow-400 mb-1"></i>
-                      <span className="text-[0.55rem] font-bold opacity-70">Fim</span>
-                    </>
-                  ) : (
-                    <>
-                      <i className="fas fa-forward-step text-xl mb-1"></i>
-                      <span className="text-[0.55rem] font-bold opacity-70">Pular</span>
-                    </>
-                  )}
-                </button>
-              </div>
+              <Link 
+                href="/app/historias"
+                className="w-full py-3.5 rounded-full bg-[#F59E0B] text-slate-900 font-bold text-sm hover:bg-amber-600 transition-all shadow-md flex items-center justify-center gap-2"
+              >
+                <span>🚀 Explorar Outras Histórias</span>
+              </Link>
             </div>
           </div>
-        ) : (
-          /* Fallback quando não há parágrafos estruturados */
-          <>
-            {story.nanoBananaImageUrl && (
-              <div className="mb-6 rounded-[24px] overflow-hidden shadow-sm">
-                <img src={story.nanoBananaImageUrl} alt="Ilustração da história" className="w-full h-auto object-cover" />
-              </div>
-            )}
-            <div className="bg-white p-6 rounded-[24px] shadow-sm mb-6 pb-8">
-              <div className="prose prose-blue max-w-none text-[#444] leading-[1.8] text-[1.05rem]">
-                {story.content?.text?.split('\n').filter((p: string) => p.trim() !== '').map((p: string, i: number) => (
-                  <p key={i} className="mb-5 last:mb-0">{p}</p>
-                ))}
-              </div>
-            </div>
-
-            {(story.mission || story.content?.mission) && (
-              <div className="bg-[linear-gradient(135deg,#3D5AFE,#5C6BC0)] text-white p-6 rounded-[24px] shadow-lg mb-8">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-[10px] bg-white/20 flex items-center justify-center text-xl text-yellow-300">
-                    <i className="fas fa-star"></i>
-                  </div>
-                  <h3 className="font-extrabold text-xl">{story.mission?.title || 'Missão do Bem'}</h3>
-                </div>
-                <p className="font-medium text-blue-50 leading-relaxed border-l-2 border-blue-400 pl-4">
-                  {story.mission?.description || story.content?.mission}
-                </p>
-              </div>
-            )}
-
-            {story.reflection?.question && (
-              <div className="bg-white p-6 rounded-[24px] shadow-sm border border-blue-100 text-center">
-                <h4 className="font-extrabold text-[#283593] mb-2"><i className="far fa-comments text-blue-500 mr-2"></i>Vamos conversar?</h4>
-                <p className="text-[#666] font-medium text-sm leading-relaxed">{story.reflection.question}</p>
-              </div>
-            )}
-          </>
         )}
+      </div>
+
+      {/* ═══ CONTROLES DE NAVEGAÇÃO DO LEITOR (Botões Voltar e Próxima) ═══ */}
+      <div className="max-w-xl w-full mx-auto px-6 py-2 flex items-center justify-between">
+        <button
+          disabled={currentPageIndex === 0}
+          onClick={() => setCurrentPageIndex(prev => prev - 1)}
+          className="px-5 py-2.5 rounded-full border border-slate-300 text-slate-700 font-bold text-xs hover:bg-slate-100 disabled:opacity-30 disabled:pointer-events-none transition-all flex items-center gap-1.5"
+        >
+          <span>👈 Anterior</span>
+        </button>
+
+        <button
+          disabled={currentPageIndex === displayParagraphs.length + 1}
+          onClick={() => setCurrentPageIndex(prev => prev + 1)}
+          className="px-6 py-2.5 rounded-full bg-[#0D9488] text-white font-bold text-xs hover:bg-[#0F766E] disabled:opacity-30 disabled:pointer-events-none transition-all shadow-md flex items-center gap-1.5"
+        >
+          <span>Próxima 👉</span>
+        </button>
       </div>
     </div>
   );

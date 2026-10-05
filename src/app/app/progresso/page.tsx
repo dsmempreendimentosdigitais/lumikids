@@ -47,66 +47,74 @@ export default function ProgressoPage() {
   const planColor = stats.plan === 'free' ? 'text-gray-500' : 'text-gold-500';
 
   return (
-    <div className="p-6 font-sans bg-[#0B0819] text-white min-h-screen pb-36 relative overflow-x-hidden">
-      {/* Background Starry Glows */}
-      <div className="fixed inset-0 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 50% 20%, rgba(139, 92, 246, 0.15), transparent 60%)' }}></div>
+    <div className="p-6 font-sans bg-[#F8F7F2] text-[#1A1D20] min-h-screen pb-32 max-w-2xl mx-auto">
+      <div className="flex items-center justify-between pt-2 mb-6">
+        <h1 className="text-2xl font-serif font-bold text-slate-900">Perfil</h1>
+        <Link href="/app/configuracoes" className="w-9 h-9 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-600 shadow-xs hover:bg-slate-50 transition-all" title="Configurações">
+          ⚙️
+        </Link>
+      </div>
 
-      <div className="relative z-10 max-w-2xl mx-auto pt-4">
-        <div className="flex items-center gap-4 mb-8">
-          <div className="w-[58px] h-[58px] rounded-full overflow-hidden shadow-[0_0_15px_rgba(139,92,246,0.5)] border-2 border-purple-400 flex-shrink-0">
-            <img src={user?.photoURL || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix'} alt="Avatar" className="w-[100%] h-[100%] object-cover" />
-          </div>
-          <div>
-            <h1 className="text-[1.6rem] font-serif font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-purple-200 to-blue-200 leading-tight break-all pr-4">{user?.displayName || 'Aventureiro'}</h1>
-            <p className="text-xs font-bold flex items-center gap-1.5 text-amber-300">
-              <i className="fas fa-crown"></i> {planName}
-            </p>
-          </div>
+      {/* User Info Card */}
+      <div className="bg-white rounded-[24px] border border-slate-200/80 p-5 shadow-xs mb-6 flex items-center gap-4">
+        <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-[#0D9488] shadow-xs flex-shrink-0">
+          <img src={user?.photoURL || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix'} alt="Avatar" className="w-full h-full object-cover" />
+        </div>
+        <div className="flex-1">
+          <h2 className="text-lg font-serif font-bold text-slate-900">{user?.displayName || 'Aventureiro Lumikids'}</h2>
+          <span className="inline-flex items-center gap-1 text-xs font-bold text-[#F59E0B] bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full mt-0.5">
+            👑 {planName}
+          </span>
+        </div>
+      </div>
+
+      {/* Stats Row (Estilo Readmio Image 8) */}
+      <div className="grid grid-cols-3 gap-3 mb-8">
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-4 text-center shadow-xs">
+          <div className="text-3xl mb-2">⏳</div>
+          <div className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider mb-1">Tempo de Leitura</div>
+          <div className="text-xl font-bold font-sans text-slate-900">{stats.totalStories * 5} <span className="text-xs text-slate-500 font-normal">min</span></div>
         </div>
 
-        <div className="bg-[#150F2D] border border-purple-500/30 rounded-[28px] p-6 shadow-lg mb-6 flex items-center justify-between">
-          <div>
-            <h3 className="font-extrabold text-white text-xl mb-1 font-serif">Total de Leituras</h3>
-            <p className="text-purple-200/60 text-xs font-semibold">Histórias geradas no Lumikids</p>
-          </div>
-          <div className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-300">
-            {loading ? '...' : stats.totalStories}
-          </div>
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-4 text-center shadow-xs">
+          <div className="text-3xl mb-2">🗓️</div>
+          <div className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider mb-1">Semanas de Leitura</div>
+          <div className="text-xl font-bold font-sans text-slate-900">1</div>
         </div>
 
-        <h2 className="text-sm font-black text-purple-300 uppercase tracking-widest mb-4">Uso do Plano IA</h2>
-        <div className="grid grid-cols-2 gap-4 mb-8">
-          <div className="bg-[#150F2D] border border-purple-500/20 rounded-[24px] p-5 shadow-lg relative overflow-hidden flex flex-col items-center justify-center min-h-[140px]">
-            <div className="text-3xl mb-1">📅</div>
-            <div className="text-purple-200/60 text-[0.65rem] font-bold uppercase tracking-wider text-center">Nesta Semana</div>
-            <div className="text-3xl font-black text-white mt-2 font-serif">
-              {loading ? '-' : stats.weekCount} <span className="text-sm text-purple-300/50 font-semibold">{stats.plan === 'free' ? '/ 2' : ''}</span>
-            </div>
-          </div>
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-4 text-center shadow-xs">
+          <div className="text-3xl mb-2">📕</div>
+          <div className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider mb-1">Histórias Lidas</div>
+          <div className="text-xl font-bold font-sans text-slate-900">{loading ? '...' : stats.totalStories}</div>
+        </div>
+      </div>
 
-          <div className="bg-[#150F2D] border border-purple-500/20 rounded-[24px] p-5 shadow-lg relative overflow-hidden flex flex-col items-center justify-center min-h-[140px]">
-            <div className="text-3xl mb-1">🗓️</div>
-            <div className="text-purple-200/60 text-[0.65rem] font-bold uppercase tracking-wider text-center">Neste Mês</div>
-            <div className="text-3xl font-black text-white mt-2 font-serif">
-              {loading ? '-' : stats.monthCount}
-            </div>
-          </div>
+      {/* Seção Conquistas Recentes (Estilo Readmio Image 8) */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-base font-serif font-bold text-slate-900">Conquistas Recentes</h3>
+          <span className="text-xs font-bold text-[#0D9488] cursor-pointer">Ver todas</span>
         </div>
 
-        <div className="relative group">
-          <div className="absolute -inset-0.5 bg-gradient-to-r from-pink-500 to-purple-500 rounded-[28px] opacity-75 blur-[2px] transition duration-300"></div>
-          <div className="relative bg-[#150F2D] text-white p-6 rounded-[26px] shadow-lg">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="font-serif font-black text-xl text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-amber-400">Lumikids Premium</h3>
-              <i className="fas fa-rocket text-yellow-300 text-2xl animate-pulse"></i>
+        <div className="grid grid-cols-3 gap-3">
+          {[
+            { icon: '🏅', title: 'Semana Perfeita' },
+            { icon: '🌱', title: 'Primeiros Brotos' },
+            { icon: '🌸', title: 'Flor dos Contos' },
+            { icon: '✨', title: 'Três Desejos' },
+            { icon: '🌳', title: 'Carvalho Mítico' },
+            { icon: '📖', title: 'Virador de Páginas' },
+            { icon: '📜', title: 'Buscador' },
+            { icon: '📚', title: 'Devorador' },
+            { icon: '👑', title: 'Mestre dos Contos' },
+          ].map((medal, idx) => (
+            <div key={idx} className="bg-white border border-slate-200/80 rounded-2xl p-4 text-center shadow-xs flex flex-col items-center justify-center">
+              <div className="w-12 h-12 rounded-full bg-[#FAF9F5] border border-amber-200 flex items-center justify-center text-2xl mb-2 shadow-xs">
+                {medal.icon}
+              </div>
+              <span className="text-xs font-bold text-slate-700 leading-tight">{medal.title}</span>
             </div>
-            <p className="font-medium text-purple-200/80 text-xs leading-relaxed mb-6">
-              Desbloqueie infinitas criações, trilhas de valores cristãos completas e áudios super detalhados.
-            </p>
-            <Link href="/app/planos" className="w-full flex items-center justify-center bg-gradient-to-r from-pink-500 to-purple-500 text-white font-extrabold h-[50px] rounded-[16px] shadow-md hover:opacity-90 transition-opacity text-sm">
-              Fazer Upgrade ✨
-            </Link>
-          </div>
+          ))}
         </div>
       </div>
     </div>

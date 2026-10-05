@@ -2,34 +2,38 @@
 
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { House, Wand2, BookOpen, User } from 'lucide-react';
+import { House, LayoutGrid, LibraryBig, User } from 'lucide-react';
 
 export default function BottomNav() {
   const pathname = usePathname();
 
   const ITEMS = [
-    { id: 'home', path: '/app', icon: <House size={22} />, label: "Home" },
-    { id: 'create', path: '/app/criar', icon: <Wand2 size={22} />, label: "Criar" },
-    { id: 'stories', path: '/app/historias', icon: <BookOpen size={22} />, label: "Minhas Histórias" },
-    { id: 'profile', path: '/app/configuracoes', icon: <User size={22} />, label: "Perfil" },
+    { id: 'home', path: '/app', icon: <House size={20} />, label: "Home" },
+    { id: 'browse', path: '/app/historias', icon: <LayoutGrid size={20} />, label: "Explorar" },
+    { id: 'library', path: '/app/criar', icon: <LibraryBig size={20} />, label: "Biblioteca" },
+    { id: 'profile', path: '/app/progresso', icon: <User size={20} />, label: "Perfil" },
   ];
 
   return (
-    <div className="bottom-nav fixed bottom-0 left-0 w-full bg-[#0B0819]/85 backdrop-blur-xl border-t border-purple-500/20 p-[10px_0_16px] flex justify-around shadow-[0_-10px_30px_rgba(139,92,246,0.15)] z-50 rounded-t-[24px]">
+    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[92%] max-w-[420px] bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-full px-3 py-2 flex items-center justify-around shadow-[0_12px_36px_rgba(0,0,0,0.08)] z-50">
       {ITEMS.map((item) => {
-        const isActive = pathname === item.path;
+        const isActive = pathname === item.path || (item.path !== '/app' && pathname.startsWith(item.path));
         return (
           <Link 
             key={item.id}
             href={item.path}
-            className={`bn-item flex flex-col items-center gap-[4px] cursor-pointer px-[12px] group ${isActive ? 'active' : ''} transition-all duration-300`}
+            className={`flex items-center gap-2 px-3 py-2 rounded-full transition-all duration-200 select-none ${
+              isActive 
+                ? 'bg-[#E6F4F1] text-[#0D9488] font-bold shadow-sm' 
+                : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/70 font-semibold'
+            }`}
           >
-            <div className={`bn-icon w-[44px] h-[44px] rounded-[16px] flex items-center justify-center text-[1.1rem] transition-all duration-300 ${isActive ? 'bg-gradient-to-tr from-purple-500 to-blue-500 text-white shadow-[0_0_20px_rgba(139,92,246,0.6)]' : 'bg-transparent text-purple-200/40 group-hover:bg-white/5 group-hover:text-purple-300'}`}>
+            <span className={`${isActive ? 'text-[#0D9488]' : 'text-slate-400'}`}>
               {item.icon}
-            </div>
-            <div className={`bn-label text-[0.65rem] font-[800] tracking-wide transition-all duration-300 ${isActive ? 'text-purple-300 drop-shadow-[0_0_5px_rgba(139,92,246,0.8)]' : 'text-purple-200/40'}`}>
+            </span>
+            <span className={`text-xs font-bold tracking-tight ${isActive ? 'inline-block' : 'hidden md:inline-block'}`}>
               {item.label}
-            </div>
+            </span>
           </Link>
         );
       })}

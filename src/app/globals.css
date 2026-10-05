@@ -1,34 +1,29 @@
 @import "tailwindcss";
 
 :root {
-  --blue:      #3B82F6;
-  --blue2:     #6366F1;
-  --blue-dark: #1E1B4B;
-  --gold:      #FBBF24;
-  --coral:     #F43F5E;
-  --cream:     #F8FAFC;
-  --bg:        #0B0819; /* Fundo escuro deep space */
-  --text:      #FFFFFF;
-  --green:     #10B981;
-  --purple:    #8B5CF6;
-  --card:      rgba(255, 255, 255, 0.05); /* Fundo glass */
-  --shadow:    0 8px 32px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 12px 48px rgba(139, 92, 246, 0.3);
-  --radius:    24px;
-  --radius-sm: 16px;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif: 'Merriweather', Georgia, serif;
   
-  --neon-border: rgba(139, 92, 246, 0.5);
+  --bg:          #F8F7F2; /* Cream light background like Readmio */
+  --bg-card:     #FFFFFF;
+  --text-dark:   #1A1D20;
+  --text-muted:  #64748B;
+  --brand-teal:  #0D9488; /* Readmio Green/Teal primary accent */
+  --brand-hover: #0F766E;
+  --brand-gold:  #F59E0B;
+  --brand-cream: #F3F1EA;
+  --border-light:#E2E8F0;
+  --shadow-sm:   0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-md:   0 8px 24px rgba(0, 0, 0, 0.06);
+  --shadow-lg:   0 16px 40px rgba(0, 0, 0, 0.08);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 body { 
-  font-family: var(--font-nunito), 'Nunito', sans-serif; 
+  font-family: var(--font-sans); 
   background-color: var(--bg); 
-  background-image: 
-    radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.15), transparent 25%),
-    radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.15), transparent 25%);
-  color: var(--text); 
+  color: var(--text-dark); 
   overflow-x: hidden; 
   min-height: 100vh;
 }
