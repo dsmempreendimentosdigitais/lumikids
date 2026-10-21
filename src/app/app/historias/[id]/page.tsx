@@ -187,6 +187,55 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
     } catch (err) {}
   };
 
+  // Efeito sonoro suave de página de livro virando (estilo Bible App for Kids)
+  const playPageFlipSound = () => {
+    if (typeof window === 'undefined') return;
+    try {
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      
+      // Cria som de "whoosh" suave de papel
+      const bufferSize = ctx.sampleRate * 0.12;
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = Math.random() * 2 - 1;
+      }
+
+      const noise = ctx.createBufferSource();
+      noise.buffer = buffer;
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(800, ctx.currentTime);
+      filter.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.12);
+
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.08, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+
+      noise.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+      noise.start();
+    } catch (e) {}
+  };
+
+  const handleNextPage = () => {
+    if (currentPageIndex < displayParagraphs.length + 1) {
+      playPageFlipSound();
+      setCurrentPageIndex(prev => prev + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPageIndex > 0) {
+      playPageFlipSound();
+      setCurrentPageIndex(prev => prev - 1);
+    }
+  };
+
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStartX(e.touches[0].clientX);
   };
@@ -198,14 +247,10 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
 
     if (diffX > 45) {
       // Arrastar para a esquerda -> Próxima página
-      if (currentPageIndex < displayParagraphs.length) {
-        setCurrentPageIndex(prev => prev + 1);
-      }
+      handleNextPage();
     } else if (diffX < -45) {
       // Arrastar para a direita -> Página anterior
-      if (currentPageIndex > 0) {
-        setCurrentPageIndex(prev => prev - 1);
-      }
+      handlePrevPage();
     }
     setTouchStartX(null);
   };
@@ -481,13 +526,39 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
           ✕
         </Link>
 
-        <div className="text-sm font-bold text-slate-600 font-sans tracking-wide">
-          {currentPageIndex === 0 
-            ? `1 / ${totalPagesCount}` 
-            : currentPageIndex === displayParagraphs.length + 1 
-              ? `${totalPagesCount} / ${totalPagesCount}` 
-              : `${currentPageIndex + 1} / ${totalPagesCount}`
-          }
+        {/* Indicador de Capítulos / Pedras de Marco Estilo Bible App for Kids */}
+        <div className="flex flex-col items-center gap-1 max-w-[200px] sm:max-w-xs">
+          <div className="flex items-center gap-1.5 overflow-x-auto py-1 px-2 no-scrollbar max-w-full">
+            {Array.from({ length: totalPagesCount }).map((_, idx) => {
+              const isCurrent = idx === currentPageIndex;
+              const isPast = idx < currentPageIndex;
+              return (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => {
+                    playPageFlipSound();
+                    setCurrentPageIndex(idx);
+                  }}
+                  className={`transition-all rounded-full ${
+                    isCurrent
+                      ? 'w-6 h-2.5 bg-amber-400 ring-2 ring-amber-300 shadow-sm'
+                      : isPast
+                        ? 'w-2.5 h-2.5 bg-emerald-500 hover:scale-125'
+                        : 'w-2.5 h-2.5 bg-slate-300 hover:bg-slate-400'
+                  }`}
+                  title={`Página ${idx + 1}`}
+                />
+              );
+            })}
+          </div>
+          <span className="text-[10px] font-bold text-slate-500 tracking-wider uppercase">
+            {currentPageIndex === 0 
+              ? `Capa • 1 / ${totalPagesCount}` 
+              : currentPageIndex === displayParagraphs.length + 1 
+                ? `Fim • ${totalPagesCount} / ${totalPagesCount}` 
+                : `Cena ${currentPageIndex} de ${displayParagraphs.length}`}
+          </span>
         </div>
 
         <div className="flex items-center gap-3 text-slate-700">
@@ -720,16 +791,16 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
       <div className="max-w-xl w-full mx-auto px-6 py-2 flex items-center justify-between">
         <button
           disabled={currentPageIndex === 0}
-          onClick={() => setCurrentPageIndex(prev => prev - 1)}
-          className="px-5 py-2.5 rounded-full border border-slate-300 text-slate-700 font-bold text-xs hover:bg-slate-100 disabled:opacity-30 disabled:pointer-events-none transition-all flex items-center gap-1.5"
+          onClick={handlePrevPage}
+          className="px-5 py-2.5 rounded-full border border-slate-300 text-slate-700 font-bold text-xs hover:bg-slate-100 disabled:opacity-30 disabled:pointer-events-none transition-all flex items-center gap-1.5 active:scale-95"
         >
           <span>👈 Anterior</span>
         </button>
 
         <button
           disabled={currentPageIndex === displayParagraphs.length + 1}
-          onClick={() => setCurrentPageIndex(prev => prev + 1)}
-          className="px-6 py-2.5 rounded-full bg-[#0D9488] text-white font-bold text-xs hover:bg-[#0F766E] disabled:opacity-30 disabled:pointer-events-none transition-all shadow-md flex items-center gap-1.5"
+          onClick={handleNextPage}
+          className="px-6 py-2.5 rounded-full bg-[#0D9488] text-white font-bold text-xs hover:bg-[#0F766E] disabled:opacity-30 disabled:pointer-events-none transition-all shadow-md flex items-center gap-1.5 active:scale-95"
         >
           <span>Próxima 👉</span>
         </button>
