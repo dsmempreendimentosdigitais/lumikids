@@ -52,9 +52,9 @@ export default function AdminPage() {
 
   if (loading) {
     return (
-      <div className="p-8 text-center bg-[#0B0819] text-white min-h-screen">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-purple-500 mx-auto"></div>
-        <p className="mt-4 font-bold text-sm text-purple-300">Carregando painel admin...</p>
+      <div className="p-8 text-center bg-[#F8F7F2] text-slate-900 min-h-screen">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#0D9488] mx-auto"></div>
+        <p className="mt-4 font-bold text-sm text-slate-600">Carregando painel admin...</p>
       </div>
     );
   }
@@ -62,27 +62,25 @@ export default function AdminPage() {
   if (dbUser?.role !== 'admin') return null;
 
   return (
-    <div className="p-6 bg-[#0B0819] text-white min-h-screen pb-36 font-sans overflow-x-hidden relative">
-      <div className="fixed inset-0 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 50% 20%, rgba(139, 92, 246, 0.15), transparent 60%)' }}></div>
-
+    <div className="p-6 bg-[#F8F7F2] text-[#1A1D20] min-h-screen pb-36 font-sans overflow-x-hidden relative">
       <div className="relative z-10 max-w-4xl mx-auto pt-4">
         <div className="flex items-center gap-3 mb-8">
-          <div className="w-[48px] h-[48px] rounded-[16px] flex items-center justify-center text-white text-[1.4rem] shadow-lg shadow-purple-500/30 border border-purple-400/30 bg-gradient-to-tr from-purple-600 to-indigo-600">
+          <div className="w-[48px] h-[48px] rounded-[16px] flex items-center justify-center text-amber-700 text-[1.4rem] shadow-xs border border-amber-200 bg-amber-50">
              👑
           </div>
           <div>
-            <h1 className="text-[2rem] font-serif font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-purple-200 to-blue-200 leading-tight">Painel Admin</h1>
-            <p className="text-purple-200/60 text-xs font-semibold">Gerenciamento de usuários e planos</p>
+            <h1 className="text-2xl font-serif font-bold text-slate-900 leading-tight">Painel Admin</h1>
+            <p className="text-slate-500 text-xs font-semibold">Gerenciamento de usuários e planos</p>
           </div>
         </div>
 
-        {error && <div className="text-red-400 font-bold bg-red-500/20 border border-red-500/40 p-4 rounded-[16px] text-sm mb-6">{error}</div>}
+        {error && <div className="text-red-600 font-bold bg-red-50 border border-red-200 p-4 rounded-[16px] text-sm mb-6">{error}</div>}
 
-        <div className="bg-[#150F2D] border border-purple-500/30 rounded-[24px] p-6 shadow-xl overflow-hidden">
+        <div className="bg-white border border-slate-200/90 rounded-[24px] p-6 shadow-xs overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-purple-500/20 text-purple-300 text-sm">
+                <tr className="border-b border-slate-200 text-slate-400 text-xs uppercase tracking-wider">
                   <th className="pb-3 font-bold px-2">Nome</th>
                   <th className="pb-3 font-bold px-2">E-mail</th>
                   <th className="pb-3 font-bold px-2">Data Cadastro</th>
@@ -93,25 +91,25 @@ export default function AdminPage() {
               </thead>
               <tbody>
                 {users.map(u => (
-                  <tr key={u.uid} className="border-b border-purple-500/10 text-sm hover:bg-purple-900/20 transition-colors">
-                    <td className="py-4 px-2 font-bold text-white">{u.displayName || 'Sem nome'}</td>
-                    <td className="py-4 px-2 text-purple-200/60">{u.email}</td>
-                    <td className="py-4 px-2 text-purple-200/60">
+                  <tr key={u.uid} className="border-b border-slate-100 text-sm hover:bg-slate-50 transition-colors">
+                    <td className="py-4 px-2 font-bold text-slate-900">{u.displayName || 'Sem nome'}</td>
+                    <td className="py-4 px-2 text-slate-500">{u.email}</td>
+                    <td className="py-4 px-2 text-slate-500">
                       {u.createdAt ? new Date(u.createdAt._seconds * 1000).toLocaleDateString('pt-BR') : '-'}
                     </td>
                     <td className="py-4 px-2">
-                      <span className={`px-2 py-1 rounded-full text-xs font-bold ${u.role === 'admin' ? 'bg-purple-500/30 text-purple-300 border border-purple-500/40' : 'bg-gray-500/20 text-gray-400'}`}>
+                      <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${u.role === 'admin' ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-slate-100 text-slate-600'}`}>
                         {u.role || 'user'}
                       </span>
                     </td>
                     <td className="py-4 px-2 font-semibold">
-                      <span className={`px-2 py-1 rounded-full text-xs font-bold ${u.plan === 'premium2' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-blue-500/20 text-blue-300 border border-blue-500/40'}`}>
+                      <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${u.plan === 'premium2' ? 'bg-teal-100 text-[#0D9488] border border-teal-300' : 'bg-slate-100 text-slate-600'}`}>
                         {u.plan}
                       </span>
                     </td>
                     <td className="py-4 px-2 text-right">
                       <select
-                        className="bg-[#1A133A] border border-purple-500/30 text-purple-200 font-bold text-xs rounded-lg px-2 py-1.5 outline-none cursor-pointer"
+                        className="bg-[#FAF9F5] border border-slate-300 text-slate-800 font-bold text-xs rounded-lg px-2 py-1.5 outline-none cursor-pointer"
                         value={u.plan || 'free'}
                         onChange={(e) => handlePlanChange(u.uid, e.target.value)}
                       >

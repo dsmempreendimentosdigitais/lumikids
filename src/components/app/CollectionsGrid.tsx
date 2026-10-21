@@ -92,15 +92,15 @@ const ICON_MAP: Record<string, any> = {
 
 export default function CollectionsGrid() {
   return (
-    <div className="mb-8">
-      <div className="flex justify-between items-baseline mb-4">
+    <div className="mb-8 font-sans">
+      <div className="flex justify-between items-center mb-3">
         <div>
-          <h4 className="text-xs font-black text-purple-300 uppercase tracking-widest flex items-center gap-2">
+          <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
             <span>✨</span> Trilhas de Conhecimento & Virtudes
           </h4>
-          <p className="text-[0.68rem] text-purple-200/50 font-medium">Histórias inteligentes adaptadas para formar mentes brilhantes</p>
+          <p className="text-[0.7rem] text-slate-500 font-medium mt-0.5">Histórias inteligentes adaptadas para formar mentes brilhantes</p>
         </div>
-        <Link href="/app/historias" className="text-xs text-blue-400 font-bold hover:text-blue-300 whitespace-nowrap">Ver todas</Link>
+        <Link href="/app/historias" className="text-xs text-[#0D9488] font-bold hover:underline whitespace-nowrap">Ver todas</Link>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -110,21 +110,20 @@ export default function CollectionsGrid() {
             <Link 
               key={trail.id} 
               href={`/app/historias?cat=${trail.id}`}
-              className="relative group block"
+              className="group block"
             >
-              <div className={`absolute -inset-0.5 bg-gradient-to-br ${trail.gradient} rounded-[22px] opacity-40 blur-[2px] group-hover:opacity-100 transition duration-300`}></div>
-              <div className="relative bg-[#150F2D] border border-white/10 rounded-[20px] p-3.5 h-full flex flex-col justify-between backdrop-blur-md transition-all hover:-translate-y-1">
+              <div className="bg-white border border-slate-200/90 rounded-[22px] p-4 h-full flex flex-col justify-between shadow-xs hover:shadow-md hover:border-[#0D9488]/40 transition-all">
                 <div>
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center justify-between mb-3">
                     <span className="text-2xl">{trail.emoji}</span>
-                    <div className={`w-7 h-7 rounded-lg bg-white/5 border ${trail.borderColor} flex items-center justify-center text-white/70 group-hover:text-white transition-colors`}>
+                    <div className="w-7 h-7 rounded-lg bg-teal-50 border border-teal-100 flex items-center justify-center text-[#0D9488]">
                       <IconComp size={14} />
                     </div>
                   </div>
-                  <h5 className="font-bold text-white text-xs mb-1 leading-tight">{trail.title}</h5>
-                  <p className="text-[0.63rem] text-purple-200/50 leading-snug line-clamp-2 font-medium">{trail.desc}</p>
+                  <h5 className="font-serif font-bold text-slate-900 text-sm mb-1 leading-snug">{trail.title}</h5>
+                  <p className="text-[0.68rem] text-slate-500 leading-snug line-clamp-2 font-medium">{trail.desc}</p>
                 </div>
-                <div className="mt-3 flex items-center justify-between text-[0.6rem] font-bold text-pink-400 group-hover:translate-x-1 transition-transform">
+                <div className="mt-3.5 flex items-center justify-between text-[0.65rem] font-bold text-[#0D9488] group-hover:translate-x-0.5 transition-transform">
                   <span>Explorar Trilha</span>
                   <span>→</span>
                 </div>

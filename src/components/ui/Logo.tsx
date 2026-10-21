@@ -28,15 +28,15 @@ export default function Logo({ size = 'md', showText = true, className = '' }: L
   };
 
   return (
-    <div className={`flex items-center gap-2.5 ${className}`}>
-      {/* Ícone Squircle Gradiente Rosa-Roxo com Estrelas Douradas (Estilo Anexo) */}
-      <div className={`${iconSizes[size]} bg-gradient-to-tr from-pink-500 via-purple-500 to-indigo-600 flex items-center justify-center text-yellow-300 shadow-[0_0_15px_rgba(217,70,239,0.5)] border border-pink-400/30 flex-shrink-0 animate-pulse`}>
-        <Sparkles size={starSizes[size]} className="fill-yellow-300 text-yellow-300 drop-shadow-[0_0_6px_rgba(253,224,71,0.8)]" />
+    <div className={`flex items-center gap-2 ${className}`}>
+      {/* Ícone Squircle Teal & Gold */}
+      <div className={`${iconSizes[size]} bg-[#0D9488] flex items-center justify-center text-amber-300 shadow-xs border border-teal-600/20 flex-shrink-0`}>
+        <Sparkles size={starSizes[size]} className="fill-amber-300 text-amber-300" />
       </div>
 
       {showText && (
-        <span className={`${textSizes[size]} font-serif font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-pink-200 via-purple-100 to-blue-200 drop-shadow-md`}>
-          Lumi<em className="not-italic text-yellow-300">kids</em>
+        <span className={`${textSizes[size]} font-serif font-extrabold tracking-tight text-slate-900`}>
+          Lumi<span className="text-[#0D9488]">kids</span>
         </span>
       )}
     </div>
