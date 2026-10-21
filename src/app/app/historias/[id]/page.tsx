@@ -96,6 +96,65 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
   const [interactivePop, setInteractivePop] = useState<{ x: number; y: number; active: boolean }>({ x: 0, y: 0, active: false });
   const [starsReward, setStarsReward] = useState<number>(3);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [activeWordIndex, setActiveWordIndex] = useState<number | null>(null);
+
+  // Narração Imersiva com Web Speech API e Sincronização de Palavras (Estilo Bible App for Kids)
+  const stopNarration = () => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+      setActiveWordIndex(null);
+    }
+  };
+
+  const speakText = (text: string) => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'pt-BR';
+    utterance.rate = 0.92; // Ritmo mais calmo e acolhedor para crianças
+    utterance.pitch = 1.05; // Tom ligeiramente suave e expressivo
+
+    // Tentar selecionar voz brasileira de qualidade
+    const voices = window.speechSynthesis.getVoices();
+    const ptVoice = voices.find(v => v.lang.includes('pt-BR') || v.lang.includes('pt_BR') || v.name.toLowerCase().includes('brazil') || v.name.toLowerCase().includes('maria') || v.name.toLowerCase().includes('luciana'));
+    if (ptVoice) {
+      utterance.voice = ptVoice;
+    }
+
+    // Sincronização de destaque de palavras
+    utterance.onboundary = (event) => {
+      if (event.name === 'word') {
+        const charIdx = event.charIndex;
+        const textBefore = text.slice(0, charIdx);
+        const wordCount = textBefore.trim() ? textBefore.trim().split(/\s+/).length : 0;
+        setActiveWordIndex(wordCount);
+      }
+    };
+
+    utterance.onstart = () => {
+      setIsSpeaking(true);
+    };
+
+    utterance.onend = () => {
+      setIsSpeaking(false);
+      setActiveWordIndex(null);
+    };
+
+    utterance.onerror = () => {
+      setIsSpeaking(false);
+      setActiveWordIndex(null);
+    };
+
+    window.speechSynthesis.speak(utterance);
+  };
+
+  // Para narração ao mudar de página
+  useEffect(() => {
+    stopNarration();
+  }, [currentPageIndex]);
 
   // Som suave de sininho e reação tátil estilo Bible App for Kids
   const triggerKidReaction = (e?: React.MouseEvent | React.TouchEvent) => {
@@ -434,11 +493,24 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
         <div className="flex items-center gap-3 text-slate-700">
           <button 
             type="button"
-            onClick={() => setIsVideoPaused(!isVideoPaused)}
-            className="w-9 h-9 rounded-full bg-slate-200/60 hover:bg-slate-200 flex items-center justify-center transition-colors text-sm"
-            title="Ouvir Narração"
+            onClick={() => {
+              if (isSpeaking) {
+                stopNarration();
+              } else {
+                const currentText = currentPageIndex > 0 && currentPageIndex <= displayParagraphs.length
+                  ? displayParagraphs[currentPageIndex - 1].text
+                  : story.title;
+                speakText(currentText);
+              }
+            }}
+            className={`w-9 h-9 rounded-full flex items-center justify-center transition-all text-sm shadow-xs ${
+              isSpeaking
+                ? 'bg-[#0D9488] text-white animate-pulse'
+                : 'bg-slate-200/60 hover:bg-slate-200 text-slate-700'
+            }`}
+            title={isSpeaking ? 'Pausar Narração' : 'Ouvir Narração da Página'}
           >
-            🔊
+            {isSpeaking ? '🔊' : '🔈'}
           </button>
           <span className="text-sm font-serif font-bold text-slate-700 cursor-pointer px-1">AA</span>
         </div>
@@ -513,16 +585,32 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
                   )}
                 </div>
 
-                {/* TEXTO ESTILO LIVRO IMPRESSO (Com Capitular na 1ª página) */}
-                <div className="w-full bg-[#FAF9F5] p-6 md:p-8 rounded-[28px] border border-slate-200/70 shadow-sm min-h-[140px] flex items-center">
+                {/* TEXTO ESTILO LIVRO IMPRESSO (Com Capitular na 1ª página e Destaque Sincronizado de Narração) */}
+                <div className="w-full bg-[#FAF9F5] p-6 md:p-8 rounded-[28px] border border-slate-200/70 shadow-sm min-h-[140px] flex items-center relative">
                   <p className="font-serif text-lg md:text-xl text-slate-900 leading-relaxed select-none w-full">
-                    {isFirstStoryPage ? (
+                    {isFirstStoryPage && !isSpeaking ? (
                       <>
                         <span className="float-left text-5xl md:text-6xl font-serif font-bold text-[#0D9488] pr-3 pb-1 leading-none font-bold">
                           {firstLetter}
                         </span>
                         {restOfText}
                       </>
+                    ) : isSpeaking ? (
+                      p.text.split(/\s+/).map((word: string, wIdx: number) => {
+                        const isCurrentWord = activeWordIndex === wIdx;
+                        return (
+                          <span
+                            key={wIdx}
+                            className={`transition-colors duration-150 inline-block mr-1.5 ${
+                              isCurrentWord
+                                ? 'bg-amber-300 text-slate-950 font-black px-1 rounded-md shadow-xs scale-105'
+                                : 'text-slate-900'
+                            }`}
+                          >
+                            {word}
+                          </span>
+                        );
+                      })
                     ) : (
                       p.text
                     )}
