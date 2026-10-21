@@ -42,54 +42,20 @@ export default function AppDashboard() {
   const userInitial = userName.charAt(0).toUpperCase();
 
   return (
-    <div className="relative min-h-screen pb-12 font-sans bg-[#F8F7F2] text-[#1A1D20] select-none">
-      
-      {/* ═══ BARRA SUPERIOR FLUTUANTE LUMIKIDS ═══ */}
-      <div className="pt-3 px-4 sm:px-6 pb-2 max-w-5xl mx-auto flex justify-between items-center">
-        <Logo size="md" />
-
-        <div className="flex items-center gap-2">
-          {/* Acesso Admin Discreto se for Admin */}
-          {dbUser?.role === 'admin' && (
-            <Link 
-              href="/app/admin" 
-              className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-amber-100 border border-amber-300 text-amber-900 text-xs font-bold shadow-xs hover:bg-amber-200"
-              title="Painel Administrativo"
-            >
-              👑 <span className="hidden sm:inline">Admin</span>
-            </Link>
-          )}
-
-          <button
-            onClick={() => window.dispatchEvent(new CustomEvent('open-pwa-modal'))}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-50 shadow-xs"
-            title="Instalar aplicativo"
-          >
-            📲 <span className="hidden sm:inline">Baixar App</span>
-          </button>
-
-          <Link
-            href="/app/progresso"
-            className="w-9 h-9 rounded-full bg-[#0D9488] text-white flex items-center justify-center font-bold text-sm shadow-xs hover:scale-105 transition-transform"
-            title={`Perfil de ${userName}`}
-          >
-            {userInitial}
-          </Link>
+    <div className="relative w-full min-h-screen font-sans select-none overflow-x-hidden">
+      {loadingStories ? (
+        <div className="flex flex-col items-center justify-center min-h-screen bg-[#D4EAC8] p-8">
+          <div className="w-12 h-12 border-4 border-teal-200 border-t-[#0D9488] rounded-full animate-spin mb-3"></div>
+          <span className="text-sm font-bold text-slate-700 animate-pulse">Carregando mapa dos mundos... 🗺️</span>
         </div>
-      </div>
-
-      {/* ═══ MAPA DE AVENTURA DOS MUNDOS (100% Estilo Bible App for Kids) ═══ */}
-      <div className="px-3 sm:px-6 max-w-5xl mx-auto mt-2">
-        {loadingStories ? (
-          <div className="flex flex-col items-center justify-center min-h-[500px] bg-white rounded-[36px] border border-slate-200 p-8 shadow-sm">
-            <div className="w-10 h-10 border-4 border-teal-200 border-t-[#0D9488] rounded-full animate-spin mb-3"></div>
-            <span className="text-xs font-bold text-slate-500 animate-pulse">Carregando mapa dos mundos... 🗺️</span>
-          </div>
-        ) : (
-          <JourneyMap stories={allJourneyStories} userPlan={dbUser?.plan || 'free'} />
-        )}
-      </div>
-
+      ) : (
+        <JourneyMap 
+          stories={allJourneyStories} 
+          userPlan={dbUser?.plan || 'free'}
+          isAdmin={dbUser?.role === 'admin'}
+          userName={userName}
+        />
+      )}
     </div>
   );
 }
