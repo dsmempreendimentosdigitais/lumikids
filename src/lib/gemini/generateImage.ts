@@ -37,7 +37,7 @@ export function buildPrompt(
 ): string {
   const stylePrompt = styleMode === '3d_pixar'
     ? 'High quality 3D digital cartoon render, Pixar animation style, warm glowing sunlight, rich detailed scenery, cute character design, masterpiece'
-    : 'Cute 2D children storybook illustration, vibrant digital watercolor painting, flat vector art, bright sunny colors, cheerful fairytale book style, clean lines, clear sky';
+    : 'Bible App for Kids art style, cute 2D children vector cartoon illustration, clean bold outlines, vibrant flat colors, friendly expressive cartoon characters, warm sunny lighting, storybook picture book artwork, cheerful and kid-friendly';
 
   const rawScene = storyTitleOrScene
     .replace(/[*_#~`"']/g, '')
@@ -48,15 +48,15 @@ export function buildPrompt(
   const safeScene = sanitizeSceneForChild(childName, rawScene);
 
   const charTag = characterAppearance && characterAppearance.trim() 
-    ? `${childName}, cute animated ${ageGroup} year old child with ${characterAppearance}`
-    : `${childName}, cute animated child`;
+    ? `${childName}, cute friendly cartoon child character, ${characterAppearance}`
+    : `${childName}, cute friendly cartoon child character`;
 
   return [
-    styleMode === '2d_storybook' ? 'Beautiful 2D storybook drawing for kids' : '3D animated scene full of life and color',
+    styleMode === '2d_storybook' ? 'Bible App for Kids illustration style' : '3D animated scene full of life and color',
     `Scene: ${safeScene}`,
     `Character: ${charTag}`,
     stylePrompt,
-    `cheerful background, sunny daylight, no text, no letters, no words, no watermark, no logo`
+    `cheerful vibrant background, clear sky, highly polished, cute, no text, no letters, no words, no watermark, no logo, no blur`
   ].join(', ');
 }
 

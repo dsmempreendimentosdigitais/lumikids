@@ -93,6 +93,39 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
   const [isVideoPaused, setIsVideoPaused] = useState(true);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [interactivePop, setInteractivePop] = useState<{ x: number; y: number; active: boolean }>({ x: 0, y: 0, active: false });
+  const [starsReward, setStarsReward] = useState<number>(3);
+
+  // Som suave de sininho e reação tátil estilo Bible App for Kids
+  const triggerKidReaction = (e?: React.MouseEvent | React.TouchEvent) => {
+    let clickX = 50;
+    let clickY = 50;
+    if (e && 'clientX' in e) {
+      clickX = (e as React.MouseEvent).clientX;
+      clickY = (e as React.MouseEvent).clientY;
+    }
+    setInteractivePop({ x: clickX, y: clickY, active: true });
+    setTimeout(() => setInteractivePop(prev => ({ ...prev, active: false })), 800);
+
+    if (typeof window === 'undefined') return;
+    try {
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      // Som de sino feliz (notas C5 e G5)
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+      osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15); // A5
+      gain.gain.setValueAtTime(0.12, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.35);
+    } catch (err) {}
+  };
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStartX(e.touches[0].clientX);
@@ -453,14 +486,30 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
 
             return (
               <div className="flex flex-col gap-6">
-                {/* 1 ILUSTRAÇÃO 2D DE LIVRO IMPRESSO POR PÁGINA */}
-                <div className="w-full rounded-[24px] overflow-hidden shadow-sm border border-slate-200/70 bg-white aspect-square max-h-[350px] mx-auto flex items-center justify-center">
+                {/* 1 ILUSTRAÇÃO 2D DE LIVRO COM INTERATIVIDADE (Estilo Bible App for Kids: Toque para Brilhar & Som) */}
+                <div 
+                  onClick={triggerKidReaction}
+                  className="relative w-full rounded-[28px] overflow-hidden shadow-md border-2 border-white bg-white aspect-square max-h-[350px] mx-auto flex items-center justify-center cursor-pointer group active:scale-[0.98] transition-transform select-none"
+                  title="Toque na cena para interagir! ✨"
+                >
                   <img 
                     src={p.imageUrl} 
                     alt={`Ilustração Página ${currentPageIndex}`} 
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     onError={(e) => { e.currentTarget.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800"><rect width="800" height="800" fill="%23F3F1EA"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%230D9488" font-size="32" font-family="serif">✨ Ilustração Lumikids</text></svg>'; }}
                   />
+
+                  {/* Badge lúdico de toque */}
+                  <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-full text-[0.65rem] font-black text-[#0D9488] shadow-sm flex items-center gap-1 opacity-90 group-hover:opacity-100">
+                    <span>👆 Toque aqui!</span>
+                  </div>
+
+                  {/* Efeito visual de estrelinhas ao tocar */}
+                  {interactivePop.active && (
+                    <div className="absolute inset-0 bg-teal-400/10 pointer-events-none flex items-center justify-center animate-ping">
+                      <span className="text-6xl drop-shadow-md">✨ ⭐ ✨</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* TEXTO ESTILO LIVRO IMPRESSO (Com Capitular na 1ª página) */}

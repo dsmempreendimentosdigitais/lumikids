@@ -7,6 +7,7 @@ import { useAuth } from '@/context/AuthContext';
 import { Sparkles, Play, ChevronRight, Crown, Wand2, Target, BookOpen, Moon } from 'lucide-react';
 import Logo from '@/components/ui/Logo';
 import CollectionsGrid from '@/components/app/CollectionsGrid';
+import JourneyMap from '@/components/app/JourneyMap';
 
 const ageData = {
   '2-4':   { title: 'O Leãozinho Corajoso', meta: '🍼 Bebês • 3 min • 2–4 anos' },
@@ -20,15 +21,17 @@ export default function AppDashboard() {
   const { user, dbUser } = useAuth();
   const [activeAge, setActiveAge] = useState<'2-4'|'5-7'|'8-10'|'11-14'>('5-7');
   const [recentStories, setRecentStories] = useState<any[]>([]);
+  const [allJourneyStories, setAllJourneyStories] = useState<any[]>([]);
   const [loadingStories, setLoadingStories] = useState(true);
 
   useEffect(() => {
     const fetchStories = async () => {
       try {
-        const q = query(collection(db, 'stories'), orderBy('createdAt', 'desc'), limit(3));
+        const q = query(collection(db, 'stories'), orderBy('createdAt', 'desc'), limit(50));
         const snap = await getDocs(q);
         const data = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setRecentStories(data);
+        setAllJourneyStories(data);
+        setRecentStories(data.slice(0, 3));
       } catch (err) {
         console.error('Error fetching stories:', err);
       } finally {
@@ -123,6 +126,9 @@ export default function AppDashboard() {
              </div>
           </Link>
         )}
+
+        {/* Mapa da Jornada Interativo (Estilo Bible App for Kids) */}
+        <JourneyMap stories={allJourneyStories} userPlan={dbUser?.plan || 'free'} />
 
         {/* Trilhas de Conhecimento */}
         <CollectionsGrid />
