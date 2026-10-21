@@ -3,13 +3,11 @@ import BottomNav from '@/components/app/BottomNav';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="phone-wrapper" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative' }}>
-      <div style={{ flex: 1, paddingBottom: '80px', overflowY: 'auto' }}>
+    <div className="w-full min-h-screen flex flex-col relative bg-[#F8F7F2] font-sans">
+      <main className="flex-1 w-full">
         {children}
-      </div>
-      <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', zIndex: 50 }}>
-        <BottomNav />
-      </div>
+      </main>
+      <BottomNav />
     </div>
   );
 }

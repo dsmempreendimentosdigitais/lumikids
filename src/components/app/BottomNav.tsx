@@ -7,6 +7,11 @@ import { House, LayoutGrid, LibraryBig, User } from 'lucide-react';
 export default function BottomNav() {
   const pathname = usePathname();
 
+  // No mapa principal (/app) e no leitor (/app/historias/[id]), o app tem seus próprios controles flutuantes
+  if (pathname === '/app' || pathname.startsWith('/app/historias/')) {
+    return null;
+  }
+
   const ITEMS = [
     { id: 'home', path: '/app', icon: <House size={20} />, label: "Home" },
     { id: 'browse', path: '/app/historias', icon: <LayoutGrid size={20} />, label: "Explorar" },

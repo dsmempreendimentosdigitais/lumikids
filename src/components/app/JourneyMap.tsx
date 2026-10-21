@@ -167,52 +167,9 @@ export default function JourneyMap({ stories, userPlan = 'free' }: JourneyWorldP
 
   return (
     <div className="w-full select-none font-sans">
-      {/* ═══ BARRA SUPERIOR DE TRILHAS (Seleção de Mundos do Mapa) ═══ */}
-      <div className="mb-4">
-        <div className="flex items-center justify-between px-2 mb-2">
-          <div className="flex items-center gap-2">
-            <span className="text-xl">🗺️</span>
-            <div>
-              <h3 className="font-bold text-slate-800 text-sm tracking-tight flex items-center gap-1.5">
-                Mundos de Aprendizado
-                <span className="text-[0.65rem] font-black uppercase px-2 py-0.5 rounded-full bg-teal-100 text-[#0D9488]">
-                  Trilha Interativa
-                </span>
-              </h3>
-            </div>
-          </div>
-          <span className="text-xs font-bold text-slate-500">
-            {trailStories.length} histórias
-          </span>
-        </div>
-
-        {/* Pílulas de Seleção de Mundos estilo Carrossel Lúdico */}
-        <div className="flex gap-2.5 overflow-x-auto pb-2 px-1 scrollbar-none">
-          {KNOWLEDGE_TRAILS.map((trail) => {
-            const isSelected = trail.id === selectedCategory;
-            return (
-              <button
-                key={trail.id}
-                onClick={() => {
-                  setSelectedCategory(trail.id);
-                  playSound(520);
-                }}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-2xl transition-all duration-200 shrink-0 font-bold text-xs shadow-xs active:scale-95 border-2 ${
-                  isSelected
-                    ? 'bg-white border-[#0D9488] text-slate-900 shadow-md scale-105'
-                    : 'bg-white/80 border-slate-200 text-slate-600 hover:bg-white'
-                }`}
-              >
-                <span className="text-lg">{trail.emoji}</span>
-                <span>{trail.title}</span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
+      
       {/* ═══ MAPA PANORÂMICO DE AVENTURA ESTILO BIBLE APP FOR KIDS ═══ */}
-      <div className={`relative w-full rounded-[36px] overflow-hidden border-4 border-white shadow-2xl bg-gradient-to-b ${worldConfig.bgColor} p-6 min-h-[620px]`}>
+      <div className={`relative w-full rounded-[36px] overflow-hidden border-4 border-white shadow-2xl bg-gradient-to-b ${worldConfig.bgColor} p-4 sm:p-6 min-h-[700px]`}>
         
         {/* ELEMENTOS CENOGRÁFICOS DO RELEVO (Colinas, Lago, Montanhas, Céu) */}
         <div className="absolute inset-0 pointer-events-none opacity-40 overflow-hidden">
@@ -223,38 +180,74 @@ export default function JourneyMap({ stories, userPlan = 'free' }: JourneyWorldP
           <div className="absolute top-6 left-8 text-5xl opacity-60 animate-pulse">☁️</div>
           <div className="absolute top-16 right-12 text-6xl opacity-50 animate-pulse" style={{ animationDelay: '1.5s' }}>☁️</div>
           {/* Árvores, ovelhas e lago */}
-          <div className="absolute top-48 left-6 text-4xl opacity-30">🌲 🌳</div>
-          <div className="absolute top-72 right-10 text-4xl opacity-25">🏕️ 🐑</div>
+          <div className="absolute top-52 left-6 text-4xl opacity-30">🌲 🌳</div>
+          <div className="absolute top-80 right-10 text-4xl opacity-25">🏕️ 🐑</div>
           <div className="absolute bottom-28 left-8 text-5xl opacity-25">🌊 ⛵</div>
-          <div className="absolute bottom-40 right-6 text-5xl opacity-20">🏜️ 🐪</div>
+          <div className="absolute bottom-48 right-6 text-5xl opacity-20">🏜️ 🐪</div>
         </div>
 
-        {/* ═══ BOTÕES FLUTUANTES SUPERIORES DO MAPA ═══ */}
-        {/* Botão de Livro / Catálogo de Histórias (Canto Superior Esquerdo) */}
-        <button
-          type="button"
-          onClick={() => {
-            playSound(580);
-            setIsCatalogOpen(true);
-          }}
-          className="btn-round-action absolute top-4 left-4 z-20 w-11 h-11 sm:w-12 sm:h-12 rounded-full text-white flex items-center justify-center font-black text-xl shadow-xl active:scale-95"
-          title="Abrir Catálogo de Histórias"
-        >
-          📖
-        </button>
+        {/* ═══ BARRA SUPERIOR INTEGRADA DO MAPA (Sem sobreposições) ═══ */}
+        <div className="relative z-20 flex items-center justify-between gap-3 mb-8">
+          {/* Botão de Livro / Catálogo de Histórias (Branco com ícone azul, Print 2) */}
+          <button
+            type="button"
+            onClick={() => {
+              playSound(580);
+              setIsCatalogOpen(true);
+            }}
+            className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white text-[#0284C7] shadow-lg border-2 border-slate-100 flex items-center justify-center font-bold text-xl hover:scale-105 active:scale-95 transition-transform shrink-0"
+            title="Abrir Catálogo de Histórias"
+          >
+            📖
+          </button>
 
-        {/* Título do Mundo Atual no Topo do Mapa */}
-        <div className="relative z-10 text-center mb-10 pt-2">
-          <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full ${worldConfig.badgeBg} ${worldConfig.badgeText} border text-xs font-black uppercase tracking-wider shadow-xs mb-1.5`}>
+          {/* Seletor Temático do Mundo Atual em Pílula Elegante */}
+          <div className="flex-1 flex justify-center overflow-x-auto py-1 scrollbar-none max-w-md">
+            <div className="inline-flex items-center gap-1.5 p-1 bg-white/90 backdrop-blur-md rounded-full shadow-md border border-slate-200">
+              {KNOWLEDGE_TRAILS.map((trail) => {
+                const isSelected = trail.id === selectedCategory;
+                return (
+                  <button
+                    key={trail.id}
+                    onClick={() => {
+                      setSelectedCategory(trail.id);
+                      playSound(520);
+                    }}
+                    className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 ${
+                      isSelected
+                        ? 'bg-[#0D9488] text-white shadow-xs scale-105'
+                        : 'text-slate-600 hover:bg-slate-100'
+                    }`}
+                    title={trail.title}
+                  >
+                    <span>{trail.emoji}</span>
+                    <span className="hidden sm:inline">{trail.title.split(' ')[0]}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Troféu do Mundo no Canto Superior Direito */}
+          <Link
+            href="/app/progresso"
+            onClick={() => playSound(480)}
+            className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white text-amber-500 shadow-lg border-2 border-slate-100 flex items-center justify-center font-bold text-lg hover:scale-105 active:scale-95 transition-transform shrink-0"
+            title="Álbum de Figurinhas"
+          >
+            🏆
+          </Link>
+        </div>
+
+        {/* Título do Mundo Ativo (Discreto e Limpo) */}
+        <div className="relative z-10 text-center mb-10">
+          <div className={`inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full ${worldConfig.badgeBg} ${worldConfig.badgeText} border text-[0.7rem] font-black uppercase tracking-wider shadow-xs mb-1`}>
             <span>{activeTrail.emoji}</span>
             <span>{worldConfig.themeName}</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-serif font-black text-slate-900 drop-shadow-xs">
             {activeTrail.title}
           </h2>
-          <p className="text-xs font-medium text-slate-600 max-w-xs mx-auto mt-1">
-            {activeTrail.desc}
-          </p>
         </div>
 
         {/* ═══ TRILHA SINUOSA COM PONTILHADO DOURADO & NÓS METÁLICOS ═══ */}
