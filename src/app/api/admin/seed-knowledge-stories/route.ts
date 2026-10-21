@@ -34,23 +34,20 @@ async function handleSeed() {
       const docRef = storiesRef.doc();
       const isFlagship = rawStory.title.includes('Hércules');
 
-      // Se for a história principal (Hércules), gera imagens de teste para aprovação do usuário!
+      // Gera ilustrações 2D no estilo Bible App for Kids para todas as histórias
       let formattedParagraphs = await Promise.all(
         rawStory.paragraphs.map(async (p, idx) => {
           let imageUrl = '';
-          if (isFlagship) {
-            try {
-              console.log(`[Seed] Gerando imagem de alta qualidade para Hércules (Página ${idx + 1})...`);
-              imageUrl = await generateImageWithNanoBanana(
-                'Hércules',
-                '5-7',
-                p.imagePrompt,
-                idx,
-                'Hercules, cute animated 7 year old boy with short brown hair, fair skin, simple Greek tunic'
-              );
-            } catch (imgErr) {
-              console.warn(`[Seed] Erro ao gerar imagem da pág ${idx}:`, imgErr);
-            }
+          try {
+            imageUrl = await generateImageWithNanoBanana(
+              rawStory.title.split(':')[0].trim(),
+              rawStory.ageGroups[0] || '5-7',
+              p.imagePrompt,
+              idx,
+              'cute friendly animated cartoon character, colorful clothing'
+            );
+          } catch (imgErr) {
+            console.warn(`[Seed] Falha na imagem da história "${rawStory.title}" pág ${idx}:`, imgErr);
           }
 
           return {
@@ -65,7 +62,7 @@ async function handleSeed() {
         })
       );
 
-      const coverImageUrl = isFlagship && formattedParagraphs[0]?.imageUrl ? formattedParagraphs[0].imageUrl : undefined;
+      const coverImageUrl = formattedParagraphs[0]?.imageUrl || undefined;
 
       const storyPayload = {
         id: docRef.id,

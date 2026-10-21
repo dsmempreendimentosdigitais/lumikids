@@ -392,5 +392,161 @@ export const KNOWLEDGE_STORIES_55: SeedStoryFull[] = [
       { text: 'No coração do Pantanal brasileiro, a graciosa onça Tainá caminhava pelas margens límpidas do rio.', imagePrompt: 'Cute spotted jaguar walking on riverbank in lush Pantanal wetland, clear water, sunny sky, 3D Pixar Paw Patrol CGI animation style, no text' },
       { text: 'Aprender sobre a fauna e as florestas nos ensina a respeitar e proteger a criação divina.', imagePrompt: 'Colorful macaws flying over lush green forest with jaguar resting peacefully under tree, 3D Pixar Paw Patrol CGI animation style, no text' }
     ]
+  },
+  {
+    title: 'O Mico-Leão-Dourado e a Fruta Compartilhada',
+    category: 'natureza-animais',
+    ageGroups: ['2-4', '5-7'],
+    coverEmoji: '🐵',
+    coverColor: '#F59E0B',
+    value: 'generosidade e partilha',
+    missionTitle: 'Missão da Partilha',
+    missionDesc: 'Divida um lanche saboroso ou um brinquedo com um amigo hoje!',
+    reflectionQuestion: 'Como a partilha na floresta garante que todos os animais fiquem alimentados e felizes?',
+    paragraphs: [
+      { text: 'No alto da Mata Atlântica, o pequeno mico-leão-dourado Joca encontrou a maior manga dourada da árvore.', imagePrompt: 'Cute golden lion tamarin monkey sitting on a green mossy tree branch holding a ripe yellow mango, warm sunlight, Bible App for Kids 2D vector art style, clean lines, no text' },
+      { text: 'Em vez de comer tudo sozinho, Joca chamou seus irmãozinhos e dividiu pedaço por pedaço com alegria.', imagePrompt: 'Three cute golden tamarin monkeys eating fruit slices together happily, lush jungle canopy, blue sky, Bible App for Kids 2D vector art style, clean lines, no text' },
+      { text: 'Ele descobriu que a comida fica muito mais gostosa quando é compartilhada com quem amamos.', imagePrompt: 'Happy monkey swinging on a vine smiling with full belly, colorful flowers and butterflies, Bible App for Kids 2D vector art style, no text' }
+    ]
+  },
+  {
+    title: 'A Tartaruga Marinha e a Praia Limpa',
+    category: 'natureza-animais',
+    ageGroups: ['2-4', '5-7', '8-10'],
+    coverEmoji: '🐢',
+    coverColor: '#0D9488',
+    value: 'cuidado com o meio ambiente',
+    missionTitle: 'Guardião dos Oceanos',
+    missionDesc: 'Recolha três papéis do chão e jogue na lixeira certa hoje!',
+    reflectionQuestion: 'Por que não devemos jogar plástico na rua ou na praia?',
+    paragraphs: [
+      { text: 'A pequena tartaruguinha Tata nasceu nas areias mornas da Bahia e correu para encontrar as ondas azuis.', imagePrompt: 'Cute baby sea turtle crawling on golden sand toward sparkling turquoise ocean waves, sunny beach, Bible App for Kids 2D vector art style, clean lines, no text' },
+      { text: 'Com a ajuda de crianças atentas que limparam a praia, o caminho ficou seguro e limpo para todos os animais.', imagePrompt: 'Children picking up plastic bottles into recycling bags smiling on sunny beach, Bible App for Kids 2D vector art style, clean lines, no text' },
+      { text: 'Tata nadou livre pelos corais coloridos, agradecendo aos pequenos guardiões da Terra.', imagePrompt: 'Cute sea turtle swimming among colorful coral reef and friendly yellow fish, crystal clear ocean, Bible App for Kids 2D vector art style, no text' }
+    ]
+  },
+
+  // ==========================================
+  // 8. HISTÓRIAS BÍBLICAS ADICIONAIS (Novas)
+  // ==========================================
+  {
+    title: 'Jonas e o Grande Peixe: O Perdão e a Obediência',
+    category: 'biblia-kids',
+    ageGroups: ['2-4', '5-7', '8-10'],
+    coverEmoji: '🐋',
+    coverColor: '#0284C7',
+    value: 'obediência e perdão',
+    missionTitle: 'Pedir Desculpas',
+    missionDesc: 'Se você errou com alguém hoje, tenha a coragem de pedir um abraço e desculpas sinceras!',
+    reflectionQuestion: 'Por que fugir das nossas responsabilidades nunca resolve os problemas?',
+    paragraphs: [
+      { text: 'Jonas tentou fugir de navio para não cumprir a missão que Deus havia lhe dado de ajudar a cidade de Nínive.', imagePrompt: 'Jonah boarding an ancient wooden sailing ship in a sunny port, thinking he can hide, Bible App for Kids 2D vector art style, clean lines, no text' },
+      { text: 'No meio de uma tempestade no mar, um enorme e amigável peixe acolheu Jonas em sua barriga por três dias.', imagePrompt: 'Giant gentle blue whale swimming peacefully under rolling sea waves, Jonah praying inside warmly, Bible App for Kids 2D vector art style, clean lines, no text' },
+      { text: 'Jonas orou com sinceridade, foi deixado na praia com segurança e levou a mensagem de paz e perdão a todos.', imagePrompt: 'Jonah standing on sunny sandy beach speaking kindly to welcoming villagers, bright daylight, Bible App for Kids 2D vector art style, no text' }
+    ]
+  },
+  {
+    title: 'A Parábola do Bom Samaritano',
+    category: 'biblia-kids',
+    ageGroups: ['5-7', '8-10'],
+    coverEmoji: '❤️',
+    coverColor: '#E11D48',
+    value: 'compaixão e amor ao próximo',
+    missionTitle: 'Bom Samaritano do Dia',
+    missionDesc: 'Ajude alguém hoje que não é do seu grupinho mais próximo!',
+    reflectionQuestion: 'Quem é o nosso próximo? Como podemos demonstrar amor na prática?',
+    paragraphs: [
+      { text: 'Um viajante machucado estava caído na beira do caminho de pedras entre Jerusalém e Jericó.', imagePrompt: 'A weary traveler resting beside a dusty road with rolling green hills, warm afternoon, Bible App for Kids 2D vector art style, clean lines, no text' },
+      { text: 'Um homem bom parou seu burrinho, cuidou das feridas do viajante com azeite e o levou a uma hospedaria acolhedora.', imagePrompt: 'A kind Samaritan tending gently to the traveler with bandages, friendly donkey waiting patiently, Bible App for Kids 2D vector art style, clean lines, no text' },
+      { text: 'Jesus nos ensinou que amar ao próximo significa ter compaixão e agir com generosidade com todas as pessoas.', imagePrompt: 'The traveler resting peacefully in a cozy room while the Samaritan waves goodbye, Bible App for Kids 2D vector art style, clean lines, no text' }
+    ]
+  },
+  {
+    title: 'José do Egito e a Túnica de Muitas Cores',
+    category: 'biblia-kids',
+    ageGroups: ['5-7', '8-10', '11-14'],
+    coverEmoji: '🧥',
+    coverColor: '#8B5CF6',
+    value: 'perdão e reconciliação em família',
+    missionTitle: 'Abraço de Reconciliação',
+    missionDesc: 'Dê um abraço bem apertado em um irmão ou primo com quem você já brigou!',
+    reflectionQuestion: 'Por que o perdão em família é a chave para a verdadeira paz?',
+    paragraphs: [
+      { text: 'O jovem José ganhou de seu pai Jacó uma linda túnica com todas as cores do arco-íris.', imagePrompt: 'Young Joseph wearing a bright colorful striped tunic smiling happily under sunny sky, Bible App for Kids 2D vector art style, clean lines, no text' },
+      { text: 'Depois de muitos anos e grandes desafios, José tornou-se um líder sábio e generoso no Egito.', imagePrompt: 'Joseph as a wise governor in Egyptian palace standing near grain storehouses, Bible App for Kids 2D vector art style, clean lines, no text' },
+      { text: 'Quando seus irmãos precisaram de comida, José não guardou rancor: abraçou a todos e dividiu os celeiros com amor.', imagePrompt: 'Joseph embracing his brothers tearfully and joyfully in grand hall, warm golden light, Bible App for Kids 2D vector art style, clean lines, no text' }
+    ]
+  },
+
+  // ==========================================
+  // 9. INVENTORES E CIÊNCIA ADICIONAIS (Novas)
+  // ==========================================
+  {
+    title: 'Marie Curie e o Brilho dos Elementos',
+    category: 'inventores-genios',
+    ageGroups: ['5-7', '8-10', '11-14'],
+    coverEmoji: '🔬',
+    coverColor: '#059669',
+    value: 'dedicação e amor ao estudo',
+    missionTitle: 'Cientista Curioso',
+    missionDesc: 'Leia uma página de um livro informativo ou enciclopédia hoje!',
+    reflectionQuestion: 'Como a perseverança nos estudos ajuda a curar doenças e melhorar a humanidade?',
+    paragraphs: [
+      { text: 'Desde menina na Polônia, Marie Curie adorava ler livros de ciências sob a luz suave do abajur.', imagePrompt: 'Young girl Marie reading a science book at a wooden desk with a vintage lamp, smiling curiously, Bible App for Kids 2D vector art style, clean lines, no text' },
+      { text: 'Com anos de trabalho paciente no laboratório, ela descobriu elementos brilhantes que ajudaram a medicina a salvar vidas.', imagePrompt: 'Marie Curie in laboratory holding a glowing test tube with gentle blue light, flasks around her, Bible App for Kids 2D vector art style, clean lines, no text' },
+      { text: 'Ela foi a primeira cientista a ganhar dois Prêmios Nobel, provando que a dedicação não tem limites.', imagePrompt: 'Marie receiving a golden medal with proud respectful smile, warm auditorium, Bible App for Kids 2D vector art style, clean lines, no text' }
+    ]
+  },
+  {
+    title: 'Thomas Edison e a Lâmpada Encantada',
+    category: 'inventores-genios',
+    ageGroups: ['5-7', '8-10'],
+    coverEmoji: '💡',
+    coverColor: '#F59E0B',
+    value: 'nunca desistir após errar',
+    missionTitle: 'Tentar de Novo',
+    missionDesc: 'Se algo der errado na primeira tentativa hoje, tente uma segunda vez com calma!',
+    reflectionQuestion: 'Por que errar faz parte do aprendizado para qualquer grande invenção?',
+    paragraphs: [
+      { text: 'Thomas Edison tentou mais de mil materiais diferentes para fazer uma lâmpada acender sem queimar rápido.', imagePrompt: 'Young Thomas Edison working in a cozy workshop filled with wires and glass bulbs, determined face, Bible App for Kids 2D vector art style, clean lines, no text' },
+      { text: 'Ele dizia: "Eu não falhei mil vezes; descobri mil maneiras de como não fazer antes de achar a certa!".', imagePrompt: 'Edison smiling joyfully as a bright warm lightbulb glows brightly illuminating his face, Bible App for Kids 2D vector art style, clean lines, no text' },
+      { text: 'Sua persistência iluminou as casas, ruas e escolas de todo o planeta.', imagePrompt: 'Cozy city street lit up with glowing street lamps at dusk, happy families walking, Bible App for Kids 2D vector art style, clean lines, no text' }
+    ]
+  },
+
+  // ==========================================
+  // 10. VIRTUDES EM AÇÃO ADICIONAIS (Novas)
+  // ==========================================
+  {
+    title: 'O Menino que Aprendeu a Esperar (A Paciência)',
+    category: 'virtudes-em-acao',
+    ageGroups: ['2-4', '5-7'],
+    coverEmoji: '⏳',
+    coverColor: '#7C3AED',
+    value: 'paciência e calma',
+    missionTitle: 'Esperar a Sua Vez',
+    missionDesc: 'Espere pacientemente sua vez de falar ou brincar sem interromper ninguém!',
+    reflectionQuestion: 'Por que as melhores coisas da vida levam tempo para amadurecer, como as frutas na árvore?',
+    paragraphs: [
+      { text: 'Mateus plantou uma sementinha de girassol no vaso e queria que ela crescesse em cinco minutos.', imagePrompt: 'Little boy kneeling next to a ceramic plant pot on a sunny balcony, watering can in hand, Bible App for Kids 2D vector art style, clean lines, no text' },
+      { text: 'Seu avô o ensinou: "A terra precisa de sol, água e tempo. A paciência é como o sol para o nosso coração".', imagePrompt: 'Kind grandfather explaining to grandson with a warm smile, pointing to tiny green sprout, Bible App for Kids 2D vector art style, clean lines, no text' },
+      { text: 'Semanas depois, um girassol gigante e dourado se abriu, recompensando a paciência de Mateus.', imagePrompt: 'Giant beautiful yellow sunflower blooming happily in sunlight with smiling boy hugging the pot, Bible App for Kids 2D vector art style, clean lines, no text' }
+    ]
+  },
+  {
+    title: 'A Menina da Gratidão (O Pote do Agradecimento)',
+    category: 'virtudes-em-acao',
+    ageGroups: ['2-4', '5-7', '8-10'],
+    coverEmoji: '🌻',
+    coverColor: '#10B981',
+    value: 'gratidão diária',
+    missionTitle: 'Pote da Gratidão',
+    missionDesc: 'Agradeça a seus pais pela comida gostosa e pelo teto quentinho hoje!',
+    reflectionQuestion: 'Como agradecer pelas coisas simples nos torna mais felizes todos os dias?',
+    paragraphs: [
+      { text: 'Clara tinha um potinho transparente onde colocava um papelzinho colorido toda noite com algo bom que viveu.', imagePrompt: 'Little girl writing on a small colorful paper note at her desk with a glass jar filled with notes, Bible App for Kids 2D vector art style, clean lines, no text' },
+      { text: 'Mesmo nos dias chuvosos, ela encontrava motivos para sorrir: um abraço da vovó, um desenho bonito ou a chuva regando as flores.', imagePrompt: 'Little girl looking out window at rainy garden with warm cocoa mug, happy smiling face, Bible App for Kids 2D vector art style, clean lines, no text' },
+      { text: 'Seu potinho ficou tão cheio de papéis que o quarto dela parecia brilhar com pura felicidade.', imagePrompt: 'Glass jar glowing with warm starlight on bedside table, smiling girl sleeping peacefully, Bible App for Kids 2D vector art style, clean lines, no text' }
+    ]
   }
 ];
