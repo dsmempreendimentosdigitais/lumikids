@@ -392,3 +392,140 @@ footer { background:var(--blue-dark); color:rgba(255,255,255,.82); padding:52px 
   transform-origin: center center;
 }
 
+/* ══════════════════════════════════════════════════════
+   LUMIKIDS ADVENTURE STYLES (Estilo Lúdico Inspirador)
+   ══════════════════════════════════════════════════════ */
+
+/* Pergaminho Encantado (Leitor e Modais) */
+.parchment-sheet {
+  background: #F4E7CB;
+  background-image: 
+    radial-gradient(#E8D5B0 15%, transparent 16%),
+    radial-gradient(#E8D5B0 15%, transparent 16%);
+  background-size: 60px 60px;
+  background-position: 0 0, 30px 30px;
+  box-shadow: 
+    inset 0 0 40px rgba(180, 140, 80, 0.25),
+    0 12px 36px rgba(45, 30, 10, 0.18);
+  border: 2px solid #E2D1A8;
+  position: relative;
+}
+
+/* Borda Orgânica de Papel Antigo */
+.parchment-border-right {
+  position: relative;
+}
+.parchment-border-right::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: -8px;
+  bottom: 0;
+  width: 8px;
+  background: radial-gradient(circle at 100% 50%, transparent 6px, #F4E7CB 7px);
+  background-size: 8px 16px;
+  pointer-events: none;
+}
+
+/* Cabeçalho de Pedra Entalhada com Efeito 3D */
+.stone-banner {
+  background: linear-gradient(180deg, #94A3B8 0%, #64748B 50%, #475569 100%);
+  border-bottom: 4px solid #334155;
+  box-shadow: 
+    inset 0 2px 0 rgba(255, 255, 255, 0.3),
+    0 8px 20px rgba(15, 23, 42, 0.25);
+  position: relative;
+}
+.stone-banner::before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: 20%;
+  width: 30px;
+  height: 2px;
+  background: #334155;
+  transform: rotate(-15deg);
+  opacity: 0.6;
+}
+.stone-banner::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  right: 25%;
+  width: 25px;
+  height: 2px;
+  background: #334155;
+  transform: rotate(20deg);
+  opacity: 0.6;
+}
+
+/* Tábua de Madeira Rústica para Histórias */
+.wood-plank {
+  background: linear-gradient(180deg, #A86532 0%, #8C4E20 50%, #6E3812 100%);
+  border-top: 2px solid #C4824D;
+  border-bottom: 4px solid #4A2209;
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 6px 14px rgba(74, 34, 9, 0.35);
+  position: relative;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.wood-plank:hover {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    0 10px 20px rgba(74, 34, 9, 0.45);
+}
+.wood-plank:active {
+  transform: translateY(2px);
+  box-shadow: 
+    inset 0 2px 4px rgba(0, 0, 0, 0.4),
+    0 2px 6px rgba(74, 34, 9, 0.2);
+}
+
+/* Botão Redondo Tátil Estilo Desenho Animado (Azul Ciano Vibrante) */
+.btn-round-action {
+  background: linear-gradient(180deg, #0EA5E9 0%, #0284C7 60%, #0369A1 100%);
+  border: 3px solid #FFFFFF;
+  box-shadow: 
+    0 4px 0 #075985,
+    0 8px 16px rgba(2, 132, 199, 0.4);
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn-round-action:hover {
+  transform: scale(1.06);
+  filter: brightness(1.08);
+}
+.btn-round-action:active {
+  transform: translateY(3px) scale(0.96);
+  box-shadow: 
+    0 1px 0 #075985,
+    0 3px 8px rgba(2, 132, 199, 0.3);
+}
+
+/* Moldura Metálica 3D do Nó de História no Mapa */
+.metallic-node-rim {
+  background: linear-gradient(145deg, #E2E8F0 0%, #CBD5E1 40%, #94A3B8 100%);
+  border: 4px solid #F8FAFC;
+  box-shadow: 
+    0 6px 0 #64748B,
+    0 12px 24px rgba(30, 41, 59, 0.35);
+  transition: transform 0.2s ease;
+}
+.metallic-node-rim:hover {
+  transform: scale(1.08);
+}
+.metallic-node-rim:active {
+  transform: scale(0.95) translateY(3px);
+  box-shadow: 
+    0 2px 0 #64748B,
+    0 6px 12px rgba(30, 41, 59, 0.25);
+}
+
+/* Pedestal das 3 Estrelas do Nó */
+.stars-pedestal {
+  background: linear-gradient(180deg, #E2E8F0 0%, #CBD5E1 100%);
+  border: 2px solid #94A3B8;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+

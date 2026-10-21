@@ -98,6 +98,8 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
   const [starsReward, setStarsReward] = useState<number>(3);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [activeWordIndex, setActiveWordIndex] = useState<number | null>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [soundEffectsEnabled, setSoundEffectsEnabled] = useState(true);
 
   // Narração Imersiva com Web Speech API e Sincronização de Palavras (Estilo Bible App for Kids)
   const stopNarration = () => {
@@ -167,7 +169,7 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
     setInteractivePop({ x: clickX, y: clickY, active: true });
     setTimeout(() => setInteractivePop(prev => ({ ...prev, active: false })), 800);
 
-    if (typeof window === 'undefined') return;
+    if (!soundEffectsEnabled || typeof window === 'undefined') return;
     try {
       const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
       if (!AudioCtx) return;
@@ -189,7 +191,7 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
 
   // Efeito sonoro suave de página de livro virando (estilo Bible App for Kids)
   const playPageFlipSound = () => {
-    if (typeof window === 'undefined') return;
+    if (!soundEffectsEnabled || typeof window === 'undefined') return;
     try {
       const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
       if (!AudioCtx) return;
@@ -512,23 +514,205 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
 
   const ageGroup = story.ageGroups?.[0] || '5-7';
   const audioUrl = story.audio?.[story.language || 'pt-BR']?.url;
-  const totalPagesCount = displayParagraphs.length + 2; // Cover (1) + Pages (displayParagraphs.length) + End (1)
+  const totalStoryPages = displayParagraphs.length;
+  const totalPagesCount = totalStoryPages + 2; // Cover (0) + Pages (1..N) + End (N+1)
 
   return (
-    <div className="bg-[#F8F7F2] min-h-screen font-sans pb-28 text-[#1A1D20] flex flex-col justify-between select-none">
-      {/* ═══ TOP HEADER (Estilo Readmio) ═══ */}
-      <div className="bg-[#F8F7F2]/90 backdrop-blur-md px-6 py-4 flex items-center justify-between sticky top-0 z-40 border-b border-slate-200/60">
-        <Link 
-          href="/app/historias" 
-          className="w-9 h-9 rounded-full bg-slate-200/60 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition-colors text-base font-bold"
-          title="Fechar leitor"
-        >
-          ✕
-        </Link>
+    <div className="min-h-screen w-full flex flex-col md:flex-row bg-[#2C3E50] overflow-hidden select-none relative font-sans">
+      
+      {/* ═════════════════════════════════════════════════════════════
+          LADO ESQUERDO: PERGAMINHO DA HISTÓRIA (Estilo Bíblia Kids)
+          ═════════════════════════════════════════════════════════════ */}
+      <div className="parchment-sheet parchment-border-right w-full md:w-[42%] lg:w-[38%] flex flex-col justify-between p-6 sm:p-8 z-10 shadow-2xl relative min-h-[45vh] md:min-h-screen overflow-y-auto">
+        
+        {/* Topo do Pergaminho: Botão de Voltar Redondo Azul e Controles */}
+        <div className="flex items-center justify-between mb-4">
+          {currentPageIndex === 0 ? (
+            <Link 
+              href="/app/historias" 
+              className="btn-round-action w-11 h-11 sm:w-12 sm:h-12 rounded-full text-white flex items-center justify-center font-black text-xl sm:text-2xl shadow-md active:scale-95"
+              title="Voltar para a biblioteca"
+            >
+              ←
+            </Link>
+          ) : (
+            <button 
+              type="button"
+              onClick={handlePrevPage}
+              className="btn-round-action w-11 h-11 sm:w-12 sm:h-12 rounded-full text-white flex items-center justify-center font-black text-xl sm:text-2xl shadow-md active:scale-95"
+              title="Página anterior"
+            >
+              ←
+            </button>
+          )}
 
-        {/* Indicador de Capítulos / Pedras de Marco Estilo Bible App for Kids */}
-        <div className="flex flex-col items-center gap-1 max-w-[200px] sm:max-w-xs">
-          <div className="flex items-center gap-1.5 overflow-x-auto py-1 px-2 no-scrollbar max-w-full">
+          {/* Botão de Narração em Voz Alta estilo Bíblia Kids */}
+          <button 
+            type="button"
+            onClick={() => {
+              if (isSpeaking) {
+                stopNarration();
+              } else {
+                const currentText = currentPageIndex > 0 && currentPageIndex <= totalStoryPages
+                  ? displayParagraphs[currentPageIndex - 1].text
+                  : story.title;
+                speakText(currentText);
+              }
+            }}
+            className={`btn-round-action w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center text-sm shadow-md transition-all ${
+              isSpeaking ? 'ring-4 ring-amber-300 animate-pulse' : ''
+            }`}
+            title={isSpeaking ? 'Pausar narração' : 'Ouvir narração da página'}
+          >
+            {isSpeaking ? '🔊' : '🔈'}
+          </button>
+        </div>
+
+        {/* ═══ CONTEÚDO DO PERGAMINHO ═══ */}
+        <div className="flex-1 flex flex-col justify-center my-auto py-4">
+          
+          {/* CASO 1: CAPA DA HISTÓRIA (Página 0) */}
+          {currentPageIndex === 0 && (
+            <div className="text-left space-y-4">
+              <span className="inline-block px-3.5 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-300 text-[0.7rem] font-black uppercase tracking-wider shadow-xs">
+                {story.category ? story.category.replace('-', ' ') : 'História Infantil'}
+              </span>
+
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-black text-[#2D2114] leading-tight drop-shadow-xs">
+                {story.title}
+              </h1>
+
+              <div className="flex items-center gap-3 text-xs font-bold text-[#6D4C2B] pt-1">
+                <span>⏱️ {story.durationMinutes || 5} min</span>
+                <span>•</span>
+                <span>⭐ {story.value || 'Valores Morais'}</span>
+              </div>
+
+              <div className="pt-4">
+                <button
+                  type="button"
+                  onClick={handleNextPage}
+                  className="w-full py-4 rounded-full bg-[#0D9488] hover:bg-[#0F766E] text-white font-black text-base shadow-lg transition-transform active:scale-95 flex items-center justify-center gap-2 border-2 border-white/60"
+                >
+                  <span>Abrir História 📖</span>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* CASO 2: CENAS DA HISTÓRIA (Páginas 1 até N) */}
+          {currentPageIndex > 0 && currentPageIndex <= totalStoryPages && (
+            (() => {
+              const pIndex = currentPageIndex - 1;
+              const p = displayParagraphs[pIndex];
+              const isFirstStoryPage = pIndex === 0;
+              const firstLetter = p.text ? p.text.charAt(0) : '';
+              const restOfText = p.text ? p.text.slice(1) : '';
+
+              return (
+                <div className="space-y-4">
+                  {/* Texto no pergaminho com formatação calorosa e nítida */}
+                  <div className="text-[#2D2114] font-serif text-lg sm:text-xl md:text-2xl leading-relaxed font-bold select-none">
+                    {isFirstStoryPage && !isSpeaking ? (
+                      <>
+                        <span className="float-left text-5xl sm:text-6xl font-serif font-black text-[#0D9488] pr-3 pb-1 leading-none">
+                          {firstLetter}
+                        </span>
+                        {restOfText}
+                      </>
+                    ) : isSpeaking ? (
+                      p.text.split(/\s+/).map((word: string, wIdx: number) => {
+                        const isCurrentWord = activeWordIndex === wIdx;
+                        return (
+                          <span
+                            key={wIdx}
+                            className={`transition-all duration-150 inline-block mr-1.5 ${
+                              isCurrentWord
+                                ? 'bg-amber-300 text-slate-950 font-black px-1.5 py-0.5 rounded-lg shadow-sm scale-105'
+                                : 'text-[#2D2114]'
+                            }`}
+                          >
+                            {word}
+                          </span>
+                        );
+                      })
+                    ) : (
+                      p.text
+                    )}
+                  </div>
+
+                  {/* Desafios Educativos Interativos no Pergaminho */}
+                  {p.interactiveChallenge && (
+                    <div className="pt-2">
+                      {p.interactiveChallenge.type === 'drag_rescue' && (
+                        <InteractiveDragRescue 
+                          instruction={p.interactiveChallenge.instruction}
+                          itemEmoji={p.interactiveChallenge.itemEmoji}
+                          targetEmoji={p.interactiveChallenge.targetEmoji}
+                        />
+                      )}
+                      {p.interactiveChallenge.type === 'counting' && (
+                        <InteractiveCounting 
+                          instruction={p.interactiveChallenge.instruction}
+                          targetCount={p.interactiveChallenge.targetCount}
+                          itemEmoji={p.interactiveChallenge.itemEmoji}
+                        />
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })()
+          )}
+
+          {/* CASO 3: FIM DA HISTÓRIA (Página N+1) */}
+          {currentPageIndex === totalPagesCount - 1 && (
+            <div className="space-y-4 text-center">
+              <span className="text-5xl block animate-bounce-subtle">🏆</span>
+              <h2 className="text-2xl sm:text-3xl font-serif font-black text-[#2D2114]">
+                Fim da Aventura!
+              </h2>
+              <p className="text-xs sm:text-sm font-bold text-[#6D4C2B]">
+                Você completou esta história com honra e sabedoria.
+              </p>
+
+              {/* Atividade de Fixação & Selo da Trilha */}
+              <StoryEndActivity 
+                storyTitle={story.title}
+                reflectionQuestion={story.reflection?.question}
+                value={story.value}
+                onComplete={(score) => {
+                  setStarsReward(score);
+                }}
+              />
+
+              <div className="pt-2 flex flex-col gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => {
+                    playPageFlipSound();
+                    setCurrentPageIndex(0);
+                  }}
+                  className="w-full py-3.5 rounded-full bg-[#0D9488] hover:bg-[#0F766E] text-white font-black text-sm shadow-md active:scale-95 transition-transform"
+                >
+                  🔄 Reler História
+                </button>
+
+                <Link
+                  href="/app/historias"
+                  className="w-full py-3.5 rounded-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-sm shadow-md active:scale-95 transition-transform block text-center"
+                >
+                  🗺️ Voltar ao Mapa
+                </Link>
+              </div>
+            </div>
+          )}
+
+        </div>
+
+        {/* Rodapé do Pergaminho: Pedras de Marco / Progresso de Capítulos */}
+        <div className="pt-4 border-t border-amber-900/15 flex items-center justify-between">
+          <div className="flex items-center gap-1.5 overflow-x-auto py-1">
             {Array.from({ length: totalPagesCount }).map((_, idx) => {
               const isCurrent = idx === currentPageIndex;
               const isPast = idx < currentPageIndex;
@@ -542,269 +726,191 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
                   }}
                   className={`transition-all rounded-full ${
                     isCurrent
-                      ? 'w-6 h-2.5 bg-amber-400 ring-2 ring-amber-300 shadow-sm'
+                      ? 'w-6 h-3 bg-amber-400 ring-2 ring-amber-500 shadow-sm'
                       : isPast
-                        ? 'w-2.5 h-2.5 bg-emerald-500 hover:scale-125'
-                        : 'w-2.5 h-2.5 bg-slate-300 hover:bg-slate-400'
+                        ? 'w-3 h-3 bg-emerald-600'
+                        : 'w-2.5 h-2.5 bg-[#C9B68F]'
                   }`}
                   title={`Página ${idx + 1}`}
                 />
               );
             })}
           </div>
-          <span className="text-[10px] font-bold text-slate-500 tracking-wider uppercase">
+
+          <span className="text-[10px] font-black uppercase text-[#6D4C2B] tracking-wider shrink-0 ml-2">
             {currentPageIndex === 0 
-              ? `Capa • 1 / ${totalPagesCount}` 
-              : currentPageIndex === displayParagraphs.length + 1 
-                ? `Fim • ${totalPagesCount} / ${totalPagesCount}` 
-                : `Cena ${currentPageIndex} de ${displayParagraphs.length}`}
+              ? 'Capa' 
+              : currentPageIndex === totalPagesCount - 1 
+                ? 'Fim' 
+                : `Cena ${currentPageIndex} / ${totalStoryPages}`}
           </span>
         </div>
 
-        <div className="flex items-center gap-3 text-slate-700">
+      </div>
+
+      {/* ═════════════════════════════════════════════════════════════
+          LADO DIREITO: ILUSTRAÇÃO 2D EXPANDIDA (Estilo Bíblia Kids)
+          ═════════════════════════════════════════════════════════════ */}
+      <div 
+        className="flex-1 relative w-full h-[55vh] md:h-screen overflow-hidden bg-slate-900 flex items-center justify-center cursor-pointer select-none"
+        onClick={triggerKidReaction}
+      >
+        {/* Imagem de Fundo em 2D Cartoon Panorâmica */}
+        <img 
+          src={
+            currentPageIndex === 0
+              ? story.coverImageUrl || displayParagraphs[0]?.imageUrl
+              : currentPageIndex > 0 && currentPageIndex <= totalStoryPages
+                ? displayParagraphs[currentPageIndex - 1].imageUrl
+                : story.coverImageUrl || displayParagraphs[0]?.imageUrl
+          } 
+          alt={story.title} 
+          className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+          onError={(e) => { 
+            e.currentTarget.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800"><rect width="800" height="800" fill="%2387CEEB"/><circle cx="400" cy="300" r="100" fill="%23FFD700"/><text x="50%" y="60%" dominant-baseline="middle" text-anchor="middle" fill="%23FFFFFF" font-size="32" font-family="serif">✨ Ilustração Lumikids</text></svg>'; 
+          }}
+        />
+
+        {/* Efeito Visual de Estrelinhas e Faíscas Mágicas ao Tocar na Cena */}
+        {interactivePop.active && (
+          <div className="absolute inset-0 bg-white/10 pointer-events-none flex items-center justify-center animate-ping z-20">
+            <span className="text-7xl drop-shadow-2xl">✨ ⭐ ✨</span>
+          </div>
+        )}
+
+        {/* Badge Lúdico de Interatividade */}
+        {currentPageIndex > 0 && currentPageIndex <= totalStoryPages && (
+          <div className="absolute top-5 left-5 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full text-[0.7rem] font-black text-white shadow-lg flex items-center gap-1.5 pointer-events-none border border-white/20">
+            <span>👆 Toque na cena!</span>
+          </div>
+        )}
+
+        {/* BOTÃO PRÓXIMA PÁGINA (Seta Azul Redonda no Canto Superior Direito) */}
+        {currentPageIndex < totalPagesCount - 1 && (
           <button 
             type="button"
-            onClick={() => {
-              if (isSpeaking) {
-                stopNarration();
-              } else {
-                const currentText = currentPageIndex > 0 && currentPageIndex <= displayParagraphs.length
-                  ? displayParagraphs[currentPageIndex - 1].text
-                  : story.title;
-                speakText(currentText);
-              }
+            onClick={(e) => {
+              e.stopPropagation();
+              handleNextPage();
             }}
-            className={`w-9 h-9 rounded-full flex items-center justify-center transition-all text-sm shadow-xs ${
-              isSpeaking
-                ? 'bg-[#0D9488] text-white animate-pulse'
-                : 'bg-slate-200/60 hover:bg-slate-200 text-slate-700'
-            }`}
-            title={isSpeaking ? 'Pausar Narração' : 'Ouvir Narração da Página'}
+            className="btn-round-action w-12 h-12 sm:w-14 sm:h-14 rounded-full text-white flex items-center justify-center font-black text-2xl sm:text-3xl shadow-xl absolute top-5 right-5 z-20 active:scale-95"
+            title="Próxima página"
           >
-            {isSpeaking ? '🔊' : '🔈'}
+            →
           </button>
-          <span className="text-sm font-serif font-bold text-slate-700 cursor-pointer px-1">AA</span>
-        </div>
+        )}
+
+        {/* BOTÃO DE MENU (Ícone Redondo de 3 Barras no Canto Inferior Direito) */}
+        <button 
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsMenuOpen(true);
+          }}
+          className="btn-round-action w-11 h-11 sm:w-12 sm:h-12 rounded-full text-white flex items-center justify-center font-black text-xl shadow-xl absolute bottom-5 right-5 z-20 active:scale-95"
+          title="Opções da História"
+        >
+          ☰
+        </button>
+
       </div>
 
-      {/* ═══ CONTEÚDO PRINCIPAL DO LEITOR (Estilo Livro Infantil Impresso) ═══ */}
-      <div className="flex-1 max-w-xl w-full mx-auto px-6 py-4 flex flex-col justify-center" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
-        
-        {/* SLIDE 1: CAPA COM TÍTULO (Página 1 / Total) */}
-        {currentPageIndex === 0 && (
-          <div className="flex flex-col items-center justify-center min-h-[480px] text-center px-4 py-8 bg-[#FAF9F5] rounded-[32px] border border-slate-200/80 shadow-sm relative overflow-hidden">
-            <div className="w-24 h-[3px] bg-[#0D9488] mb-8 rounded-full"></div>
-            
-            <span className="text-xs font-bold text-[#0D9488] uppercase tracking-widest mb-3">
-              {story.category ? story.category.replace('-', ' ') : 'História Infantil'}
-            </span>
-
-            <h1 className="text-3xl md:text-4xl font-serif font-bold text-slate-900 leading-tight mb-8 max-w-md">
-              {story.title}
-            </h1>
-
-            <div className="w-24 h-[3px] bg-[#0D9488] mb-12 rounded-full"></div>
-
-            <div className="flex items-center justify-center gap-4 text-xs font-medium text-slate-500 mb-8">
-              <span>⏱️ {story.durationMinutes || 5} min</span>
-              <span>•</span>
-              <span>❤️ {story.value || 'Valores Morais'}</span>
-            </div>
-
-            <p className="text-xs font-sans text-slate-400 animate-pulse flex items-center gap-1">
-              Deslize para a direita e boa leitura 👈
-            </p>
-          </div>
-        )}
-
-        {/* SLIDES DA HISTÓRIA (Página 2 a N-1) - 1 Imagem 2D por Página + Texto Serif com Drop Cap */}
-        {currentPageIndex > 0 && currentPageIndex <= displayParagraphs.length && (
-          (() => {
-            const pIndex = currentPageIndex - 1;
-            const p = displayParagraphs[pIndex];
-            const isFirstStoryPage = pIndex === 0;
-
-            // Extrai a primeira letra para o Drop Cap da primeira página da história
-            const firstLetter = p.text ? p.text.charAt(0) : '';
-            const restOfText = p.text ? p.text.slice(1) : '';
-
-            return (
-              <div className="flex flex-col gap-6">
-                {/* 1 ILUSTRAÇÃO 2D DE LIVRO COM INTERATIVIDADE (Estilo Bible App for Kids: Toque para Brilhar & Som) */}
-                <div 
-                  onClick={triggerKidReaction}
-                  className="relative w-full rounded-[28px] overflow-hidden shadow-md border-2 border-white bg-white aspect-square max-h-[350px] mx-auto flex items-center justify-center cursor-pointer group active:scale-[0.98] transition-transform select-none"
-                  title="Toque na cena para interagir! ✨"
-                >
-                  <img 
-                    src={p.imageUrl} 
-                    alt={`Ilustração Página ${currentPageIndex}`} 
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    onError={(e) => { e.currentTarget.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800"><rect width="800" height="800" fill="%23F3F1EA"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%230D9488" font-size="32" font-family="serif">✨ Ilustração Lumikids</text></svg>'; }}
-                  />
-
-                  {/* Badge lúdico de toque */}
-                  <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-full text-[0.65rem] font-black text-[#0D9488] shadow-sm flex items-center gap-1 opacity-90 group-hover:opacity-100">
-                    <span>👆 Toque aqui!</span>
-                  </div>
-
-                  {/* Efeito visual de estrelinhas ao tocar */}
-                  {interactivePop.active && (
-                    <div className="absolute inset-0 bg-teal-400/10 pointer-events-none flex items-center justify-center animate-ping">
-                      <span className="text-6xl drop-shadow-md">✨ ⭐ ✨</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* TEXTO ESTILO LIVRO IMPRESSO (Com Capitular na 1ª página e Destaque Sincronizado de Narração) */}
-                <div className="w-full bg-[#FAF9F5] p-6 md:p-8 rounded-[28px] border border-slate-200/70 shadow-sm min-h-[140px] flex items-center relative">
-                  <p className="font-serif text-lg md:text-xl text-slate-900 leading-relaxed select-none w-full">
-                    {isFirstStoryPage && !isSpeaking ? (
-                      <>
-                        <span className="float-left text-5xl md:text-6xl font-serif font-bold text-[#0D9488] pr-3 pb-1 leading-none font-bold">
-                          {firstLetter}
-                        </span>
-                        {restOfText}
-                      </>
-                    ) : isSpeaking ? (
-                      p.text.split(/\s+/).map((word: string, wIdx: number) => {
-                        const isCurrentWord = activeWordIndex === wIdx;
-                        return (
-                          <span
-                            key={wIdx}
-                            className={`transition-colors duration-150 inline-block mr-1.5 ${
-                              isCurrentWord
-                                ? 'bg-amber-300 text-slate-950 font-black px-1 rounded-md shadow-xs scale-105'
-                                : 'text-slate-900'
-                            }`}
-                          >
-                            {word}
-                          </span>
-                        );
-                      })
-                    ) : (
-                      p.text
-                    )}
-                  </p>
-                </div>
-
-                {/* Desafios Educativos Interativos se houver */}
-                {p.interactiveChallenge && (
-                  <div className="w-full">
-                    {p.interactiveChallenge.type === 'drag_rescue' && (
-                      <InteractiveDragRescue 
-                        instruction={p.interactiveChallenge.instruction}
-                        itemEmoji={p.interactiveChallenge.itemEmoji}
-                        targetEmoji={p.interactiveChallenge.targetEmoji}
-                      />
-                    )}
-                    {p.interactiveChallenge.type === 'counting' && (
-                      <InteractiveCounting 
-                        instruction={p.interactiveChallenge.instruction}
-                        targetCount={p.interactiveChallenge.targetCount}
-                        itemEmoji={p.interactiveChallenge.itemEmoji}
-                      />
-                    )}
-                  </div>
-                )}
-              </div>
-            );
-          })()
-        )}
-
-        {/* SLIDE FINAL: FIM DA HISTÓRIA & AVALIAÇÃO (Estilo Readmio Image 5) */}
-        {currentPageIndex === displayParagraphs.length + 1 && (
-          <div className="flex flex-col items-center justify-between min-h-[480px] text-center p-6 bg-[#FAF9F5] rounded-[32px] border border-slate-200/80 shadow-sm">
-            <div>
-              {/* Miniatura da Capa */}
-              <div className="w-28 h-28 rounded-2xl overflow-hidden shadow-md mx-auto mb-4 border border-slate-200">
-                <img src={story.coverImageUrl || displayParagraphs[0]?.imageUrl} alt={story.title} className="w-full h-full object-cover" />
-              </div>
-
-              <h2 className="text-2xl font-serif font-bold text-slate-900 mb-1">Fim da História</h2>
-              <p className="text-xs text-slate-500 font-sans mb-4">O que achou desta aventura?</p>
-
-              {/* Avaliação em Estrelas (Estilo Readmio) */}
-              <div className="flex justify-center gap-2 text-2xl text-[#F59E0B] mb-6">
-                <span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span>
-              </div>
-            </div>
-
-            {/* Seção "O que fazer agora?" */}
-            <div className="w-full my-4 space-y-3">
-              {/* Desafio de Fixação & Adesivo da Virtude (Estilo Bible App for Kids) */}
-              <StoryEndActivity 
-                storyTitle={story.title}
-                reflectionQuestion={story.reflection?.question}
-                value={story.value}
-                onComplete={(score) => {
-                  setStarsReward(score);
-                }}
-              />
-
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Para Praticar em Família</h3>
-
-              {story.reflection?.question && (
-                <div className="bg-white p-4 rounded-2xl border border-slate-200/80 text-left shadow-xs">
-                  <div className="flex items-center gap-2 text-[#0D9488] font-bold text-xs mb-1">
-                    <span>💬 Conversar em Família</span>
-                  </div>
-                  <p className="text-xs font-serif text-slate-700 leading-relaxed">
-                    {story.reflection.question}
-                  </p>
-                </div>
-              )}
-
-              {story.mission?.description && (
-                <div className="bg-white p-4 rounded-2xl border border-slate-200/80 text-left shadow-xs">
-                  <div className="flex items-center gap-2 text-[#F59E0B] font-bold text-xs mb-1">
-                    <span>🌟 Missão do Bem</span>
-                  </div>
-                  <p className="text-xs font-sans text-slate-700 leading-relaxed font-semibold">
-                    {story.mission.description}
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* Botões de Ação Finais */}
-            <div className="w-full flex flex-col gap-3">
-              <button 
-                onClick={() => setCurrentPageIndex(0)}
-                className="w-full py-3.5 rounded-full bg-[#0D9488] text-white font-bold text-sm hover:bg-[#0F766E] transition-all shadow-md flex items-center justify-center gap-2"
+      {/* ═════════════════════════════════════════════════════════════
+          MODAL DE CONFIGURAÇÕES ESTILO BIBLE APP (Pedra + Pergaminho)
+          ═════════════════════════════════════════════════════════════ */}
+      {isMenuOpen && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4"
+          onClick={() => setIsMenuOpen(false)}
+        >
+          <div 
+            className="w-full max-w-sm rounded-[32px] overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Cabeçalho de Barra de Pedra Entalhada */}
+            <div className="stone-banner py-4 px-6 flex items-center justify-between text-white">
+              <button
+                type="button"
+                onClick={() => setIsMenuOpen(false)}
+                className="btn-round-action w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-base shadow-xs"
               >
-                <span>🔄 Reler História</span>
+                ←
               </button>
-              
-              <Link 
-                href="/app/historias"
-                className="w-full py-3.5 rounded-full bg-[#F59E0B] text-slate-900 font-bold text-sm hover:bg-amber-600 transition-all shadow-md flex items-center justify-center gap-2"
-              >
-                <span>🚀 Explorar Outras Histórias</span>
-              </Link>
+              <h3 className="font-serif font-black text-lg tracking-wide uppercase drop-shadow-md">
+                Configurações
+              </h3>
+              <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-sm font-bold text-white border border-white/40">
+                i
+              </div>
             </div>
+
+            {/* Corpo em Pergaminho Dobrado com Toggles */}
+            <div className="parchment-sheet p-6 space-y-4 text-[#2D2114]">
+              {/* Opção Efeitos Sonoros */}
+              <div className="flex items-center justify-between py-2 border-b border-amber-900/10">
+                <span className="font-bold text-sm">Sound Effects</span>
+                <button
+                  type="button"
+                  onClick={() => setSoundEffectsEnabled(prev => !prev)}
+                  className={`btn-round-action w-10 h-10 rounded-full flex items-center justify-center text-white text-base ${
+                    soundEffectsEnabled ? 'opacity-100' : 'opacity-40 grayscale'
+                  }`}
+                >
+                  {soundEffectsEnabled ? '🔊' : '🔇'}
+                </button>
+              </div>
+
+              {/* Opção Narração */}
+              <div className="flex items-center justify-between py-2 border-b border-amber-900/10">
+                <span className="font-bold text-sm">Narração da Voz</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (isSpeaking) {
+                      stopNarration();
+                    } else {
+                      const currentText = currentPageIndex > 0 && currentPageIndex <= totalStoryPages
+                        ? displayParagraphs[currentPageIndex - 1].text
+                        : story.title;
+                      speakText(currentText);
+                    }
+                  }}
+                  className="btn-round-action w-10 h-10 rounded-full flex items-center justify-center text-white text-base"
+                >
+                  🗣️
+                </button>
+              </div>
+
+              {/* Botões de Ação */}
+              <div className="pt-3 space-y-2.5">
+                <Link
+                  href="/app"
+                  className="w-full py-3 rounded-full bg-white border-2 border-amber-400 text-[#2D2114] font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-xs hover:bg-amber-50"
+                >
+                  <span>🗺️ Voltar ao Mapa de Aventuras</span>
+                </Link>
+
+                <Link
+                  href="/app/historias"
+                  className="w-full py-3 rounded-full bg-white border-2 border-amber-400 text-[#2D2114] font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-xs hover:bg-amber-50"
+                >
+                  <span>📚 Gerenciar Histórias</span>
+                </Link>
+
+                <button
+                  type="button"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="w-full py-3 rounded-full bg-[#0D9488] text-white font-black text-xs uppercase tracking-wider shadow-md hover:bg-[#0F766E]"
+                >
+                  Continuar Lendo ✨
+                </button>
+              </div>
+            </div>
+
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
-      {/* ═══ CONTROLES DE NAVEGAÇÃO DO LEITOR (Botões Voltar e Próxima) ═══ */}
-      <div className="max-w-xl w-full mx-auto px-6 py-2 flex items-center justify-between">
-        <button
-          disabled={currentPageIndex === 0}
-          onClick={handlePrevPage}
-          className="px-5 py-2.5 rounded-full border border-slate-300 text-slate-700 font-bold text-xs hover:bg-slate-100 disabled:opacity-30 disabled:pointer-events-none transition-all flex items-center gap-1.5 active:scale-95"
-        >
-          <span>👈 Anterior</span>
-        </button>
-
-        <button
-          disabled={currentPageIndex === displayParagraphs.length + 1}
-          onClick={handleNextPage}
-          className="px-6 py-2.5 rounded-full bg-[#0D9488] text-white font-bold text-xs hover:bg-[#0F766E] disabled:opacity-30 disabled:pointer-events-none transition-all shadow-md flex items-center gap-1.5 active:scale-95"
-        >
-          <span>Próxima 👉</span>
-        </button>
-      </div>
     </div>
   );
 }
