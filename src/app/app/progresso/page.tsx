@@ -89,11 +89,56 @@ export default function ProgressoPage() {
         </div>
       </div>
 
-      {/* Seção Conquistas Recentes (Estilo Readmio Image 8) */}
+      {/* Álbum do Explorador: Adesivos das Trilhas (Estilo Bible App for Kids) */}
+      <div className="mb-8 bg-gradient-to-br from-amber-50 to-teal-50 border-2 border-amber-200/90 rounded-[28px] p-5 shadow-xs">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <span className="text-2xl">📖</span>
+            <div>
+              <h3 className="font-serif font-bold text-slate-900 text-sm">Álbum de Adesivos & Mundos</h3>
+              <p className="text-[0.68rem] text-slate-500 font-medium">Colete um selo dourado ao completar cada trilha</p>
+            </div>
+          </div>
+          <span className="text-[0.65rem] font-black uppercase px-2.5 py-1 rounded-full bg-amber-400 text-amber-950 shadow-xs">
+            {stats.totalStories} / 8 Selos
+          </span>
+        </div>
+
+        <div className="grid grid-cols-4 gap-2.5 pt-2">
+          {[
+            { id: 'mitologia-grega', emoji: '🏛️', name: 'Olimpo', unlocked: true },
+            { id: 'biblia-kids', emoji: '📖', name: 'Bíblia', unlocked: stats.totalStories >= 1 },
+            { id: 'mulheres-fortes', emoji: '👑', name: 'Heroínas', unlocked: stats.totalStories >= 2 },
+            { id: 'biografias-historicas', emoji: '🏰', name: 'Líderes', unlocked: stats.totalStories >= 3 },
+            { id: 'contos-de-herois', emoji: '🛡️', name: 'Fábulas', unlocked: stats.totalStories >= 4 },
+            { id: 'inventores-genios', emoji: '🔬', name: 'Oficina', unlocked: stats.totalStories >= 5 },
+            { id: 'virtudes-em-acao', emoji: '✨', name: 'Virtudes', unlocked: stats.totalStories >= 6 },
+            { id: 'natureza-animais', emoji: '🌿', name: 'Natureza', unlocked: stats.totalStories >= 7 },
+          ].map((sticker) => (
+            <div 
+              key={sticker.id}
+              className={`rounded-2xl p-2.5 text-center flex flex-col items-center justify-center transition-all ${
+                sticker.unlocked
+                  ? 'bg-white border-2 border-amber-300 shadow-xs scale-100'
+                  : 'bg-slate-100/70 border border-slate-200 opacity-50 grayscale'
+              }`}
+            >
+              <div className="w-10 h-10 rounded-full flex items-center justify-center text-xl mb-1">
+                {sticker.emoji}
+              </div>
+              <span className="text-[0.62rem] font-bold text-slate-800 truncate w-full">
+                {sticker.name}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Seção Conquistas Recentes */}
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-base font-serif font-bold text-slate-900">Conquistas Recentes</h3>
-          <span className="text-xs font-bold text-[#0D9488] cursor-pointer">Ver todas</span>
+          <h3 className="text-base font-serif font-bold text-slate-900">Medalhas de Leitura</h3>
+          <span className="text-xs font-bold text-[#0D9488]">Todas</span>
         </div>
 
         <div className="grid grid-cols-3 gap-3">

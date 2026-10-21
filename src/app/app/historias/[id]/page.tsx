@@ -8,6 +8,7 @@ import InteractiveDragRescue from '@/components/educational/InteractiveDragRescu
 import InteractiveCounting from '@/components/educational/InteractiveCounting';
 import InteractiveShapeMatch from '@/components/educational/InteractiveShapeMatch';
 import InteractiveMoralChoice from '@/components/educational/InteractiveMoralChoice';
+import StoryEndActivity from '@/components/app/StoryEndActivity';
 
 // Função para detectar efeitos visuais baseados nas palavras da história
 function getDynamicEffects(text: string): string[] {
@@ -572,7 +573,17 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
 
             {/* Seção "O que fazer agora?" */}
             <div className="w-full my-4 space-y-3">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">O que fazer agora?</h3>
+              {/* Desafio de Fixação & Adesivo da Virtude (Estilo Bible App for Kids) */}
+              <StoryEndActivity 
+                storyTitle={story.title}
+                reflectionQuestion={story.reflection?.question}
+                value={story.value}
+                onComplete={(score) => {
+                  setStarsReward(score);
+                }}
+              />
+
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Para Praticar em Família</h3>
 
               {story.reflection?.question && (
                 <div className="bg-white p-4 rounded-2xl border border-slate-200/80 text-left shadow-xs">
