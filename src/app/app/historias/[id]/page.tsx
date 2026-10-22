@@ -97,36 +97,51 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
   const [interactivePop, setInteractivePop] = useState<{ x: number; y: number; active: boolean }>({ x: 0, y: 0, active: false });
   const [starsReward, setStarsReward] = useState<number>(3);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isAudioLoading, setIsAudioLoading] = useState(false);
   const [activeWordIndex, setActiveWordIndex] = useState<number | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [soundEffectsEnabled, setSoundEffectsEnabled] = useState(true);
 
-  // Narração Imersiva com Web Speech API e Sincronização de Palavras (Estilo Bible App for Kids)
+  // Referências para o áudio profissional humanizado
+  const audioElementRef = React.useRef<HTMLAudioElement | null>(null);
+  const audioCacheRef = React.useRef<Map<string, string>>(new Map());
+
+  // Narração Imersiva: Áudio Realista com IA e Sincronização
   const stopNarration = () => {
+    if (audioElementRef.current) {
+      audioElementRef.current.pause();
+      audioElementRef.current.currentTime = 0;
+    }
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
-      setIsSpeaking(false);
-      setActiveWordIndex(null);
     }
+    setIsSpeaking(false);
+    setIsAudioLoading(false);
+    setActiveWordIndex(null);
   };
 
-  const speakText = (text: string) => {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+  const fallbackSpeechSynthesis = (text: string) => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+      setIsSpeaking(false);
+      setIsAudioLoading(false);
+      return;
+    }
     window.speechSynthesis.cancel();
-
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'pt-BR';
-    utterance.rate = 0.92; // Ritmo mais calmo e acolhedor para crianças
-    utterance.pitch = 1.05; // Tom ligeiramente suave e expressivo
+    utterance.rate = 0.92;
+    utterance.pitch = 1.05;
 
-    // Tentar selecionar voz brasileira de qualidade
     const voices = window.speechSynthesis.getVoices();
-    const ptVoice = voices.find(v => v.lang.includes('pt-BR') || v.lang.includes('pt_BR') || v.name.toLowerCase().includes('brazil') || v.name.toLowerCase().includes('maria') || v.name.toLowerCase().includes('luciana'));
-    if (ptVoice) {
-      utterance.voice = ptVoice;
-    }
+    const ptVoice = voices.find(v => 
+      v.lang.includes('pt-BR') || 
+      v.lang.includes('pt_BR') || 
+      v.name.toLowerCase().includes('brazil') || 
+      v.name.toLowerCase().includes('maria') || 
+      v.name.toLowerCase().includes('luciana')
+    );
+    if (ptVoice) utterance.voice = ptVoice;
 
-    // Sincronização de destaque de palavras
     utterance.onboundary = (event) => {
       if (event.name === 'word') {
         const charIdx = event.charIndex;
@@ -138,19 +153,83 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
 
     utterance.onstart = () => {
       setIsSpeaking(true);
+      setIsAudioLoading(false);
     };
-
     utterance.onend = () => {
       setIsSpeaking(false);
       setActiveWordIndex(null);
     };
-
     utterance.onerror = () => {
       setIsSpeaking(false);
+      setIsAudioLoading(false);
       setActiveWordIndex(null);
     };
 
     window.speechSynthesis.speak(utterance);
+  };
+
+  const speakText = async (text: string) => {
+    stopNarration();
+    if (!text || !text.trim()) return;
+
+    setIsAudioLoading(true);
+
+    try {
+      let audioBlobUrl = audioCacheRef.current.get(text);
+
+      if (!audioBlobUrl) {
+        const res = await fetch('/api/ai/narrate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text, voice: 'Aoede' })
+        });
+
+        if (res.ok) {
+          const blob = await res.blob();
+          audioBlobUrl = URL.createObjectURL(blob);
+          audioCacheRef.current.set(text, audioBlobUrl);
+        }
+      }
+
+      if (audioBlobUrl) {
+        const audio = new Audio(audioBlobUrl);
+        audioElementRef.current = audio;
+
+        const words = text.trim().split(/\s+/);
+        audio.ontimeupdate = () => {
+          if (audio.duration && audio.duration > 0) {
+            const progress = audio.currentTime / audio.duration;
+            const currentWord = Math.min(
+              words.length - 1,
+              Math.floor(progress * words.length)
+            );
+            setActiveWordIndex(currentWord);
+          }
+        };
+
+        audio.onplay = () => {
+          setIsSpeaking(true);
+          setIsAudioLoading(false);
+        };
+
+        audio.onended = () => {
+          setIsSpeaking(false);
+          setActiveWordIndex(null);
+        };
+
+        audio.onerror = () => {
+          console.warn('Falha no playback de áudio, usando fallback');
+          fallbackSpeechSynthesis(text);
+        };
+
+        await audio.play();
+        return;
+      }
+    } catch (e) {
+      console.warn('Erro ao chamar API de narração, usando sintetizador nativo', e);
+    }
+
+    fallbackSpeechSynthesis(text);
   };
 
   // Para narração ao mudar de página
@@ -518,15 +597,18 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
   const totalPagesCount = totalStoryPages + 2; // Cover (0) + Pages (1..N) + End (N+1)
 
   return (
-    <div className="min-h-screen w-full flex flex-col md:flex-row bg-[#2C3E50] overflow-hidden select-none relative font-sans">
+    <div className="min-h-screen w-full flex flex-col md:flex-row bg-[#2C3E50] overflow-x-hidden select-none relative font-sans">
       
       {/* ═════════════════════════════════════════════════════════════
           LADO ESQUERDO: PERGAMINHO DA HISTÓRIA (Estilo Bíblia Kids)
           ═════════════════════════════════════════════════════════════ */}
-      <div className="parchment-sheet parchment-border-right w-full md:w-[42%] lg:w-[38%] flex flex-col justify-between p-6 sm:p-8 z-10 shadow-2xl relative min-h-[45vh] md:min-h-screen overflow-y-auto">
+      <div 
+        className="parchment-sheet parchment-border-right w-full md:w-[44%] lg:w-[40%] shrink-0 min-w-0 flex flex-col justify-between px-6 sm:px-10 md:px-12 py-6 sm:py-8 z-10 shadow-2xl relative min-h-[45vh] md:min-h-screen overflow-y-auto"
+        style={{ paddingLeft: 'max(1.75rem, calc(env(safe-area-inset-left) + 1.25rem))' }}
+      >
         
         {/* Topo do Pergaminho: Botão de Voltar Redondo Azul e Controles */}
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-4 w-full">
           {currentPageIndex === 0 ? (
             <Link 
               href="/app/historias" 
@@ -550,7 +632,7 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
           <button 
             type="button"
             onClick={() => {
-              if (isSpeaking) {
+              if (isSpeaking || isAudioLoading) {
                 stopNarration();
               } else {
                 const currentText = currentPageIndex > 0 && currentPageIndex <= totalStoryPages
@@ -559,17 +641,17 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
                 speakText(currentText);
               }
             }}
-            className={`btn-round-action w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center text-sm shadow-md transition-all ${
+            className={`btn-round-action w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-sm shadow-md transition-all ${
               isSpeaking ? 'ring-4 ring-amber-300 animate-pulse' : ''
             }`}
-            title={isSpeaking ? 'Pausar narração' : 'Ouvir narração da página'}
+            title={isSpeaking ? 'Pausar narração' : isAudioLoading ? 'Carregando voz de IA...' : 'Ouvir narração da página'}
           >
-            {isSpeaking ? '🔊' : '🔈'}
+            {isAudioLoading ? '⏳' : isSpeaking ? '🔊' : '🔈'}
           </button>
         </div>
 
         {/* ═══ CONTEÚDO DO PERGAMINHO ═══ */}
-        <div className="flex-1 flex flex-col justify-center my-auto py-4">
+        <div className="flex-1 flex flex-col justify-center my-auto py-4 w-full px-1 sm:px-2">
           
           {/* CASO 1: CAPA DA HISTÓRIA (Página 0) */}
           {currentPageIndex === 0 && (
@@ -752,7 +834,7 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
           LADO DIREITO: ILUSTRAÇÃO 2D EXPANDIDA (Estilo Bíblia Kids)
           ═════════════════════════════════════════════════════════════ */}
       <div 
-        className="flex-1 relative w-full h-[55vh] md:h-screen overflow-hidden bg-slate-900 flex items-center justify-center cursor-pointer select-none"
+        className="w-full md:w-[56%] lg:w-[60%] flex-1 relative min-w-0 h-[55vh] md:h-screen overflow-hidden bg-slate-900 flex items-center justify-center cursor-pointer select-none"
         onClick={triggerKidReaction}
       >
         {/* Imagem de Fundo em 2D Cartoon Panorâmica */}

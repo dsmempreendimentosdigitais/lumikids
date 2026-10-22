@@ -136,10 +136,8 @@ export default function JourneyMap({ stories, userPlan = 'free', isAdmin = false
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
 
+  const themeScrollRef = React.useRef<HTMLDivElement>(null);
   const activeTrail = KNOWLEDGE_TRAILS.find(t => t.id === selectedCategory) || KNOWLEDGE_TRAILS[0];
-  const worldConfig = WORLD_CONFIGS[selectedCategory] || WORLD_CONFIGS['mitologia-grega'];
-
-  // Histórias da trilha selecionada
   const trailStories = stories.filter(s => s.category === selectedCategory);
 
   // Totais do pequeno explorador
@@ -167,32 +165,94 @@ export default function JourneyMap({ stories, userPlan = 'free', isAdmin = false
     } catch (e) {}
   };
 
+  // Rolagem suave até a seção de um mundo específico no mapa contínuo
+  const scrollToWorld = (trailId: string) => {
+    setSelectedCategory(trailId);
+    playSound(520);
+    const element = document.getElementById(`world-${trailId}`);
+    if (element) {
+      const yOffset = -110;
+      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  };
+
+  // Rolar carrossel de temas no topo para a direita ou esquerda
+  const scrollThemeRow = (direction: 'left' | 'right') => {
+    playSound(460);
+    if (themeScrollRef.current) {
+      const scrollAmount = direction === 'right' ? 180 : -180;
+      themeScrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
+
+  // Detector de qual mundo está no campo de visão conforme o explorador rola a tela
+  React.useEffect(() => {
+    const observers: IntersectionObserver[] = [];
+
+    KNOWLEDGE_TRAILS.forEach((trail) => {
+      const el = document.getElementById(`world-${trail.id}`);
+      if (!el) return;
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              setSelectedCategory(trail.id);
+
+              // Centraliza o botão correspondente no carrossel do topo
+              const btnEl = document.getElementById(`theme-btn-${trail.id}`);
+              if (btnEl && themeScrollRef.current) {
+                const container = themeScrollRef.current;
+                const scrollLeft = btnEl.offsetLeft - container.offsetWidth / 2 + btnEl.offsetWidth / 2;
+                container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+              }
+            }
+          });
+        },
+        { threshold: 0.2, rootMargin: '-100px 0px -40% 0px' }
+      );
+
+      observer.observe(el);
+      observers.push(observer);
+    });
+
+    return () => {
+      observers.forEach((obs) => obs.disconnect());
+    };
+  }, []);
+
   return (
-    <div className={`relative w-full min-h-screen bg-gradient-to-b ${worldConfig.bgColor} select-none font-sans overflow-x-hidden flex flex-col justify-between`}>
+    <div className="relative w-full min-h-screen bg-gradient-to-b from-[#FFF7ED] via-[#FEF3C7] via-[#DCFCE7] via-[#FFE4E6] via-[#EEF2FF] via-[#E0F2FE] via-[#FEF9C3] via-[#FAF5FF] to-[#ECFCCB] select-none font-sans overflow-x-hidden flex flex-col justify-between">
       
       {/* ═════════════════════════════════════════════════════════════
           PLANO DE FUNDO CENOGRÁFICO 100% FULL-BLEED (Colinas, Rio e Céu)
           ═════════════════════════════════════════════════════════════ */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
         {/* Curvas de Colinas Verdes em SVG (Relevo autêntico de jogo) */}
-        <svg className="absolute bottom-0 left-0 w-full h-[60%] min-h-[450px] opacity-25" viewBox="0 0 1440 800" preserveAspectRatio="none">
-          <path d="M0,320 C320,180 480,420 800,280 C1120,140 1280,360 1440,240 L1440,800 L0,800 Z" fill="#84CC16" />
-          <path d="M0,480 C260,360 520,580 840,440 C1160,300 1320,500 1440,420 L1440,800 L0,800 Z" fill="#65A30D" />
+        <svg className="absolute bottom-0 left-0 w-full h-[70%] min-h-[600px] opacity-25" viewBox="0 0 1440 1200" preserveAspectRatio="none">
+          <path d="M0,480 C320,280 480,520 800,380 C1120,240 1280,460 1440,340 L1440,1200 L0,1200 Z" fill="#84CC16" />
+          <path d="M0,680 C260,560 520,780 840,640 C1160,500 1320,700 1440,620 L1440,1200 L0,1200 Z" fill="#65A30D" />
           {/* Rio sinuoso que cruza o mapa */}
-          <path d="M-50,600 C300,520 600,680 950,560 C1200,480 1350,620 1500,580 L1500,660 C1350,700 1200,560 950,640 C600,760 300,600 -50,680 Z" fill="#38BDF8" opacity="0.6" />
+          <path d="M-50,800 C300,720 600,880 950,760 C1200,680 1350,820 1500,780 L1500,860 C1350,900 1200,760 950,840 C600,960 300,800 -50,880 Z" fill="#38BDF8" opacity="0.6" />
         </svg>
 
-        {/* Nuvens fofas flutuantes no topo */}
+        {/* Nuvens fofas flutuantes espalhadas pelo céu do mapa */}
         <div className="absolute top-8 left-12 text-6xl opacity-75 animate-pulse">☁️</div>
-        <div className="absolute top-20 right-16 text-7xl opacity-65 animate-pulse" style={{ animationDelay: '2s' }}>☁️</div>
-        <div className="absolute top-36 left-1/3 text-5xl opacity-40 animate-pulse" style={{ animationDelay: '3.5s' }}>☁️</div>
+        <div className="absolute top-24 right-16 text-7xl opacity-65 animate-pulse" style={{ animationDelay: '2s' }}>☁️</div>
+        <div className="absolute top-96 left-1/4 text-5xl opacity-40 animate-pulse" style={{ animationDelay: '3.5s' }}>☁️</div>
+        <div className="absolute top-[800px] right-12 text-6xl opacity-50 animate-pulse" style={{ animationDelay: '1.5s' }}>☁️</div>
+        <div className="absolute top-[1400px] left-10 text-6xl opacity-45 animate-pulse" style={{ animationDelay: '4s' }}>☁️</div>
 
-        {/* Elementos cenográficos lúdicos espalhados */}
-        <div className="absolute top-28 right-8 text-7xl opacity-40">🏔️ ⛰️</div>
-        <div className="absolute top-64 left-10 text-5xl opacity-50">🌲 🌳</div>
-        <div className="absolute top-96 right-12 text-5xl opacity-45">🏕️ 🐑</div>
-        <div className="absolute bottom-36 left-12 text-6xl opacity-40">🌊 ⛵ 🐠</div>
-        <div className="absolute bottom-52 right-10 text-6xl opacity-35">🏜️ 🐪 🌴</div>
+        {/* Elementos cenográficos lúdicos ao longo da aventura */}
+        <div className="absolute top-36 right-8 text-7xl opacity-40">🏔️ ⛰️</div>
+        <div className="absolute top-80 left-8 text-5xl opacity-50">🌲 🌳</div>
+        <div className="absolute top-[650px] right-10 text-6xl opacity-45">🕊️ 🌾</div>
+        <div className="absolute top-[1100px] left-8 text-6xl opacity-40">👑 🏰</div>
+        <div className="absolute top-[1600px] right-12 text-6xl opacity-45">🛡️ 🏕️</div>
+        <div className="absolute top-[2100px] left-10 text-6xl opacity-40">🔭 💡</div>
+        <div className="absolute top-[2600px] right-8 text-6xl opacity-45">✨ 🌸</div>
+        <div className="absolute bottom-52 left-12 text-6xl opacity-40">🌊 ⛵ 🐠</div>
       </div>
 
       {/* ═══ CONTEÚDO PRINCIPAL DO MAPA ═══ */}
@@ -205,7 +265,7 @@ export default function JourneyMap({ stories, userPlan = 'free', isAdmin = false
               Lumi<span className="text-amber-500">kids</span>
             </span>
             <span className="text-xs bg-white/80 border border-slate-200 px-2.5 py-0.5 rounded-full font-bold text-slate-600 shadow-xs">
-              ✨ Aventura
+              ✨ Aventura Contínua
             </span>
           </div>
 
@@ -221,172 +281,238 @@ export default function JourneyMap({ stories, userPlan = 'free', isAdmin = false
           )}
         </div>
 
-        {/* ═══ BARRA DE CONTROLES DO TOPO (Ícones Bem Grandes Estilo Bíblia Kids) ═══ */}
-        <div className="flex items-center justify-between gap-3 sm:gap-4 mb-6">
-          
-          {/* BOTÃO DE LIVRO / HISTÓRIAS (GRANDE E VIBRANTE, PRINT 2) */}
-          <button
-            type="button"
-            onClick={() => {
-              playSound(580);
-              setIsCatalogOpen(true);
-            }}
-            className="w-14 h-14 sm:w-16 sm:h-16 md:w-18 md:h-18 rounded-full bg-white text-[#0284C7] shadow-[0_8px_25px_rgba(2,132,199,0.35)] border-3 sm:border-4 border-white flex items-center justify-center font-black text-2xl sm:text-3xl md:text-4xl hover:scale-105 active:scale-95 transition-all shrink-0 cursor-pointer"
-            title="Abrir Catálogo de Histórias em Madeira"
-          >
-            📖
-          </button>
+        {/* ═══ BARRA DE CONTROLES DO TOPO (Ícones Bem Grandes com Indicador de Rolagem) ═══ */}
+        <div className="sticky top-2 z-40 mb-8 backdrop-blur-xs py-1">
+          <div className="flex items-center justify-between gap-3 sm:gap-4">
+            
+            {/* BOTÃO DE LIVRO / HISTÓRIAS (GRANDE E VIBRANTE, PRINT 2) */}
+            <button
+              type="button"
+              onClick={() => {
+                playSound(580);
+                setIsCatalogOpen(true);
+              }}
+              className="w-14 h-14 sm:w-16 sm:h-16 md:w-18 md:h-18 rounded-full bg-white text-[#0284C7] shadow-[0_8px_25px_rgba(2,132,199,0.35)] border-3 sm:border-4 border-white flex items-center justify-center font-black text-2xl sm:text-3xl md:text-4xl hover:scale-105 active:scale-95 transition-all shrink-0 cursor-pointer"
+              title="Abrir Catálogo de Histórias em Madeira"
+            >
+              📖
+            </button>
 
-          {/* SELETOR DE MUNDOS COM ÍCONES GRANDES E ROLAGEM SUAVE */}
-          <div className="flex-1 flex justify-center overflow-x-auto py-2 px-1 scrollbar-none max-w-2xl">
-            <div className="inline-flex items-center gap-2 p-1.5 bg-white/95 backdrop-blur-md rounded-full shadow-xl border-2 border-white/90">
-              {KNOWLEDGE_TRAILS.map((trail) => {
-                const isSelected = trail.id === selectedCategory;
-                return (
-                  <button
-                    key={trail.id}
-                    onClick={() => {
-                      setSelectedCategory(trail.id);
-                      playSound(520);
-                    }}
-                    className={`flex items-center gap-2 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-full font-black transition-all shrink-0 active:scale-95 cursor-pointer ${
-                      isSelected
-                        ? 'bg-[#0D9488] text-white shadow-md scale-105'
-                        : 'text-slate-700 hover:bg-slate-100/80'
-                    }`}
-                    title={trail.title}
-                  >
-                    <span className="text-2xl sm:text-3xl">{trail.emoji}</span>
-                    <span className="text-xs sm:text-sm font-bold tracking-tight">
-                      {trail.title.split(' ')[0]}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* BOTÃO DE TROFÉU / ÁLBUM (GRANDE E DOURADO, PRINT 2) */}
-          <Link
-            href="/app/progresso"
-            onClick={() => playSound(480)}
-            className="w-14 h-14 sm:w-16 sm:h-16 md:w-18 md:h-18 rounded-full bg-white text-amber-500 shadow-[0_8px_25px_rgba(245,158,11,0.35)] border-3 sm:border-4 border-white flex items-center justify-center font-black text-2xl sm:text-3xl md:text-4xl hover:scale-105 active:scale-95 transition-all shrink-0"
-            title="Álbum do Explorador"
-          >
-            🏆
-          </Link>
-        </div>
-
-        {/* TÍTULO DO MUNDO ATIVO (Limpo, Elegante e Centralizado) */}
-        <div className="relative z-10 text-center mb-10">
-          <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full ${worldConfig.badgeBg} ${worldConfig.badgeText} border text-xs sm:text-sm font-black uppercase tracking-wider shadow-sm mb-2`}>
-            <span>{activeTrail.emoji}</span>
-            <span>{worldConfig.themeName}</span>
-          </div>
-          <h2 className="text-3xl sm:text-4xl font-serif font-black text-slate-900 drop-shadow-sm">
-            {activeTrail.title}
-          </h2>
-        </div>
-
-        {/* ═══ TRILHA SINUOSA COM PONTILHADO DOURADO & NÓS METÁLICOS ═══ */}
-        <div className="relative z-10 max-w-sm mx-auto flex flex-col items-center gap-14 pb-20">
-          {trailStories.length === 0 ? (
-            <div className="bg-white/90 backdrop-blur-md rounded-3xl p-8 text-center border-2 border-dashed border-slate-300 max-w-xs mx-auto my-12 shadow-sm">
-              <span className="text-4xl block mb-2">🧭</span>
-              <h4 className="font-bold text-slate-800 text-sm mb-1">Novos caminhos chegando!</h4>
-              <p className="text-xs text-slate-500">As histórias deste mundo estão sendo mapeadas para os pequenos exploradores.</p>
-            </div>
-          ) : (
-            trailStories.map((story, index) => {
-              // Posicionamento sinuoso em zigue-zague (esquerda, centro, direita) estilo Bible App
-              const positions = ['-translate-x-14 md:-translate-x-20', 'translate-x-0', 'translate-x-14 md:translate-x-20'];
-              const posClass = positions[index % 3];
+            {/* SELETOR DE MUNDOS COM ÍCONES GRANDES E INDICADOR DE ROLAGEM */}
+            <div className="flex-1 relative flex items-center justify-center min-w-0 max-w-2xl">
               
-              const isFirst = index === 0;
-              const isLocked = !isFirst && story.isLocked;
-              const starsCount = story.stars || (isFirst ? 3 : 0);
+              {/* Botão de Rolar para Esquerda (Desktop) */}
+              <button
+                type="button"
+                onClick={() => scrollThemeRow('left')}
+                className="hidden md:flex absolute -left-3 z-20 w-8 h-8 rounded-full bg-white shadow-lg border border-slate-200 items-center justify-center text-slate-700 hover:scale-110 active:scale-95 transition-transform cursor-pointer"
+                title="Rolar temas para a esquerda"
+              >
+                ◀
+              </button>
 
-              // Tags de atividade no canto do nó (adesivo, pincel, personagem)
-              const activityTags = [
-                { emoji: '🧩', bg: 'bg-pink-500' },
-                { emoji: '🎨', bg: 'bg-purple-500' },
-                { emoji: '🌟', bg: 'bg-amber-500' },
-                { emoji: '👑', bg: 'bg-blue-500' }
-              ];
-              const tag = activityTags[index % activityTags.length];
-
-              return (
-                <div key={story.id} className={`relative flex flex-col items-center transition-all ${posClass}`}>
-                  
-                  {/* PONTILHADO DOURADO CONECTANDO OS NÓS (Estilo Bible App for Kids) */}
-                  {index < trailStories.length - 1 && (
-                    <div className="absolute top-20 flex flex-col items-center gap-1.5 -z-0 pointer-events-none opacity-80">
-                      <div className="w-2.5 h-2.5 rounded-full bg-amber-400 border border-amber-500 shadow-xs"></div>
-                      <div className="w-2.5 h-2.5 rounded-full bg-amber-400 border border-amber-500 shadow-xs"></div>
-                      <div className="w-2.5 h-2.5 rounded-full bg-amber-400 border border-amber-500 shadow-xs"></div>
-                      <div className="w-2.5 h-2.5 rounded-full bg-amber-400 border border-amber-500 shadow-xs"></div>
-                    </div>
-                  )}
-
-                  {/* LINK DO NÓ DE HISTÓRIA */}
-                  <Link
-                    href={`/app/historias/${story.id}`}
-                    onClick={() => playSound(640)}
-                    className="group relative flex flex-col items-center focus:outline-none"
-                  >
-                    {/* NÓ METÁLICO 3D (Aro prateado circular com sombra) */}
-                    <div className={`metallic-node-rim relative w-24 h-24 sm:w-28 sm:h-28 rounded-full flex items-center justify-center cursor-pointer ${
-                      isLocked ? 'grayscale opacity-75' : ''
-                    }`}>
-                      {/* Miniatura / Ilustração 2D da História */}
-                      <div className="w-full h-full rounded-full overflow-hidden bg-slate-100 flex items-center justify-center">
-                        {story.coverImageUrl ? (
-                          <img src={story.coverImageUrl} alt={story.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" />
-                        ) : (
-                          <span className="text-4xl drop-shadow-sm transition-transform group-hover:scale-125">
-                            {story.coverEmoji || activeTrail.emoji}
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Mini-Badge de Atividade no Canto Superior Direito do Nó */}
-                      <div className={`absolute -top-1.5 -right-1.5 w-7 h-7 rounded-full ${tag.bg} text-white flex items-center justify-center text-xs shadow-md border-2 border-white`}>
-                        <span>{tag.emoji}</span>
-                      </div>
-
-                      {/* PEDESTAL DAS 3 ESTRELAS NA BASE INFERIOR (Estilo Bible App for Kids) */}
-                      <div className="stars-pedestal absolute -bottom-3 z-10 px-3 py-0.5 rounded-full flex items-center gap-1">
-                        {[1, 2, 3].map((s) => (
-                          <Star
-                            key={s}
-                            size={12}
-                            className={`${
-                              s <= starsCount
-                                ? 'text-amber-400 fill-amber-400 drop-shadow-xs'
-                                : 'text-slate-300 fill-slate-300'
-                            }`}
-                          />
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* TÍTULO DA HISTÓRIA EM CARTÃO LÚDICO */}
-                    <div className="mt-4 bg-white/95 backdrop-blur-sm px-3.5 py-1.5 rounded-2xl border border-slate-200/90 shadow-sm max-w-[170px] text-center">
-                      <h4 className="font-serif font-bold text-xs text-slate-900 leading-tight line-clamp-2">
-                        {story.title}
-                      </h4>
-                      {story.value && (
-                        <span className="text-[0.62rem] font-bold text-[#0D9488] uppercase block mt-0.5 truncate">
-                          ⭐ {story.value}
+              {/* Contêiner de rolagem horizontal dos mundos */}
+              <div 
+                ref={themeScrollRef}
+                className="w-full flex overflow-x-auto py-2 px-3 scrollbar-none scroll-smooth"
+              >
+                <div className="inline-flex items-center gap-2.5 p-1.5 sm:p-2 bg-white/95 backdrop-blur-md rounded-full shadow-xl border-2 border-white/90">
+                  {KNOWLEDGE_TRAILS.map((trail) => {
+                    const isSelected = trail.id === selectedCategory;
+                    return (
+                      <button
+                        key={trail.id}
+                        id={`theme-btn-${trail.id}`}
+                        onClick={() => scrollToWorld(trail.id)}
+                        className={`flex items-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3 rounded-full font-black transition-all shrink-0 active:scale-95 cursor-pointer ${
+                          isSelected
+                            ? 'bg-[#0D9488] text-white shadow-md scale-105 ring-2 ring-emerald-300'
+                            : 'text-slate-700 hover:bg-slate-100/90'
+                        }`}
+                        title={trail.title}
+                      >
+                        <span className="text-3xl sm:text-4xl">{trail.emoji}</span>
+                        <span className="text-xs sm:text-sm font-black tracking-tight whitespace-nowrap">
+                          {trail.title.split(' ')[0]}
                         </span>
-                      )}
-                    </div>
-                  </Link>
-
+                      </button>
+                    );
+                  })}
                 </div>
-              );
-            })
-          )}
+              </div>
+
+              {/* Botão de Rolar para Direita (Indicador visual de mais temas) */}
+              <button
+                type="button"
+                onClick={() => scrollThemeRow('right')}
+                className="flex absolute -right-2 sm:-right-3 z-20 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-amber-400 text-slate-950 font-black shadow-lg border-2 border-white items-center justify-center hover:scale-110 active:scale-95 transition-transform cursor-pointer animate-pulse"
+                title="Ver mais mundos à direita 👉"
+              >
+                <ChevronRight size={22} className="stroke-[3]" />
+              </button>
+            </div>
+
+            {/* BOTÃO DE TROFÉU / ÁLBUM (GRANDE E DOURADO, PRINT 2) */}
+            <Link
+              href="/app/progresso"
+              onClick={() => playSound(480)}
+              className="w-14 h-14 sm:w-16 sm:h-16 md:w-18 md:h-18 rounded-full bg-white text-amber-500 shadow-[0_8px_25px_rgba(245,158,11,0.35)] border-3 sm:border-4 border-white flex items-center justify-center font-black text-2xl sm:text-3xl md:text-4xl hover:scale-105 active:scale-95 transition-all shrink-0"
+              title="Álbum do Explorador"
+            >
+              🏆
+            </Link>
+          </div>
+
+          {/* Dica lúdica animada no mobile indicando rolagem lateral dos mundos */}
+          <div className="flex items-center justify-center mt-1.5 sm:hidden">
+            <span className="inline-flex items-center gap-1.5 text-[0.65rem] font-bold text-slate-600 bg-white/80 px-3 py-0.5 rounded-full border border-slate-200/80 shadow-2xs animate-pulse">
+              <span>Arraste para os lados para ver todos os mundos</span>
+              <span>👉</span>
+            </span>
+          </div>
+        </div>
+
+        {/* ═══ MAPA DE AVENTURA CONTÍNUO (TODOS OS MUNDOS INTEGRADOS NA MESMA TRILHA) ═══ */}
+        <div className="relative z-10 w-full flex flex-col items-center">
+          {KNOWLEDGE_TRAILS.map((trail, worldIdx) => {
+            const worldStories = stories.filter(s => s.category === trail.id);
+            const config = WORLD_CONFIGS[trail.id] || WORLD_CONFIGS['mitologia-grega'];
+
+            return (
+              <section 
+                key={trail.id} 
+                id={`world-${trail.id}`}
+                className="w-full max-w-md mx-auto flex flex-col items-center pt-6 pb-16 transition-all scroll-mt-28"
+              >
+                {/* PORTAL / ARCO CENOGRÁFICO DO MUNDO */}
+                <div className="text-center mb-8 relative">
+                  <div className="text-5xl mb-2 filter drop-shadow-md select-none">{config.bgDecoration}</div>
+                  <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full ${config.badgeBg} ${config.badgeText} border text-xs sm:text-sm font-black uppercase tracking-wider shadow-sm mb-2`}>
+                    <span>{trail.emoji}</span>
+                    <span>{config.themeName}</span>
+                  </div>
+                  <h2 className="text-3xl sm:text-4xl font-serif font-black text-slate-900 drop-shadow-xs">
+                    {trail.title}
+                  </h2>
+                  <p className="text-xs text-slate-600 font-bold max-w-xs mx-auto mt-1 leading-snug">
+                    {trail.desc || (trail as any).description}
+                  </p>
+                </div>
+
+                {/* NÓS DA TRILHA DESTE MUNDO EM ZIGUE-ZAGUE */}
+                <div className="relative w-full flex flex-col items-center gap-14">
+                  {worldStories.length === 0 ? (
+                    <div className="bg-white/90 backdrop-blur-md rounded-3xl p-6 text-center border-2 border-dashed border-slate-300 max-w-xs mx-auto shadow-sm">
+                      <span className="text-3xl block mb-1">🧭</span>
+                      <h4 className="font-bold text-slate-800 text-xs mb-1">Novas histórias a caminho!</h4>
+                      <p className="text-[0.68rem] text-slate-500">As histórias deste reino estão sendo mapeadas para os pequenos exploradores.</p>
+                    </div>
+                  ) : (
+                    worldStories.map((story, index) => {
+                      const positions = ['-translate-x-14 md:-translate-x-20', 'translate-x-0', 'translate-x-14 md:translate-x-20'];
+                      const posClass = positions[index % 3];
+                      const isFirstInApp = worldIdx === 0 && index === 0;
+                      const isLocked = !isFirstInApp && story.isLocked;
+                      const starsCount = story.stars || (isFirstInApp ? 3 : 0);
+
+                      const activityTags = [
+                        { emoji: '🧩', bg: 'bg-pink-500' },
+                        { emoji: '🎨', bg: 'bg-purple-500' },
+                        { emoji: '🌟', bg: 'bg-amber-500' },
+                        { emoji: '👑', bg: 'bg-blue-500' }
+                      ];
+                      const tag = activityTags[index % activityTags.length];
+
+                      return (
+                        <div key={story.id} className={`relative flex flex-col items-center transition-all ${posClass}`}>
+                          
+                          {/* PONTILHADO DOURADO CONECTANDO OS NÓS */}
+                          {index < worldStories.length - 1 && (
+                            <div className="absolute top-20 flex flex-col items-center gap-1.5 -z-0 pointer-events-none opacity-80">
+                              <div className="w-2.5 h-2.5 rounded-full bg-amber-400 border border-amber-500 shadow-xs"></div>
+                              <div className="w-2.5 h-2.5 rounded-full bg-amber-400 border border-amber-500 shadow-xs"></div>
+                              <div className="w-2.5 h-2.5 rounded-full bg-amber-400 border border-amber-500 shadow-xs"></div>
+                              <div className="w-2.5 h-2.5 rounded-full bg-amber-400 border border-amber-500 shadow-xs"></div>
+                            </div>
+                          )}
+
+                          {/* LINK DO NÓ DE HISTÓRIA */}
+                          <Link
+                            href={`/app/historias/${story.id}`}
+                            onClick={() => playSound(640)}
+                            className="group relative flex flex-col items-center focus:outline-none"
+                          >
+                            {/* NÓ METÁLICO 3D */}
+                            <div className={`metallic-node-rim relative w-24 h-24 sm:w-28 sm:h-28 rounded-full flex items-center justify-center cursor-pointer ${
+                              isLocked ? 'grayscale opacity-75' : ''
+                            }`}>
+                              <div className="w-full h-full rounded-full overflow-hidden bg-slate-100 flex items-center justify-center">
+                                {story.coverImageUrl ? (
+                                  <img src={story.coverImageUrl} alt={story.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" />
+                                ) : (
+                                  <span className="text-4xl drop-shadow-sm transition-transform group-hover:scale-125">
+                                    {story.coverEmoji || trail.emoji}
+                                  </span>
+                                )}
+                              </div>
+
+                              {/* Mini-Badge de Atividade no Canto Superior Direito */}
+                              <div className={`absolute -top-1.5 -right-1.5 w-7 h-7 rounded-full ${tag.bg} text-white flex items-center justify-center text-xs shadow-md border-2 border-white`}>
+                                <span>{tag.emoji}</span>
+                              </div>
+
+                              {/* PEDESTAL DAS 3 ESTRELAS NA BASE INFERIOR */}
+                              <div className="stars-pedestal absolute -bottom-3 z-10 px-3 py-0.5 rounded-full flex items-center gap-1">
+                                {[1, 2, 3].map((s) => (
+                                  <Star
+                                    key={s}
+                                    size={12}
+                                    className={`${
+                                      s <= starsCount
+                                        ? 'text-amber-400 fill-amber-400 drop-shadow-xs'
+                                        : 'text-slate-300 fill-slate-300'
+                                    }`}
+                                  />
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* TÍTULO DA HISTÓRIA EM CARTÃO LÚDICO */}
+                            <div className="mt-4 bg-white/95 backdrop-blur-sm px-3.5 py-1.5 rounded-2xl border border-slate-200/90 shadow-sm max-w-[170px] text-center">
+                              <h4 className="font-serif font-bold text-xs text-slate-900 leading-tight line-clamp-2">
+                                {story.title}
+                              </h4>
+                              {story.value && (
+                                <span className="text-[0.62rem] font-bold text-[#0D9488] uppercase block mt-0.5 truncate">
+                                  ⭐ {story.value}
+                                </span>
+                              )}
+                            </div>
+                          </Link>
+
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+
+                {/* PORTAL MÁGICO DE PASSAGEM ENTRE MUNDOS */}
+                {worldIdx < KNOWLEDGE_TRAILS.length - 1 && (
+                  <div className="mt-16 mb-4 flex flex-col items-center gap-2 pointer-events-none">
+                    <div className="flex flex-col items-center gap-2 opacity-80">
+                      <div className="w-3 h-3 rounded-full bg-amber-400 border border-amber-500 shadow-xs animate-pulse"></div>
+                      <div className="w-3 h-3 rounded-full bg-amber-400 border border-amber-500 shadow-xs animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                      <div className="w-3 h-3 rounded-full bg-amber-400 border border-amber-500 shadow-xs animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                    </div>
+                    <div className="px-4 py-1.5 rounded-full bg-white/95 backdrop-blur-md border-2 border-amber-300 shadow-md flex items-center gap-2 text-xs font-black text-amber-900">
+                      <span>✨ Portal de Passagem ✨</span>
+                    </div>
+                    <div className="w-3 h-3 rounded-full bg-amber-400 border border-amber-500 shadow-xs animate-pulse" style={{ animationDelay: '0.6s' }}></div>
+                  </div>
+                )}
+              </section>
+            );
+          })}
         </div>
 
         {/* ═══ BARRA FLUTUANTE DE STATS NO CANTO INFERIOR ESQUERDO (Estilo Bible App) ═══ */}
