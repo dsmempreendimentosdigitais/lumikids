@@ -63,7 +63,7 @@ export const KNOWLEDGE_STORIES_55: SeedStoryFull[] = [
     missionDesc: 'Ajude alguém da sua família a encontrar algo perdido hoje com atenção e carinho!',
     reflectionQuestion: 'Por que planejar bem os nossos passos nos impede de ficar perdidos nos problemas?',
     paragraphs: [
-      { text: 'Teseu viajou até a ilha de Creta para salvar seu povo do misterioso Labirinto. Ariadne lhe deu um simples novelo de fio mágico.', imagePrompt: 'Theseus holding a golden ball of yarn in an ancient Greek port, ships in background, 3D Pixar Paw Patrol CGI animation style, no text' },
+      { text: 'Teseu viajou até a ilha de Creta para salvar seu povo do misterioso Labirinto. Ariadne lhe deu um engenhoso novelo de fio dourado.', imagePrompt: 'Theseus holding a golden ball of yarn in an ancient Greek port, ships in background, 3D Pixar Paw Patrol CGI animation style, no text' },
       { text: 'Desenrolando o fio a cada passo dentro das paredes de pedra, Teseu conseguiu guiar todos em segurança de volta à luz do sol.', imagePrompt: 'Theseus leading young friends out of a stone archway into bright daylight, smiling faces, 3D Pixar Paw Patrol CGI animation style, no text' }
     ]
   },

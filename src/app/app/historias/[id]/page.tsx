@@ -442,22 +442,25 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
 
   if (loading) {
     return (
-      <div className="flex flex-col justify-center items-center py-20 min-h-screen bg-[#0B0819] text-white">
-        <div className="w-12 h-12 rounded-full border-4 border-purple-900/30 border-t-pink-500 animate-spin mb-4 drop-shadow-[0_0_15px_rgba(236,72,153,0.6)]"></div>
-        <span className="text-sm font-bold text-purple-200/80 animate-pulse">Carregando magia... ✨</span>
+      <div className="flex flex-col justify-center items-center py-20 min-h-screen bg-[#FDF8EC] text-[#2D2114]">
+        <div className="w-12 h-12 rounded-full border-4 border-[#EAD7B7] border-t-[#0284C7] animate-spin mb-4"></div>
+        <span className="text-sm font-bold text-[#6B5A45] animate-pulse">Abrindo seu livro de histórias...</span>
       </div>
     );
   }
 
   if (!story && !showNameForm && !generating) {
     return (
-      <div className="p-6 text-center pt-28 bg-[#0B0819] min-h-screen text-white flex flex-col items-center justify-center">
-        <div className="max-w-md w-full bg-[#150F2D] border border-purple-500/30 rounded-[32px] p-8 shadow-[0_0_40px_rgba(139,92,246,0.3)] backdrop-blur-xl">
-          <h2 className="text-2xl font-serif font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-purple-200 to-blue-200 mb-4">
+      <div className="p-6 text-center pt-28 bg-[#FDF8EC] min-h-screen text-[#2D2114] flex flex-col items-center justify-center font-sans">
+        <div className="max-w-md w-full bg-[#FFFDF7] border-2 border-[#EAD7B7] rounded-[32px] p-8 shadow-md">
+          <h2 className="text-2xl font-serif font-black text-[#2D2114] mb-3">
             História não encontrada
           </h2>
-          <Link href="/app/historias" className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-pink-500 to-blue-500 text-white font-extrabold text-sm shadow-[0_0_15px_rgba(217,70,239,0.5)] transition-all hover:scale-105">
-            Voltar para Biblioteca
+          <p className="text-[#6B5A45] text-sm font-medium mb-6">
+            Não encontramos a história solicitada. Que tal explorar outras aventuras?
+          </p>
+          <Link href="/app/historias" className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#0284C7] text-white font-extrabold text-sm shadow-md transition-all hover:scale-105">
+            Voltar para o Catálogo
           </Link>
         </div>
       </div>
@@ -466,25 +469,22 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
 
   if (showNameForm) {
     return (
-      <div className="p-6 text-center pt-20 bg-[#0B0819] min-h-screen flex flex-col justify-center items-center font-sans text-white relative overflow-hidden">
-        {/* Background Starry Glows */}
-        <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 50% 30%, rgba(139, 92, 246, 0.25), transparent 70%)' }}></div>
-
-        <div className="bg-[#150F2D] rounded-[32px] p-8 max-w-md w-full shadow-[0_0_50px_rgba(139,92,246,0.4)] border border-purple-500/40 relative z-10 backdrop-blur-xl">
-          <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-pink-500 to-purple-600 text-white text-[0.65rem] font-black uppercase tracking-wider py-1 px-4 rounded-full shadow-[0_0_12px_rgba(217,70,239,0.6)]">
+      <div className="p-6 text-center pt-20 bg-[#FDF8EC] min-h-screen flex flex-col justify-center items-center font-sans text-[#2D2114] relative overflow-hidden">
+        <div className="bg-[#FFFDF7] rounded-[32px] p-8 max-w-md w-full shadow-[0_15px_35px_rgba(45,33,20,0.08)] border-2 border-[#EAD7B7] relative z-10">
+          <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#0284C7] text-white text-[0.65rem] font-black uppercase tracking-wider py-1 px-4 rounded-full shadow-sm">
             Nova Aventura
           </div>
           
-          <div className="w-16 h-16 rounded-[22px] bg-gradient-to-tr from-pink-500 to-purple-600 text-white flex items-center justify-center text-3xl mx-auto mb-6 mt-2 shadow-[0_0_20px_rgba(217,70,239,0.5)]">
-            ✨
+          <div className="w-16 h-16 rounded-[22px] bg-gradient-to-tr from-[#0284C7] to-[#38BDF8] text-white flex items-center justify-center text-3xl mx-auto mb-5 mt-2 shadow-md shadow-sky-500/20">
+            📖
           </div>
 
-          <h2 className="text-2xl font-serif font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-purple-200 to-blue-200 mb-2 leading-tight">
+          <h2 className="text-2xl font-serif font-black text-[#2D2114] mb-2 leading-tight">
             Quem viverá a aventura?
           </h2>
 
-          <p className="text-purple-200/80 font-semibold text-xs mb-6">
-            Insira o nome da criança para personalizarmos a história ou use um nome tradicional brasileiro aleatório!
+          <p className="text-[#6B5A45] font-semibold text-xs mb-6">
+            Insira o nome da criança para personalizarmos a história ou use um nome tradicional brasileiro!
           </p>
           
           <form onSubmit={(e) => { e.preventDefault(); if (childNameInput.trim()) handleStartAdventure(childNameInput); }} className="space-y-4">
@@ -495,12 +495,12 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
                 value={childNameInput}
                 onChange={(e) => setChildNameInput(e.target.value)}
                 placeholder="Ex: Samuel, Manuela..."
-                className="flex-1 bg-[#1A133A] border border-purple-500/30 rounded-[16px] h-[52px] px-4 font-bold text-sm text-white placeholder-purple-200/30 focus:ring-2 focus:ring-purple-400 transition-all outline-none"
+                className="flex-1 bg-white border-2 border-[#EAD7B7] rounded-[16px] h-[52px] px-4 font-bold text-sm text-[#2D2114] placeholder-[#A89885] focus:border-[#0284C7] transition-all outline-none"
               />
               <button
                 type="button"
                 onClick={handleRandomName}
-                className="px-4 h-[52px] rounded-[16px] bg-purple-500/20 border border-purple-400/40 text-purple-200 font-extrabold text-xs hover:bg-purple-500/30 transition-all whitespace-nowrap"
+                className="px-4 h-[52px] rounded-[16px] bg-[#F4E9D8] border border-[#EAD7B7] text-[#2D2114] font-extrabold text-xs hover:bg-[#EBDDC8] transition-all whitespace-nowrap"
               >
                 🎲 Aleatório
               </button>
@@ -509,14 +509,14 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
             <button
               type="submit"
               disabled={!childNameInput.trim()}
-              className="w-full h-[54px] rounded-[99px] font-extrabold text-white bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 shadow-[0_0_20px_rgba(217,70,239,0.5)] hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:pointer-events-none text-sm"
+              className="w-full h-[54px] rounded-full font-extrabold text-white bg-[#0284C7] shadow-md shadow-sky-600/25 hover:bg-[#0369A1] active:scale-95 transition-all disabled:opacity-50 disabled:pointer-events-none text-sm uppercase tracking-wider"
             >
-              Criar História Mágica ✨
+              Iniciar Leitura
             </button>
           </form>
           
-          <Link href="/app/historias" className="block mt-5 text-xs font-bold text-purple-300/60 hover:text-purple-200 hover:underline transition-colors">
-            Voltar para Biblioteca
+          <Link href="/app/historias" className="block mt-5 text-xs font-bold text-[#6B5A45] hover:text-[#2D2114] hover:underline transition-colors">
+            Voltar para o Catálogo
           </Link>
         </div>
       </div>
@@ -525,22 +525,13 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
 
   if (generating) {
     return (
-      <div className="flex flex-col justify-center items-center p-6 min-h-screen bg-[#0B0819] text-center relative overflow-hidden">
-        {/* Background Starry Glows */}
-        <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 50% 20%, rgba(139, 92, 246, 0.15), transparent 60%)' }}></div>
-        <div className="absolute top-[20%] left-[15%] w-1.5 h-1.5 bg-white rounded-full shadow-[0_0_10px_rgba(255,255,255,0.8)] animate-pulse"></div>
-        <div className="absolute top-[40%] right-[20%] w-2 h-2 bg-purple-300 rounded-full shadow-[0_0_15px_rgba(216,180,254,0.8)] animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute bottom-[30%] left-[25%] w-1.5 h-1.5 bg-blue-300 rounded-full shadow-[0_0_12px_rgba(147,197,253,0.8)] animate-pulse" style={{ animationDelay: '0.5s' }}></div>
-
-        <div className="relative mb-8 z-10">
-          <div className="w-24 h-24 border-4 border-purple-900/30 border-t-pink-500 rounded-full animate-spin drop-shadow-[0_0_15px_rgba(236,72,153,0.5)]"></div>
-          <div className="absolute inset-0 flex items-center justify-center text-3xl animate-pulse drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">✨</div>
-        </div>
-        <h2 className="text-[2.2rem] font-serif font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-purple-200 to-blue-200 mb-4 animate-pulse drop-shadow-md z-10">
-          Preparando Magia...
+      <div className="flex flex-col justify-center items-center p-6 min-h-screen bg-[#FDF8EC] text-center relative overflow-hidden font-sans">
+        <div className="w-16 h-16 border-4 border-[#EAD7B7] border-t-[#0284C7] rounded-full animate-spin mb-6"></div>
+        <h2 className="text-2xl font-serif font-black text-[#2D2114] mb-3">
+          Preparando sua História...
         </h2>
-        <p className="text-purple-200/80 text-sm font-bold max-w-sm leading-relaxed z-10">
-          Nossa inteligência artificial está escrevendo as páginas, renderizando ilustrações 3D e gravando a narração da história! Aguarde só mais um pouquinho. 📖
+        <p className="text-[#6B5A45] text-sm font-semibold max-w-sm leading-relaxed">
+          Estamos organizando as páginas, preparando as ilustrações e ajustando a narração para uma leitura incrível! 📖
         </p>
       </div>
     );
@@ -548,13 +539,13 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
 
   if (generationError) {
     return (
-      <div className="p-6 text-center pt-20 bg-[#F0F2FF] min-h-screen flex flex-col justify-center items-center">
-        <div className="bg-white rounded-[24px] p-6 max-w-md shadow-lg border border-red-100">
-          <div className="text-red-500 text-5xl mb-4"><i className="fas fa-exclamation-triangle"></i></div>
-          <h2 className="text-xl font-bold text-gray-800 mb-2">A magia falhou temporariamente</h2>
-          <p className="text-gray-600 text-sm mb-6 leading-relaxed">{generationError}</p>
-          <Link href="/app/historias" className="inline-block py-3 px-6 bg-[#3D5AFE] text-white font-bold rounded-full shadow-md shadow-blue-500/20">
-            Voltar para Biblioteca
+      <div className="p-6 text-center pt-20 bg-[#FDF8EC] min-h-screen flex flex-col justify-center items-center font-sans">
+        <div className="bg-[#FFFDF7] rounded-[24px] p-6 max-w-md shadow-md border-2 border-amber-200">
+          <div className="text-amber-500 text-4xl mb-3">⚠️</div>
+          <h2 className="text-xl font-bold text-[#2D2114] mb-2">Não foi possível carregar a história</h2>
+          <p className="text-[#6B5A45] text-sm mb-6 leading-relaxed">{generationError}</p>
+          <Link href="/app/historias" className="inline-block py-3 px-6 bg-[#0284C7] text-white font-bold rounded-full shadow-md">
+            Voltar para o Catálogo
           </Link>
         </div>
       </div>
@@ -902,49 +893,62 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
           ═════════════════════════════════════════════════════════════ */}
       {isMenuOpen && (
         <div 
-          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 sm:p-6"
           onClick={() => setIsMenuOpen(false)}
         >
           <div 
-            className="w-full max-w-sm rounded-[32px] overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200"
+            className="w-full max-w-[420px] max-h-[92vh] flex flex-col rounded-[28px] overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200 border-2 border-[#D8C29D]"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Cabeçalho de Barra de Pedra Entalhada */}
-            <div className="stone-banner py-4 px-6 flex items-center justify-between text-white">
+            <div className="stone-banner py-3.5 px-6 flex items-center justify-between text-white shrink-0">
               <button
                 type="button"
                 onClick={() => setIsMenuOpen(false)}
-                className="btn-round-action w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-base shadow-xs"
+                className="btn-round-action w-9 h-9 rounded-full flex items-center justify-center text-white font-black text-base shadow-xs hover:scale-105 active:scale-95"
+                title="Voltar"
               >
                 ←
               </button>
-              <h3 className="font-serif font-black text-lg tracking-wide uppercase drop-shadow-md">
+              <h3 className="font-serif font-black text-base tracking-wider uppercase drop-shadow-md">
                 Configurações
               </h3>
-              <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-sm font-bold text-white border border-white/40">
-                i
+              <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold text-white border border-white/30">
+                ⚙️
               </div>
             </div>
 
             {/* Corpo em Pergaminho Dobrado com Toggles */}
-            <div className="parchment-sheet p-6 space-y-4 text-[#2D2114]">
+            <div className="parchment-sheet p-5 sm:p-6 space-y-3.5 text-[#2D2114] overflow-y-auto">
               {/* Opção Efeitos Sonoros */}
-              <div className="flex items-center justify-between py-2 border-b border-amber-900/10">
-                <span className="font-bold text-sm">Sound Effects</span>
+              <div className="flex items-center justify-between p-3.5 bg-amber-50/60 rounded-2xl border border-amber-900/10 shadow-xs">
+                <div className="flex items-center gap-3">
+                  <span className="text-xl">🔔</span>
+                  <div>
+                    <span className="font-black text-sm block leading-tight">Efeitos Sonoros</span>
+                    <span className="text-[0.7rem] text-[#6B5A45] font-semibold">Sons de virar página e toques</span>
+                  </div>
+                </div>
                 <button
                   type="button"
                   onClick={() => setSoundEffectsEnabled(prev => !prev)}
-                  className={`btn-round-action w-10 h-10 rounded-full flex items-center justify-center text-white text-base ${
-                    soundEffectsEnabled ? 'opacity-100' : 'opacity-40 grayscale'
+                  className={`btn-round-action px-3.5 h-9 rounded-full flex items-center gap-1.5 text-white text-xs font-black shadow-xs transition-all ${
+                    soundEffectsEnabled ? 'bg-[#0284C7]' : 'bg-gray-400 opacity-60'
                   }`}
                 >
-                  {soundEffectsEnabled ? '🔊' : '🔇'}
+                  <span>{soundEffectsEnabled ? 'Ligado' : 'Mudo'}</span>
                 </button>
               </div>
 
               {/* Opção Narração */}
-              <div className="flex items-center justify-between py-2 border-b border-amber-900/10">
-                <span className="font-bold text-sm">Narração da Voz</span>
+              <div className="flex items-center justify-between p-3.5 bg-amber-50/60 rounded-2xl border border-amber-900/10 shadow-xs">
+                <div className="flex items-center gap-3">
+                  <span className="text-xl">🗣️</span>
+                  <div>
+                    <span className="font-black text-sm block leading-tight">Narração em Áudio</span>
+                    <span className="text-[0.7rem] text-[#6B5A45] font-semibold">Leitura realista em voz alta</span>
+                  </div>
+                </div>
                 <button
                   type="button"
                   onClick={() => {
@@ -957,34 +961,38 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
                       speakText(currentText);
                     }
                   }}
-                  className="btn-round-action w-10 h-10 rounded-full flex items-center justify-center text-white text-base"
+                  className={`btn-round-action px-3.5 h-9 rounded-full flex items-center gap-1.5 text-white text-xs font-black shadow-xs transition-all ${
+                    isSpeaking ? 'bg-amber-600 animate-pulse' : 'bg-[#0284C7]'
+                  }`}
                 >
-                  🗣️
+                  <span>{isSpeaking ? 'Pausar' : 'Ouvir'}</span>
                 </button>
               </div>
 
-              {/* Botões de Ação */}
-              <div className="pt-3 space-y-2.5">
-                <Link
-                  href="/app"
-                  className="w-full py-3 rounded-full bg-white border-2 border-amber-400 text-[#2D2114] font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-xs hover:bg-amber-50"
-                >
-                  <span>🗺️ Voltar ao Mapa de Aventuras</span>
-                </Link>
+              {/* Botões de Ação com Espaçamento Amplo */}
+              <div className="pt-2 space-y-2.5">
+                <div className="grid grid-cols-2 gap-2">
+                  <Link
+                    href="/app"
+                    className="py-2.5 px-3 rounded-2xl bg-white border-2 border-[#D8C29D] text-[#2D2114] font-black text-[0.75rem] uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-xs hover:bg-amber-50 text-center"
+                  >
+                    <span>🗺️ Mapa</span>
+                  </Link>
 
-                <Link
-                  href="/app/historias"
-                  className="w-full py-3 rounded-full bg-white border-2 border-amber-400 text-[#2D2114] font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-xs hover:bg-amber-50"
-                >
-                  <span>📚 Gerenciar Histórias</span>
-                </Link>
+                  <Link
+                    href="/app/historias"
+                    className="py-2.5 px-3 rounded-2xl bg-white border-2 border-[#D8C29D] text-[#2D2114] font-black text-[0.75rem] uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-xs hover:bg-amber-50 text-center"
+                  >
+                    <span>📚 Catálogo</span>
+                  </Link>
+                </div>
 
                 <button
                   type="button"
                   onClick={() => setIsMenuOpen(false)}
-                  className="w-full py-3 rounded-full bg-[#0D9488] text-white font-black text-xs uppercase tracking-wider shadow-md hover:bg-[#0F766E]"
+                  className="w-full h-12 rounded-2xl bg-[#0D9488] text-white font-black text-xs uppercase tracking-wider shadow-md hover:bg-[#0F766E] transition-all active:scale-98 flex items-center justify-center"
                 >
-                  Continuar Lendo ✨
+                  Continuar Lendo
                 </button>
               </div>
             </div>

@@ -28,7 +28,7 @@ export default function PlanosPage() {
         
         <div className="text-center mb-8">
           <h1 className="text-3xl font-serif font-bold text-slate-900 mb-2 leading-tight">Escolha seu Plano</h1>
-          <p className="text-slate-500 text-xs font-semibold">Libere toda a magia e encanto do Lumikids</p>
+          <p className="text-slate-500 text-xs font-semibold">Libere todas as histórias e aventuras do Lumikids</p>
         </div>
 
         <div className="bg-white rounded-[28px] overflow-hidden shadow-sm border border-slate-200 relative">

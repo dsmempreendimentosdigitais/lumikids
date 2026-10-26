@@ -9,7 +9,7 @@ interface InteractiveShapeMatchProps {
 }
 
 export default function InteractiveShapeMatch({
-  instruction = "Encaixe a forma geométrica correta no lugar mágico! 🧩",
+  instruction = "Encaixe a forma geométrica correta no lugar certo! 🧩",
   targetShape = 'star',
   onSuccess
 }: InteractiveShapeMatchProps) {

@@ -16,7 +16,7 @@ export default function CriarPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [progressStage, setProgressStage] = useState('Iniciando magia...');
+  const [progressStage, setProgressStage] = useState('Iniciando história...');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState<any>(null);
   const [isListening, setIsListening] = useState(false);
@@ -573,9 +573,9 @@ export default function CriarPage() {
                 className="w-full h-[56px] bg-[#0D9488] hover:bg-[#0F766E] transition-all text-white font-bold text-base rounded-full shadow-md flex items-center justify-center gap-2"
               >
                 {loading ? (
-                  <span className="animate-pulse">Criando Magia com IA... ✨</span>
+                  <span className="animate-pulse">Escrevendo História com IA...</span>
                 ) : (
-                  <span>Criar História Mágica! ✨</span>
+                  <span>Criar História Ilustrada</span>
                 )}
               </button>
             </div>

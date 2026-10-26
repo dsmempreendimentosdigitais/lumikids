@@ -640,49 +640,56 @@ export default function JourneyMap({ stories, userPlan = 'free', isAdmin = false
           ═════════════════════════════════════════════════════════════ */}
       {isSettingsOpen && (
         <div 
-          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 sm:p-6"
           onClick={() => setIsSettingsOpen(false)}
         >
           <div 
-            className="w-full max-w-sm rounded-[32px] overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200"
+            className="w-full max-w-[420px] max-h-[92vh] flex flex-col rounded-[28px] overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200 border-2 border-[#D8C29D]"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Barra de Pedra Entalhada */}
-            <div className="stone-banner py-4 px-6 flex items-center justify-between text-white">
+            <div className="stone-banner py-3.5 px-6 flex items-center justify-between text-white shrink-0">
               <button
                 type="button"
                 onClick={() => setIsSettingsOpen(false)}
-                className="btn-round-action w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-base shadow-xs"
+                className="btn-round-action w-9 h-9 rounded-full flex items-center justify-center text-white font-black text-base shadow-xs hover:scale-105 active:scale-95"
+                title="Voltar"
               >
                 ←
               </button>
-              <h3 className="font-serif font-black text-lg tracking-wide uppercase drop-shadow-md">
+              <h3 className="font-serif font-black text-base tracking-wider uppercase drop-shadow-md">
                 Configurações
               </h3>
-              <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-sm font-bold text-white border border-white/40">
-                i
+              <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold text-white border border-white/30">
+                ⚙️
               </div>
             </div>
 
             {/* Corpo em Pergaminho Dobrado */}
-            <div className="parchment-sheet p-6 space-y-4 text-[#2D2114]">
-              <div className="flex items-center justify-between py-2 border-b border-amber-900/10">
-                <span className="font-bold text-sm">Sound Effects</span>
+            <div className="parchment-sheet p-5 sm:p-6 space-y-3.5 text-[#2D2114] overflow-y-auto">
+              <div className="flex items-center justify-between p-3.5 bg-amber-50/60 rounded-2xl border border-amber-900/10 shadow-xs">
+                <div className="flex items-center gap-3">
+                  <span className="text-xl">🔔</span>
+                  <div>
+                    <span className="font-black text-sm block leading-tight">Efeitos Sonoros</span>
+                    <span className="text-[0.7rem] text-[#6B5A45] font-semibold">Sons de mapa e botões</span>
+                  </div>
+                </div>
                 <button
                   type="button"
                   onClick={() => setSoundEnabled(prev => !prev)}
-                  className={`btn-round-action w-10 h-10 rounded-full flex items-center justify-center text-white text-base ${
-                    soundEnabled ? 'opacity-100' : 'opacity-40 grayscale'
+                  className={`btn-round-action px-3.5 h-9 rounded-full flex items-center gap-1.5 text-white text-xs font-black shadow-xs transition-all ${
+                    soundEnabled ? 'bg-[#0284C7]' : 'bg-gray-400 opacity-60'
                   }`}
                 >
-                  {soundEnabled ? '🔊' : '🔇'}
+                  <span>{soundEnabled ? 'Ligado' : 'Mudo'}</span>
                 </button>
               </div>
 
-              <div className="pt-3 space-y-2.5">
+              <div className="pt-2 space-y-2.5">
                 <Link
                   href="/app/historias"
-                  className="w-full py-3 rounded-full bg-white border-2 border-amber-400 text-[#2D2114] font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-xs hover:bg-amber-50"
+                  className="w-full py-2.5 px-4 rounded-2xl bg-white border-2 border-[#D8C29D] text-[#2D2114] font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-xs hover:bg-amber-50"
                 >
                   <span>📚 Gerenciar Histórias</span>
                 </Link>
@@ -690,9 +697,9 @@ export default function JourneyMap({ stories, userPlan = 'free', isAdmin = false
                 <button
                   type="button"
                   onClick={() => setIsSettingsOpen(false)}
-                  className="w-full py-3 rounded-full bg-[#0D9488] text-white font-black text-xs uppercase tracking-wider shadow-md hover:bg-[#0F766E]"
+                  className="w-full h-12 rounded-2xl bg-[#0D9488] text-white font-black text-xs uppercase tracking-wider shadow-md hover:bg-[#0F766E] transition-all active:scale-98 flex items-center justify-center"
                 >
-                  Salvar & Fechar ✨
+                  Salvar e Fechar
                 </button>
               </div>
             </div>
