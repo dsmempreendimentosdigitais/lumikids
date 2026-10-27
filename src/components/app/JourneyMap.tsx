@@ -139,7 +139,6 @@ export default function JourneyMap({ stories, userPlan = 'free', isAdmin = false
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
 
-  const themeScrollRef = React.useRef<HTMLDivElement>(null);
   const activeTrail = KNOWLEDGE_TRAILS.find(t => t.id === selectedCategory) || KNOWLEDGE_TRAILS[0];
   const trailStories = stories.filter(s => s.category === selectedCategory);
 
@@ -174,18 +173,9 @@ export default function JourneyMap({ stories, userPlan = 'free', isAdmin = false
     playSound(520);
     const element = document.getElementById(`world-${trailId}`);
     if (element) {
-      const yOffset = -110;
+      const yOffset = -90;
       const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
       window.scrollTo({ top: y, behavior: 'smooth' });
-    }
-  };
-
-  // Rolar carrossel de temas no topo para a direita ou esquerda
-  const scrollThemeRow = (direction: 'left' | 'right') => {
-    playSound(460);
-    if (themeScrollRef.current) {
-      const scrollAmount = direction === 'right' ? 180 : -180;
-      themeScrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
     }
   };
 
@@ -202,14 +192,6 @@ export default function JourneyMap({ stories, userPlan = 'free', isAdmin = false
           entries.forEach((entry) => {
             if (entry.isIntersecting) {
               setSelectedCategory(trail.id);
-
-              // Centraliza o botão correspondente no carrossel do topo
-              const btnEl = document.getElementById(`theme-btn-${trail.id}`);
-              if (btnEl && themeScrollRef.current) {
-                const container = themeScrollRef.current;
-                const scrollLeft = btnEl.offsetLeft - container.offsetWidth / 2 + btnEl.offsetWidth / 2;
-                container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
-              }
             }
           });
         },
@@ -261,117 +243,67 @@ export default function JourneyMap({ stories, userPlan = 'free', isAdmin = false
       {/* ═══ CONTEÚDO PRINCIPAL DO MAPA ═══ */}
       <div className="relative z-10 w-full max-w-5xl mx-auto px-4 sm:px-6 pt-4 pb-28">
         
-        {/* BARRA SUPERIOR LUMIKIDS (Logo e Acesso Admin) */}
-        <div className="flex justify-between items-center mb-4">
-          <div className="flex items-center gap-2">
-            <span className="font-serif font-black text-2xl tracking-tight text-[#0D9488] drop-shadow-xs">
-              Lumi<span className="text-amber-500">kids</span>
-            </span>
-            <span className="text-xs bg-white/80 border border-slate-200 px-2.5 py-0.5 rounded-full font-bold text-slate-600 shadow-xs">
-              ✨ Aventura Contínua
-            </span>
-          </div>
-
-          {isAdmin && (
-            <Link
-              href="/app/admin"
-              className="px-3.5 py-1.5 rounded-full bg-amber-400 text-slate-950 font-black text-xs shadow-md border-2 border-white flex items-center gap-1.5 hover:scale-105 active:scale-95 transition-transform"
-              title="Painel Administrativo"
-            >
-              <span>👑</span>
-              <span>Admin</span>
-            </Link>
-          )}
-        </div>
-
-        {/* ═══ BARRA DE CONTROLES DO TOPO (Ícones Bem Grandes com Indicador de Rolagem) ═══ */}
-        <div className="sticky top-2 z-40 mb-8 backdrop-blur-xs py-1">
-          <div className="flex items-center justify-between gap-3 sm:gap-4">
+        {/* ═══ BARRA SUPERIOR: DESTAQUE DO LIVRO DE AVENTURAS & TRILHAS ═══ */}
+        <div className="sticky top-2 z-40 mb-6 py-1">
+          <div className="flex items-center justify-between gap-2.5 sm:gap-4 bg-white/95 backdrop-blur-md rounded-full px-3 py-2 sm:px-4 sm:py-2.5 shadow-[0_10px_30px_rgba(0,0,0,0.08)] border-2 border-white">
             
-            {/* BOTÃO DE LIVRO / HISTÓRIAS (GRANDE E VIBRANTE, PRINT 2) */}
+            {/* BOTÃO DO LIVRO EM SUPER DESTAQUE (Topo Superior Esquerdo) */}
             <button
               type="button"
               onClick={() => {
                 playSound(580);
                 setIsCatalogOpen(true);
               }}
-              className="w-14 h-14 sm:w-16 sm:h-16 md:w-18 md:h-18 rounded-full bg-white text-[#0284C7] shadow-[0_8px_25px_rgba(2,132,199,0.35)] border-3 sm:border-4 border-white flex items-center justify-center font-black text-2xl sm:text-3xl md:text-4xl hover:scale-105 active:scale-95 transition-all shrink-0 cursor-pointer"
-              title="Abrir Catálogo de Histórias em Madeira"
+              className="flex items-center gap-2 sm:gap-3 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-full bg-gradient-to-r from-amber-400 via-amber-500 to-orange-500 text-slate-950 font-black shadow-[0_6px_20px_rgba(245,158,11,0.4)] border-2 border-white hover:scale-105 active:scale-95 transition-all cursor-pointer group shrink-0"
+              title="Abrir Todas as Trilhas e Histórias"
             >
-              📖
+              <span className="text-2xl sm:text-3xl leading-none drop-shadow-sm group-hover:scale-110 group-hover:rotate-6 transition-transform">
+                📖
+              </span>
+              <div className="text-left">
+                <span className="text-xs sm:text-sm font-black uppercase tracking-tight block leading-tight text-slate-950">
+                  Todas as Trilhas
+                </span>
+                <span className="text-[0.62rem] sm:text-[0.68rem] font-bold text-amber-950/80 block leading-none">
+                  Escolher História 📚
+                </span>
+              </div>
             </button>
 
-            {/* SELETOR DE MUNDOS COM ÍCONES GRANDES E INDICADOR DE ROLAGEM */}
-            <div className="flex-1 relative flex items-center justify-center min-w-0 max-w-2xl">
-              
-              {/* Botão de Rolar para Esquerda (Desktop) */}
-              <button
-                type="button"
-                onClick={() => scrollThemeRow('left')}
-                className="hidden md:flex absolute -left-3 z-20 w-8 h-8 rounded-full bg-white shadow-lg border border-slate-200 items-center justify-center text-slate-700 hover:scale-110 active:scale-95 transition-transform cursor-pointer"
-                title="Rolar temas para a esquerda"
-              >
-                ◀
-              </button>
-
-              {/* Contêiner de rolagem horizontal dos mundos */}
-              <div 
-                ref={themeScrollRef}
-                className="w-full flex overflow-x-auto py-2 px-3 scrollbar-none scroll-smooth"
-              >
-                <div className="inline-flex items-center gap-2.5 p-1.5 sm:p-2 bg-white/95 backdrop-blur-md rounded-full shadow-xl border-2 border-white/90">
-                  {KNOWLEDGE_TRAILS.map((trail) => {
-                    const isSelected = trail.id === selectedCategory;
-                    return (
-                      <button
-                        key={trail.id}
-                        id={`theme-btn-${trail.id}`}
-                        onClick={() => scrollToWorld(trail.id)}
-                        className={`flex items-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3 rounded-full font-black transition-all shrink-0 active:scale-95 cursor-pointer ${
-                          isSelected
-                            ? 'bg-[#0D9488] text-white shadow-md scale-105 ring-2 ring-emerald-300'
-                            : 'text-slate-700 hover:bg-slate-100/90'
-                        }`}
-                        title={trail.title}
-                      >
-                        <span className="text-3xl sm:text-4xl">{trail.emoji}</span>
-                        <span className="text-xs sm:text-sm font-black tracking-tight whitespace-nowrap">
-                          {trail.title.split(' ')[0]}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Botão de Rolar para Direita (Indicador visual de mais temas) */}
-              <button
-                type="button"
-                onClick={() => scrollThemeRow('right')}
-                className="flex absolute -right-2 sm:-right-3 z-20 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-amber-400 text-slate-950 font-black shadow-lg border-2 border-white items-center justify-center hover:scale-110 active:scale-95 transition-transform cursor-pointer animate-pulse"
-                title="Ver mais mundos à direita 👉"
-              >
-                <ChevronRight size={22} className="stroke-[3]" />
-              </button>
+            {/* CENTRO: LOGO LUMIKIDS */}
+            <div className="flex items-center gap-2">
+              <span className="font-serif font-black text-xl sm:text-2xl tracking-tight text-[#0D9488]">
+                Lumi<span className="text-amber-500">kids</span>
+              </span>
+              <span className="hidden sm:inline-block text-[0.68rem] bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full font-bold text-amber-800">
+                Aventura Contínua ✨
+              </span>
             </div>
 
-            {/* BOTÃO DE TROFÉU / ÁLBUM (GRANDE E DOURADO, PRINT 2) */}
-            <Link
-              href="/app/progresso"
-              onClick={() => playSound(480)}
-              className="w-14 h-14 sm:w-16 sm:h-16 md:w-18 md:h-18 rounded-full bg-white text-amber-500 shadow-[0_8px_25px_rgba(245,158,11,0.35)] border-3 sm:border-4 border-white flex items-center justify-center font-black text-2xl sm:text-3xl md:text-4xl hover:scale-105 active:scale-95 transition-all shrink-0"
-              title="Álbum do Explorador"
-            >
-              🏆
-            </Link>
-          </div>
+            {/* LADO DIREITO: SELETOR DE IDIOMA, ADMIN & TROFÉU */}
+            <div className="flex items-center gap-2 shrink-0">
+              <LanguageSelector variant="pill" />
+              
+              {isAdmin && (
+                <Link
+                  href="/app/admin"
+                  className="px-2.5 py-1 rounded-full bg-amber-400 text-slate-950 font-black text-xs shadow-xs border border-white flex items-center gap-1 hover:scale-105 transition-transform"
+                  title="Admin"
+                >
+                  👑
+                </Link>
+              )}
 
-          {/* Dica lúdica animada no mobile indicando rolagem lateral dos mundos */}
-          <div className="flex items-center justify-center mt-1.5 sm:hidden">
-            <span className="inline-flex items-center gap-1.5 text-[0.65rem] font-bold text-slate-600 bg-white/80 px-3 py-0.5 rounded-full border border-slate-200/80 shadow-2xs animate-pulse">
-              <span>Arraste para os lados para ver todos os mundos</span>
-              <span>👉</span>
-            </span>
+              <Link
+                href="/app/progresso"
+                onClick={() => playSound(480)}
+                className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-amber-50 text-amber-500 border-2 border-amber-300 shadow-xs flex items-center justify-center font-black text-lg hover:scale-105 active:scale-95 transition-all"
+                title="Meu Álbum & Progresso"
+              >
+                🏆
+              </Link>
+            </div>
+
           </div>
         </div>
 
@@ -563,75 +495,137 @@ export default function JourneyMap({ stories, userPlan = 'free', isAdmin = false
       </div>
 
       {/* ═════════════════════════════════════════════════════════════
-          MODAL DE HISTÓRIAS EM TÁBUAS DE MADEIRA (Estilo Bible App)
+          MODAL: GRANDE LIVRO DE HISTÓRIAS (TODAS AS TRILHAS DISPONÍVEIS)
           ═════════════════════════════════════════════════════════════ */}
       {isCatalogOpen && (
         <div 
-          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-black/65 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5"
           onClick={() => setIsCatalogOpen(false)}
         >
           <div 
-            className="w-full max-w-md rounded-[32px] overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200"
+            className="w-full max-w-2xl max-h-[88vh] flex flex-col rounded-[32px] overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200 border-2 border-[#D8C29D]"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Barra de Pedra Entalhada */}
-            <div className="stone-banner py-4 px-6 flex items-center justify-between text-white">
+            {/* Barra de Pedra Entalhada Superior */}
+            <div className="stone-banner py-3.5 px-6 flex items-center justify-between text-white shrink-0">
               <button
                 type="button"
                 onClick={() => setIsCatalogOpen(false)}
-                className="btn-round-action w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-base shadow-xs"
+                className="btn-round-action w-9 h-9 rounded-full flex items-center justify-center text-white font-black text-base shadow-xs hover:scale-105 active:scale-95 cursor-pointer"
+                title="Fechar"
               >
-                ←
+                ✕
               </button>
-              <h3 className="font-serif font-black text-xl tracking-wide uppercase drop-shadow-md">
-                Histórias
-              </h3>
-              <div className="w-9 h-9"></div>
+              <div className="text-center">
+                <h3 className="font-serif font-black text-base sm:text-lg tracking-wide uppercase drop-shadow-md">
+                  📖 Grande Livro de Histórias
+                </h3>
+                <p className="text-[0.68rem] text-amber-200 font-bold uppercase tracking-wider">
+                  Todas as Trilhas do Lumikids
+                </p>
+              </div>
+              <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-sm font-bold border border-white/30">
+                📚
+              </div>
             </div>
 
-            {/* Lista em Pergaminho com Tábuas de Madeira */}
-            <div className="parchment-sheet p-5 space-y-3.5 max-h-[70vh] overflow-y-auto">
-              {trailStories.length === 0 ? (
-                <div className="text-center py-8 text-[#6D4C2B]">
-                  <p className="font-bold text-sm">Carregando histórias do mundo...</p>
-                </div>
-              ) : (
-                trailStories.map((s) => (
-                  <Link
-                    key={s.id}
-                    href={`/app/historias/${s.id}`}
-                    onClick={() => {
-                      playSound(600);
-                      setIsCatalogOpen(false);
-                    }}
-                    className="wood-plank rounded-2xl p-3 sm:p-4 flex items-center justify-between gap-3 text-white shadow-lg block"
-                  >
-                    {/* Miniatura com moldura metálica */}
-                    <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-slate-200 shadow-md shrink-0 bg-slate-900 flex items-center justify-center">
-                      {s.coverImageUrl ? (
-                        <img src={s.coverImageUrl} alt={s.title} className="w-full h-full object-cover" />
-                      ) : (
-                        <span className="text-xl">{s.coverEmoji || activeTrail.emoji}</span>
-                      )}
+            {/* Atalhos Rápidos das 8 Trilhas no Topo do Modal */}
+            <div className="bg-[#EEDBB8] border-b border-[#D8C29D] px-3.5 py-2 flex items-center gap-1.5 overflow-x-auto scrollbar-none shrink-0">
+              <span className="text-[0.62rem] font-black uppercase text-[#6D4C2B] shrink-0 mr-1">
+                Ir para:
+              </span>
+              {KNOWLEDGE_TRAILS.map((trail) => (
+                <button
+                  key={trail.id}
+                  type="button"
+                  onClick={() => {
+                    playSound(460);
+                    const el = document.getElementById(`catalog-trail-${trail.id}`);
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="px-2.5 py-1 rounded-full bg-white/85 hover:bg-white text-[#2D2114] text-[0.68rem] font-bold border border-[#D8C29D] shadow-2xs shrink-0 flex items-center gap-1 active:scale-95 transition-all cursor-pointer"
+                >
+                  <span>{trail.emoji}</span>
+                  <span className="whitespace-nowrap">{trail.title.split(' ')[0]}</span>
+                </button>
+              ))}
+            </div>
+
+            {/* Pergaminho com Todas as Trilhas e Suas Histórias */}
+            <div className="parchment-sheet p-4 sm:p-6 space-y-6 overflow-y-auto text-[#2D2114]">
+              {KNOWLEDGE_TRAILS.map((trail) => {
+                const storiesOfTrail = stories.filter(s => s.category === trail.id);
+                return (
+                  <div key={trail.id} id={`catalog-trail-${trail.id}`} className="space-y-3 scroll-mt-3">
+                    
+                    {/* Cabeçalho da Trilha */}
+                    <div className="flex items-center justify-between border-b-2 border-amber-900/15 pb-2">
+                      <div className="flex items-center gap-2.5">
+                        <span className="text-2xl sm:text-3xl">{trail.emoji}</span>
+                        <div>
+                          <h4 className="font-serif font-black text-base sm:text-lg text-[#2D2114] leading-tight">
+                            {trail.title}
+                          </h4>
+                          <p className="text-[0.68rem] text-[#6D4C2B] font-semibold">
+                            {storiesOfTrail.length} histórias disponíveis
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsCatalogOpen(false);
+                          scrollToWorld(trail.id);
+                        }}
+                        className="px-2.5 py-1 rounded-full bg-white border border-[#D8C29D] text-[#6D4C2B] text-[0.65rem] font-black uppercase tracking-wider hover:bg-amber-50 shadow-2xs cursor-pointer shrink-0"
+                        title="Ver este mundo no mapa de aventura"
+                      >
+                        Ver no Mapa 🗺️
+                      </button>
                     </div>
 
-                    {/* Título e Descrição */}
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-serif font-black text-sm sm:text-base leading-tight drop-shadow-sm truncate">
-                        {s.title}
-                      </h4>
-                      <p className="text-amber-100/90 text-xs font-semibold truncate mt-0.5">
-                        {s.value || 'História de Sabedoria'}
-                      </p>
+                    {/* Grade das Histórias da Trilha */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                      {storiesOfTrail.map((s) => (
+                        <Link
+                          key={s.id}
+                          href={`/app/historias/${s.id}`}
+                          onClick={() => {
+                            playSound(600);
+                            setIsCatalogOpen(false);
+                          }}
+                          className="wood-plank rounded-2xl p-3 flex items-center justify-between gap-3 text-white shadow-md hover:scale-[1.02] active:scale-98 transition-all group"
+                        >
+                          {/* Capa Miniatura */}
+                          <div className="w-12 h-12 rounded-xl overflow-hidden border-2 border-amber-300 shadow-md shrink-0 bg-slate-900 flex items-center justify-center">
+                            {s.coverImageUrl ? (
+                              <img src={s.coverImageUrl} alt={s.title} className="w-full h-full object-cover" />
+                            ) : (
+                              <span className="text-xl">{s.coverEmoji || trail.emoji}</span>
+                            )}
+                          </div>
+
+                          {/* Título e Valor */}
+                          <div className="flex-1 min-w-0">
+                            <h5 className="font-serif font-black text-xs sm:text-sm leading-tight drop-shadow-sm truncate group-hover:text-amber-200 transition-colors">
+                              {s.title}
+                            </h5>
+                            <p className="text-amber-100/90 text-[0.68rem] font-semibold truncate mt-0.5">
+                              ⭐ {s.value || 'Valores Morais'} • ⏱️ {s.durationMinutes || 7} min
+                            </p>
+                          </div>
+
+                          {/* Botão de Leitura */}
+                          <div className="w-8 h-8 rounded-full bg-[#0284C7] text-white flex items-center justify-center text-xs shadow-md shrink-0 group-hover:bg-[#0369A1]">
+                            📖
+                          </div>
+                        </Link>
+                      ))}
                     </div>
 
-                    {/* Botão Redondo Azul Tátil */}
-                    <div className="btn-round-action w-10 h-10 rounded-full flex items-center justify-center text-white text-base shadow-md shrink-0">
-                      📖
-                    </div>
-                  </Link>
-                ))
-              )}
+                  </div>
+                );
+              })}
             </div>
 
           </div>
