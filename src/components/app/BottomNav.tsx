@@ -3,9 +3,11 @@
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { House, LayoutGrid, LibraryBig, User } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function BottomNav() {
   const pathname = usePathname();
+  const { t } = useLanguage();
 
   // No mapa principal (/app) e no leitor (/app/historias/[id]), o app tem seus próprios controles flutuantes
   if (pathname === '/app' || pathname.startsWith('/app/historias/')) {
@@ -13,10 +15,10 @@ export default function BottomNav() {
   }
 
   const ITEMS = [
-    { id: 'home', path: '/app', icon: <House size={20} />, label: "Home" },
-    { id: 'browse', path: '/app/historias', icon: <LayoutGrid size={20} />, label: "Explorar" },
-    { id: 'library', path: '/app/criar', icon: <LibraryBig size={20} />, label: "Biblioteca" },
-    { id: 'profile', path: '/app/progresso', icon: <User size={20} />, label: "Perfil" },
+    { id: 'home', path: '/app', icon: <House size={20} />, label: t('nav_home', 'Início') },
+    { id: 'browse', path: '/app/historias', icon: <LayoutGrid size={20} />, label: t('nav_explore', 'Explorar') },
+    { id: 'library', path: '/app/criar', icon: <LibraryBig size={20} />, label: t('nav_library', 'Biblioteca') },
+    { id: 'profile', path: '/app/progresso', icon: <User size={20} />, label: t('nav_profile', 'Perfil') },
   ];
 
   return (

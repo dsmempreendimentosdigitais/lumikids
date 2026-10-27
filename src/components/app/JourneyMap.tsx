@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useLanguage } from '@/context/LanguageContext';
+import LanguageSelector from '@/components/ui/LanguageSelector';
 import { 
   Sparkles, 
   Star, 
@@ -131,6 +133,7 @@ const WORLD_CONFIGS: Record<string, {
 };
 
 export default function JourneyMap({ stories, userPlan = 'free', isAdmin = false, userName = 'Explorador' }: JourneyWorldProps) {
+  const { t } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState<string>('mitologia-grega');
   const [isCatalogOpen, setIsCatalogOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -652,13 +655,13 @@ export default function JourneyMap({ stories, userPlan = 'free', isAdmin = false
               <button
                 type="button"
                 onClick={() => setIsSettingsOpen(false)}
-                className="btn-round-action w-9 h-9 rounded-full flex items-center justify-center text-white font-black text-base shadow-xs hover:scale-105 active:scale-95"
+                className="btn-round-action w-9 h-9 rounded-full flex items-center justify-center text-white font-black text-base shadow-xs hover:scale-105 active:scale-95 cursor-pointer"
                 title="Voltar"
               >
                 ←
               </button>
               <h3 className="font-serif font-black text-base tracking-wider uppercase drop-shadow-md">
-                Configurações
+                {t('map_settings', 'Configurações')}
               </h3>
               <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold text-white border border-white/30">
                 ⚙️
@@ -666,40 +669,52 @@ export default function JourneyMap({ stories, userPlan = 'free', isAdmin = false
             </div>
 
             {/* Corpo em Pergaminho Dobrado */}
-            <div className="parchment-sheet p-5 sm:p-6 space-y-3.5 text-[#2D2114] overflow-y-auto">
+            <div className="parchment-sheet p-5 sm:p-6 space-y-4 text-[#2D2114] overflow-y-auto">
+              {/* Efeitos Sonoros */}
               <div className="flex items-center justify-between p-3.5 bg-amber-50/60 rounded-2xl border border-amber-900/10 shadow-xs">
                 <div className="flex items-center gap-3">
                   <span className="text-xl">🔔</span>
                   <div>
-                    <span className="font-black text-sm block leading-tight">Efeitos Sonoros</span>
-                    <span className="text-[0.7rem] text-[#6B5A45] font-semibold">Sons de mapa e botões</span>
+                    <span className="font-black text-sm block leading-tight">{t('reader_sound_effects', 'Efeitos Sonoros')}</span>
+                    <span className="text-[0.7rem] text-[#6B5A45] font-semibold">{t('reader_sound_effects_desc', 'Sons de mapa e botões')}</span>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => setSoundEnabled(prev => !prev)}
-                  className={`btn-round-action px-3.5 h-9 rounded-full flex items-center gap-1.5 text-white text-xs font-black shadow-xs transition-all ${
+                  className={`btn-round-action px-3.5 h-9 rounded-full flex items-center gap-1.5 text-white text-xs font-black shadow-xs transition-all cursor-pointer ${
                     soundEnabled ? 'bg-[#0284C7]' : 'bg-gray-400 opacity-60'
                   }`}
                 >
-                  <span>{soundEnabled ? 'Ligado' : 'Mudo'}</span>
+                  <span>{soundEnabled ? t('settings_sound_on', 'Ligado') : t('settings_sound_off', 'Mudo')}</span>
                 </button>
+              </div>
+
+              {/* Seletor de Idiomas */}
+              <div className="p-3.5 bg-amber-50/60 rounded-2xl border border-amber-900/10 shadow-xs">
+                <div className="text-xs font-black uppercase tracking-wider text-[#4A3B2C] mb-1">
+                  🌍 {t('settings_language', 'Idioma do Aplicativo')}
+                </div>
+                <div className="text-[0.7rem] text-[#6B5A45] font-semibold mb-2.5">
+                  {t('settings_language_desc', 'Mudar para Inglês, Espanhol, Francês ou Italiano')}
+                </div>
+                <LanguageSelector variant="list" />
               </div>
 
               <div className="pt-2 space-y-2.5">
                 <Link
                   href="/app/historias"
-                  className="w-full py-2.5 px-4 rounded-2xl bg-white border-2 border-[#D8C29D] text-[#2D2114] font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-xs hover:bg-amber-50"
+                  className="w-full py-2.5 px-4 rounded-2xl bg-white border-2 border-[#D8C29D] text-[#2D2114] font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-xs hover:bg-amber-50 transition-colors"
                 >
-                  <span>📚 Gerenciar Histórias</span>
+                  <span>{t('manage_stories', '📚 Gerenciar Histórias')}</span>
                 </Link>
 
                 <button
                   type="button"
                   onClick={() => setIsSettingsOpen(false)}
-                  className="w-full h-12 rounded-2xl bg-[#0D9488] text-white font-black text-xs uppercase tracking-wider shadow-md hover:bg-[#0F766E] transition-all active:scale-98 flex items-center justify-center"
+                  className="w-full h-12 rounded-2xl bg-[#0D9488] text-white font-black text-xs uppercase tracking-wider shadow-md hover:bg-[#0F766E] transition-all active:scale-98 flex items-center justify-center cursor-pointer"
                 >
-                  Salvar e Fechar
+                  {t('save_and_close', 'Salvar e Fechar')}
                 </button>
               </div>
             </div>

@@ -4,6 +4,8 @@ import { db } from '@/lib/firebase/config';
 import { doc, getDoc } from 'firebase/firestore';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
+import { useLanguage } from '@/context/LanguageContext';
+import LanguageSelector from '@/components/ui/LanguageSelector';
 import InteractiveDragRescue from '@/components/educational/InteractiveDragRescue';
 import InteractiveCounting from '@/components/educational/InteractiveCounting';
 import InteractiveShapeMatch from '@/components/educational/InteractiveShapeMatch';
@@ -79,9 +81,18 @@ function splitParagraphIntoSubtitles(text: string, imageUrl: string) {
   return chunks;
 }
 
+const LOCALE_BY_LANG: Record<string, string> = {
+  pt: 'pt-BR',
+  en: 'en-US',
+  es: 'es-ES',
+  fr: 'fr-FR',
+  it: 'it-IT',
+};
+
 export default function StoryReaderPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = React.use(params);
   const { user } = useAuth();
+  const { language, t } = useLanguage();
   
   const [story, setStory] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -101,6 +112,10 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
   const [activeWordIndex, setActiveWordIndex] = useState<number | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [soundEffectsEnabled, setSoundEffectsEnabled] = useState(true);
+
+  // Cache para traduções dinâmicas de histórias
+  const [translatedParagraphs, setTranslatedParagraphs] = useState<Record<string, string>>({});
+  const [isTranslating, setIsTranslating] = useState(false);
 
   // Referências para o áudio profissional humanizado
   const audioElementRef = React.useRef<HTMLAudioElement | null>(null);
@@ -128,19 +143,17 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
     }
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'pt-BR';
+    const targetLocale = LOCALE_BY_LANG[language] || 'pt-BR';
+    utterance.lang = targetLocale;
     utterance.rate = 0.92;
     utterance.pitch = 1.05;
 
     const voices = window.speechSynthesis.getVoices();
-    const ptVoice = voices.find(v => 
-      v.lang.includes('pt-BR') || 
-      v.lang.includes('pt_BR') || 
-      v.name.toLowerCase().includes('brazil') || 
-      v.name.toLowerCase().includes('maria') || 
-      v.name.toLowerCase().includes('luciana')
+    const matchedVoice = voices.find(v => 
+      v.lang.toLowerCase().replace('_', '-').startsWith(language) ||
+      v.lang.toLowerCase().includes(targetLocale.toLowerCase())
     );
-    if (ptVoice) utterance.voice = ptVoice;
+    if (matchedVoice) utterance.voice = matchedVoice;
 
     utterance.onboundary = (event) => {
       if (event.name === 'word') {
@@ -384,6 +397,50 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
     return list;
   }, [story?.content?.paragraphs, story?.nanoBananaImageUrl]);
 
+  const totalStoryPages = displayParagraphs.length;
+
+  // Tradução dinâmica sob demanda quando o usuário seleciona en, es, fr, it
+  useEffect(() => {
+    if (!story || language === 'pt') return;
+
+    const currentParagraph = currentPageIndex > 0 && currentPageIndex <= totalStoryPages 
+      ? displayParagraphs[currentPageIndex - 1]?.text 
+      : story?.title;
+
+    if (!currentParagraph || !currentParagraph.trim()) return;
+    const cacheKey = `${language}:${currentParagraph.slice(0, 40)}`;
+    if (translatedParagraphs[cacheKey]) return;
+
+    let isMounted = true;
+    setIsTranslating(true);
+    fetch('/api/ai/translate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: currentParagraph, targetLang: language })
+    })
+      .then(r => r.json())
+      .then(data => {
+        if (isMounted && data.translatedText) {
+          setTranslatedParagraphs(prev => ({
+            ...prev,
+            [cacheKey]: data.translatedText
+          }));
+        }
+      })
+      .catch(err => console.warn('Falha na tradução automática:', err))
+      .finally(() => {
+        if (isMounted) setIsTranslating(false);
+      });
+
+    return () => { isMounted = false; };
+  }, [language, currentPageIndex, story, totalStoryPages, displayParagraphs, translatedParagraphs]);
+
+  const getActiveText = (rawText: string) => {
+    if (language === 'pt' || !rawText) return rawText;
+    const cacheKey = `${language}:${rawText.slice(0, 40)}`;
+    return translatedParagraphs[cacheKey] || rawText;
+  };
+
   useEffect(() => {
     const fetchStory = async () => {
       try {
@@ -584,7 +641,6 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
 
   const ageGroup = story.ageGroups?.[0] || '5-7';
   const audioUrl = story.audio?.[story.language || 'pt-BR']?.url;
-  const totalStoryPages = displayParagraphs.length;
   const totalPagesCount = totalStoryPages + 2; // Cover (0) + Pages (1..N) + End (N+1)
 
   return (
@@ -598,13 +654,13 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
         style={{ paddingLeft: 'max(1.75rem, calc(env(safe-area-inset-left) + 1.25rem))' }}
       >
         
-        {/* Topo do Pergaminho: Botão de Voltar Redondo Azul e Controles */}
+        {/* Topo do Pergaminho: Botão de Voltar Redondo Azul, Seletor de Idioma e Controles */}
         <div className="flex items-center justify-between mb-4 w-full">
           {currentPageIndex === 0 ? (
             <Link 
               href="/app/historias" 
               className="btn-round-action w-11 h-11 sm:w-12 sm:h-12 rounded-full text-white flex items-center justify-center font-black text-xl sm:text-2xl shadow-md active:scale-95"
-              title="Voltar para a biblioteca"
+              title={t('reader_prev_page', 'Voltar para a biblioteca')}
             >
               ←
             </Link>
@@ -612,12 +668,17 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
             <button 
               type="button"
               onClick={handlePrevPage}
-              className="btn-round-action w-11 h-11 sm:w-12 sm:h-12 rounded-full text-white flex items-center justify-center font-black text-xl sm:text-2xl shadow-md active:scale-95"
-              title="Página anterior"
+              className="btn-round-action w-11 h-11 sm:w-12 sm:h-12 rounded-full text-white flex items-center justify-center font-black text-xl sm:text-2xl shadow-md active:scale-95 cursor-pointer"
+              title={t('reader_prev_page', 'Página anterior')}
             >
               ←
             </button>
           )}
+
+          {/* Seletor Rápido de Idioma da Leitura */}
+          <div className="flex items-center gap-2">
+            <LanguageSelector variant="pill" />
+          </div>
 
           {/* Botão de Narração em Voz Alta estilo Bíblia Kids */}
           <button 
@@ -627,15 +688,15 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
                 stopNarration();
               } else {
                 const currentText = currentPageIndex > 0 && currentPageIndex <= totalStoryPages
-                  ? displayParagraphs[currentPageIndex - 1].text
-                  : story.title;
+                  ? getActiveText(displayParagraphs[currentPageIndex - 1].text)
+                  : getActiveText(story.title);
                 speakText(currentText);
               }
             }}
-            className={`btn-round-action w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-sm shadow-md transition-all ${
+            className={`btn-round-action w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-sm shadow-md transition-all cursor-pointer ${
               isSpeaking ? 'ring-4 ring-amber-300 animate-pulse' : ''
             }`}
-            title={isSpeaking ? 'Pausar narração' : isAudioLoading ? 'Carregando voz de IA...' : 'Ouvir narração da página'}
+            title={isSpeaking ? t('reader_pause', 'Pausar') : isAudioLoading ? '...' : t('reader_listen', 'Ouvir')}
           >
             {isAudioLoading ? '⏳' : isSpeaking ? '🔊' : '🔈'}
           </button>
@@ -652,7 +713,7 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
               </span>
 
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-black text-[#2D2114] leading-tight drop-shadow-xs">
-                {story.title}
+                {getActiveText(story.title)}
               </h1>
 
               <div className="flex items-center gap-3 text-xs font-bold text-[#6D4C2B] pt-1">
@@ -665,9 +726,9 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
                 <button
                   type="button"
                   onClick={handleNextPage}
-                  className="w-full py-4 rounded-full bg-[#0D9488] hover:bg-[#0F766E] text-white font-black text-base shadow-lg transition-transform active:scale-95 flex items-center justify-center gap-2 border-2 border-white/60"
+                  className="w-full py-4 rounded-full bg-[#0D9488] hover:bg-[#0F766E] text-white font-black text-base shadow-lg transition-transform active:scale-95 flex items-center justify-center gap-2 border-2 border-white/60 cursor-pointer"
                 >
-                  <span>Abrir História 📖</span>
+                  <span>{t('reader_finish', 'Abrir História 📖')}</span>
                 </button>
               </div>
             </div>
@@ -679,11 +740,19 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
               const pIndex = currentPageIndex - 1;
               const p = displayParagraphs[pIndex];
               const isFirstStoryPage = pIndex === 0;
-              const firstLetter = p.text ? p.text.charAt(0) : '';
-              const restOfText = p.text ? p.text.slice(1) : '';
+              const activeContent = getActiveText(p.text);
+              const firstLetter = activeContent ? activeContent.charAt(0) : '';
+              const restOfText = activeContent ? activeContent.slice(1) : '';
 
               return (
                 <div className="space-y-4">
+                  {isTranslating && (
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-100/80 border border-amber-300 text-[0.68rem] font-bold text-amber-900 animate-pulse">
+                      <span>🌍</span>
+                      <span>Traduzindo...</span>
+                    </div>
+                  )}
+
                   {/* Texto no pergaminho com formatação calorosa e nítida */}
                   <div className="text-[#2D2114] font-serif text-lg sm:text-xl md:text-2xl leading-relaxed font-bold select-none">
                     {isFirstStoryPage && !isSpeaking ? (
@@ -694,7 +763,7 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
                         {restOfText}
                       </>
                     ) : isSpeaking ? (
-                      p.text.split(/\s+/).map((word: string, wIdx: number) => {
+                      activeContent.split(/\s+/).map((word: string, wIdx: number) => {
                         const isCurrentWord = activeWordIndex === wIdx;
                         return (
                           <span
@@ -710,7 +779,7 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
                         );
                       })
                     ) : (
-                      p.text
+                      activeContent
                     )}
                   </div>
 
@@ -905,13 +974,13 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
               <button
                 type="button"
                 onClick={() => setIsMenuOpen(false)}
-                className="btn-round-action w-9 h-9 rounded-full flex items-center justify-center text-white font-black text-base shadow-xs hover:scale-105 active:scale-95"
+                className="btn-round-action w-9 h-9 rounded-full flex items-center justify-center text-white font-black text-base shadow-xs hover:scale-105 active:scale-95 cursor-pointer"
                 title="Voltar"
               >
                 ←
               </button>
               <h3 className="font-serif font-black text-base tracking-wider uppercase drop-shadow-md">
-                Configurações
+                {t('reader_settings', 'Ajustes de Leitura')}
               </h3>
               <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold text-white border border-white/30">
                 ⚙️
@@ -925,18 +994,18 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
                 <div className="flex items-center gap-3">
                   <span className="text-xl">🔔</span>
                   <div>
-                    <span className="font-black text-sm block leading-tight">Efeitos Sonoros</span>
-                    <span className="text-[0.7rem] text-[#6B5A45] font-semibold">Sons de virar página e toques</span>
+                    <span className="font-black text-sm block leading-tight">{t('reader_sound_effects', 'Efeitos Sonoros')}</span>
+                    <span className="text-[0.7rem] text-[#6B5A45] font-semibold">{t('reader_sound_effects_desc', 'Sons de virar página e toques')}</span>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => setSoundEffectsEnabled(prev => !prev)}
-                  className={`btn-round-action px-3.5 h-9 rounded-full flex items-center gap-1.5 text-white text-xs font-black shadow-xs transition-all ${
+                  className={`btn-round-action px-3.5 h-9 rounded-full flex items-center gap-1.5 text-white text-xs font-black shadow-xs transition-all cursor-pointer ${
                     soundEffectsEnabled ? 'bg-[#0284C7]' : 'bg-gray-400 opacity-60'
                   }`}
                 >
-                  <span>{soundEffectsEnabled ? 'Ligado' : 'Mudo'}</span>
+                  <span>{soundEffectsEnabled ? t('settings_sound_on', 'Ligado') : t('settings_sound_off', 'Mudo')}</span>
                 </button>
               </div>
 
@@ -945,8 +1014,8 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
                 <div className="flex items-center gap-3">
                   <span className="text-xl">🗣️</span>
                   <div>
-                    <span className="font-black text-sm block leading-tight">Narração em Áudio</span>
-                    <span className="text-[0.7rem] text-[#6B5A45] font-semibold">Leitura realista em voz alta</span>
+                    <span className="font-black text-sm block leading-tight">{t('reader_audio_narration', 'Narração em Áudio')}</span>
+                    <span className="text-[0.7rem] text-[#6B5A45] font-semibold">{t('reader_audio_narration_desc', 'Leitura realista em voz alta')}</span>
                   </div>
                 </div>
                 <button
@@ -956,17 +1025,28 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
                       stopNarration();
                     } else {
                       const currentText = currentPageIndex > 0 && currentPageIndex <= totalStoryPages
-                        ? displayParagraphs[currentPageIndex - 1].text
-                        : story.title;
+                        ? getActiveText(displayParagraphs[currentPageIndex - 1].text)
+                        : getActiveText(story.title);
                       speakText(currentText);
                     }
                   }}
-                  className={`btn-round-action px-3.5 h-9 rounded-full flex items-center gap-1.5 text-white text-xs font-black shadow-xs transition-all ${
+                  className={`btn-round-action px-3.5 h-9 rounded-full flex items-center gap-1.5 text-white text-xs font-black shadow-xs transition-all cursor-pointer ${
                     isSpeaking ? 'bg-amber-600 animate-pulse' : 'bg-[#0284C7]'
                   }`}
                 >
-                  <span>{isSpeaking ? 'Pausar' : 'Ouvir'}</span>
+                  <span>{isSpeaking ? t('reader_pause', 'Pausar') : t('reader_listen', 'Ouvir')}</span>
                 </button>
+              </div>
+
+              {/* Idioma da História */}
+              <div className="p-3.5 bg-amber-50/60 rounded-2xl border border-amber-900/10 shadow-xs">
+                <div className="text-xs font-black uppercase tracking-wider text-[#4A3B2C] mb-1">
+                  🌍 {t('reader_language', 'Idioma da História')}
+                </div>
+                <div className="text-[0.7rem] text-[#6B5A45] font-semibold mb-2.5">
+                  {t('reader_language_desc', 'Alterne o idioma de leitura e narração')}
+                </div>
+                <LanguageSelector variant="list" />
               </div>
 
               {/* Botões de Ação com Espaçamento Amplo */}
@@ -976,23 +1056,23 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
                     href="/app"
                     className="py-2.5 px-3 rounded-2xl bg-white border-2 border-[#D8C29D] text-[#2D2114] font-black text-[0.75rem] uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-xs hover:bg-amber-50 text-center"
                   >
-                    <span>🗺️ Mapa</span>
+                    <span>🗺️ {t('nav_home', 'Mapa')}</span>
                   </Link>
 
                   <Link
                     href="/app/historias"
                     className="py-2.5 px-3 rounded-2xl bg-white border-2 border-[#D8C29D] text-[#2D2114] font-black text-[0.75rem] uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-xs hover:bg-amber-50 text-center"
                   >
-                    <span>📚 Catálogo</span>
+                    <span>📚 {t('nav_library', 'Catálogo')}</span>
                   </Link>
                 </div>
 
                 <button
                   type="button"
                   onClick={() => setIsMenuOpen(false)}
-                  className="w-full h-12 rounded-2xl bg-[#0D9488] text-white font-black text-xs uppercase tracking-wider shadow-md hover:bg-[#0F766E] transition-all active:scale-98 flex items-center justify-center"
+                  className="w-full h-12 rounded-2xl bg-[#0D9488] text-white font-black text-xs uppercase tracking-wider shadow-md hover:bg-[#0F766E] transition-all active:scale-98 flex items-center justify-center cursor-pointer"
                 >
-                  Continuar Lendo
+                  {t('save_and_close', 'Salvar e Fechar')}
                 </button>
               </div>
             </div>

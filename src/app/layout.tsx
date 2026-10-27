@@ -34,6 +34,7 @@ export const viewport: Viewport = {
 };
 
 import { AuthProvider } from "@/context/AuthContext";
+import { LanguageProvider } from "@/context/LanguageContext";
 import PwaInstaller from "@/components/pwa/PwaInstaller";
 
 export default function RootLayout({
@@ -43,7 +44,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="pt-BR"
+      lang="pt"
       data-scroll-behavior="smooth"
       className={`${plusJakartaSans.variable} ${merriweather.variable} h-full antialiased font-sans bg-[#F8F7F2]`}
     >
@@ -57,8 +58,10 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col font-sans bg-[#F8F7F2] text-[#1A1D20]">
         <AuthProvider>
-          {children}
-          <PwaInstaller />
+          <LanguageProvider>
+            {children}
+            <PwaInstaller />
+          </LanguageProvider>
         </AuthProvider>
         <script
           dangerouslySetInnerHTML={{
