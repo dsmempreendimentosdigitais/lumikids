@@ -1,27 +1,46 @@
-const PLANS = {
-  free: {
-    name: 'Gratuito', price: 0,
-    aiPerWeek: 2, profiles: 1,
-    premiumVoices: false, offline: false, ads: true,
+export interface PlanConfig {
+  id: string;
+  name: string;
+  billingPeriod: 'monthly' | 'yearly';
+  priceMonthlyEquivalent: number;
+  priceTotal: number;
+  discountBadge?: string;
+  description: string;
+  features: string[];
+}
+
+export const SUBSCRIPTION_PLANS: Record<string, PlanConfig> = {
+  monthly: {
+    id: 'monthly',
+    name: 'Plano Mensal',
+    billingPeriod: 'monthly',
+    priceMonthlyEquivalent: 29.90,
+    priceTotal: 29.90,
+    description: 'Acesso completo com renovação mês a mês',
+    features: [
+      'Acesso ilimitado a todas as 60+ histórias do acervo',
+      'Todas as 991 ilustrações no estilo Puffin Rock em HD',
+      'Narração de voz profissional e sincronizada',
+      'Quizzes pedagógicos interativos para todas as idades',
+      '5 Idiomas (Português, Inglês, Espanhol, Francês e Italiano)',
+      'Sem anúncios, ambiente 100% seguro para crianças'
+    ]
   },
-  start: {
-    name: 'Start', price: 1490,
-    aiPerWeek: 999, profiles: 2,
-    premiumVoices: false, offline: false, ads: false,
-  },
-  familia: {
-    name: 'Família', price: 2490,
-    aiPerMonth: 30, profiles: 4,
-    premiumVoices: true, offline: false, ads: false,
-  },
-  familia_plus: {
-    name: 'Família+', price: 3990,
-    aiPerMonth: 100, profiles: 4,
-    premiumVoices: true, offline: true, ads: false,
-  },
-  premium2: {
-    name: 'Premium2', price: 5990,
-    aiPerMonth: 999, profiles: 6,
-    premiumVoices: true, offline: true, ads: false,
-  },
+  yearly: {
+    id: 'yearly',
+    name: 'Plano Anual',
+    billingPeriod: 'yearly',
+    priceMonthlyEquivalent: 19.90,
+    priceTotal: 238.80,
+    discountBadge: 'Economize 33%',
+    description: 'Melhor valor: 1 ano inteiro de leitura por menos de R$ 0,66 por dia',
+    features: [
+      'Economia real de R$ 120,00 no ano',
+      'Parcelamento em até 12x de R$ 19,90 sem juros',
+      'Opção de pagamento instantâneo via PIX ou Cartão',
+      'Acesso antecipado a novas histórias lançadas',
+      'Desbloqueio de histórias bônus do Desafio dos 30 Dias',
+      'Acesso em múltiplos dispositivos da família'
+    ]
+  }
 };

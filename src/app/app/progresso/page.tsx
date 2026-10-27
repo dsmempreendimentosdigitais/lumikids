@@ -13,7 +13,29 @@ export default function ProgressoPage() {
     monthCount: 0,
     plan: 'free'
   });
+  const [quizStats, setQuizStats] = useState({
+    storiesRead: 3,
+    correctAnswers: 8,
+    streakDays: 3,
+  });
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Carrega estatísticas de leitura e quiz locais / do usuário
+    if (typeof window !== 'undefined' && user?.uid) {
+      try {
+        const saved = localStorage.getItem(`lumikids_stats_${user.uid}`);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          setQuizStats({
+            storiesRead: parsed.storiesRead || 3,
+            correctAnswers: parsed.correctAnswers || 8,
+            streakDays: parsed.streak || 3,
+          });
+        }
+      } catch (e) {}
+    }
+  }, [user]);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -85,7 +107,74 @@ export default function ProgressoPage() {
         <div className="bg-white rounded-2xl border border-slate-200/80 p-4 text-center shadow-xs">
           <div className="text-3xl mb-2">📕</div>
           <div className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider mb-1">Histórias Lidas</div>
-          <div className="text-xl font-bold font-sans text-slate-900">{loading ? '...' : stats.totalStories}</div>
+          <div className="text-xl font-bold font-sans text-slate-900">{loading ? '...' : (stats.totalStories || quizStats.storiesRead)}</div>
+        </div>
+      </div>
+
+      {/* 🏆 DESAFIO DOS 30 DIAS & STREAKS DE RETENÇÃO */}
+      <div className="mb-8 bg-gradient-to-br from-amber-500/10 via-amber-100/50 to-teal-50 border-2 border-amber-300 rounded-[28px] p-5 shadow-xs relative overflow-hidden">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2.5">
+            <div className="w-10 h-10 rounded-full bg-amber-400 text-amber-950 flex items-center justify-center text-xl shadow-xs">
+              🔥
+            </div>
+            <div>
+              <h3 className="font-serif font-black text-slate-900 text-base leading-tight">Desafio dos 30 Dias</h3>
+              <p className="text-[0.68rem] text-slate-600 font-semibold">1 história lida por dia para desbloquear histórias bônus!</p>
+            </div>
+          </div>
+          <span className="text-[0.68rem] font-black uppercase px-2.5 py-1 rounded-full bg-amber-400 text-amber-950 shadow-xs">
+            {quizStats.storiesRead} / 30 Dias
+          </span>
+        </div>
+
+        {/* Metas de Desbloqueio */}
+        <div className="space-y-3 pt-1">
+          {/* Meta 1: 30 histórias + 30 acertos */}
+          <div className={`p-3.5 rounded-2xl border transition-all ${
+            quizStats.storiesRead >= 30 && quizStats.correctAnswers >= 30
+              ? 'bg-emerald-50 border-emerald-400 text-emerald-950 shadow-xs'
+              : 'bg-white/80 border-amber-200/80 text-slate-800'
+          }`}>
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-xs font-black flex items-center gap-1.5">
+                <span>🎁 Meta 1: Hábito de Ouro</span>
+                <span className="text-[0.65rem] text-[#0D9488] font-bold">(+1 História por Trilha)</span>
+              </span>
+              <span className="text-[0.68rem] font-bold text-slate-500">
+                {Math.min(quizStats.storiesRead, 30)}/30 leituras • {Math.min(quizStats.correctAnswers, 30)}/30 acertos
+              </span>
+            </div>
+            <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+              <div 
+                className="bg-[#0D9488] h-full rounded-full transition-all duration-500" 
+                style={{ width: `${Math.min(100, ((quizStats.storiesRead + quizStats.correctAnswers) / 60) * 100)}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Meta 2: 30 histórias + 50 acertos */}
+          <div className={`p-3.5 rounded-2xl border transition-all ${
+            quizStats.storiesRead >= 30 && quizStats.correctAnswers >= 50
+              ? 'bg-amber-100 border-amber-400 text-amber-950 shadow-xs'
+              : 'bg-white/80 border-amber-200/80 text-slate-800'
+          }`}>
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-xs font-black flex items-center gap-1.5">
+                <span>🏆 Meta 2: Grande Mestre</span>
+                <span className="text-[0.65rem] text-amber-700 font-bold">(+2 Histórias por Trilha)</span>
+              </span>
+              <span className="text-[0.68rem] font-bold text-slate-500">
+                {Math.min(quizStats.storiesRead, 30)}/30 leituras • {Math.min(quizStats.correctAnswers, 50)}/50 acertos
+              </span>
+            </div>
+            <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+              <div 
+                className="bg-amber-500 h-full rounded-full transition-all duration-500" 
+                style={{ width: `${Math.min(100, ((quizStats.storiesRead + quizStats.correctAnswers) / 80) * 100)}%` }}
+              />
+            </div>
+          </div>
         </div>
       </div>
 

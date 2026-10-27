@@ -10,7 +10,7 @@ import InteractiveDragRescue from '@/components/educational/InteractiveDragRescu
 import InteractiveCounting from '@/components/educational/InteractiveCounting';
 import InteractiveShapeMatch from '@/components/educational/InteractiveShapeMatch';
 import InteractiveMoralChoice from '@/components/educational/InteractiveMoralChoice';
-import StoryEndActivity from '@/components/app/StoryEndActivity';
+import StoryQuiz from '@/components/app/StoryQuiz';
 
 // Função para detectar efeitos visuais baseados nas palavras da história
 function getDynamicEffects(text: string): string[] {
@@ -317,6 +317,7 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
   };
 
   const handleNextPage = () => {
+    if (isLockedByPaywall) return;
     if (currentPageIndex < displayParagraphs.length + 1) {
       playPageFlipSound();
       setCurrentPageIndex(prev => prev + 1);
@@ -609,35 +610,11 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
     );
   }
 
-  const isPremiumUser = ['familia', 'familia_plus', 'premium2'].includes(userPlan);
-  const isVideoEnabledUser = ['familia_plus', 'premium2'].includes(userPlan);
-  const isAllowed = !story.isPremium || isPremiumUser;
-
-  if (!isAllowed) {
-    return (
-      <div className="p-6 text-center pt-20 bg-[#F0F2FF] min-h-screen flex flex-col justify-center items-center">
-        <div className="bg-white rounded-[32px] p-8 max-w-md shadow-[0_20px_50px_rgba(61,90,254,.15)] border-2 border-amber-300 relative overflow-hidden">
-          <div className="absolute top-0 right-0 bg-amber-400 text-black text-[0.65rem] font-bold uppercase tracking-wider py-1 px-4 rounded-bl-lg">🔒 Exclusivo</div>
-          <div className="text-6xl mb-6">👑</div>
-          <h2 className="text-2xl font-black text-[#283593] mb-4">Aventura Premium</h2>
-          <p className="text-gray-600 font-semibold text-sm mb-6 leading-relaxed">
-            Esta história faz parte da biblioteca exclusiva do Lumikids. Assine para liberar o acesso total ao catálogo!
-          </p>
-          <div className="bg-amber-50/50 rounded-[20px] p-4 text-left mb-6 border border-amber-100">
-            <div className="flex items-center gap-2 mb-2"><i className="fas fa-check text-amber-600 text-xs"></i><span className="text-xs font-bold text-amber-900">Acesso a 900+ Histórias Inéditas</span></div>
-            <div className="flex items-center gap-2 mb-2"><i className="fas fa-check text-amber-600 text-xs"></i><span className="text-xs font-bold text-amber-900">Ilustrações Animadas em Vídeo</span></div>
-            <div className="flex items-center gap-2"><i className="fas fa-check text-amber-600 text-xs"></i><span className="text-xs font-bold text-amber-900">Vozes Premium e Narração Inteligente</span></div>
-          </div>
-          <Link href="/app/planos" className="block w-full py-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-extrabold rounded-full hover:scale-[1.02] transition-transform shadow-lg shadow-orange-500/20">
-            Assinar Premium Grátis 🚀
-          </Link>
-          <Link href="/app/historias" className="block mt-4 text-[#3D5AFE] font-bold text-xs hover:underline">
-            Voltar para Histórias Gratuitas
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  const isPremiumUser = ['familia', 'familia_plus', 'premium2', 'anual', 'mensal'].includes(userPlan);
+  // 1 história livre por trilha liberada por completo (ou identificador isFreeComplete)
+  const isFreeCompleteStory = Boolean(story.isFreeComplete || story.isFree || story.orderIndex === 0);
+  // Paywall híbrido: não-assinantes leem as primeiras 4 cenas; a partir da cena 5, surge o paywall de continuação
+  const isLockedByPaywall = !isPremiumUser && !isFreeCompleteStory && currentPageIndex >= 5;
 
   const ageGroup = story.ageGroups?.[0] || '5-7';
   const audioUrl = story.audio?.[story.language || 'pt-BR']?.url;
@@ -734,9 +711,59 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
             </div>
           )}
 
-          {/* CASO 2: CENAS DA HISTÓRIA (Páginas 1 até N) */}
+          {/* CASO 2: CENAS DA HISTÓRIA (Páginas 1 até N) OU PAYWALL DE CONTINUAÇÃO */}
           {currentPageIndex > 0 && currentPageIndex <= totalStoryPages && (
-            (() => {
+            isLockedByPaywall ? (
+              <div className="space-y-4 text-center my-auto py-2 animate-in fade-in duration-200">
+                <div className="w-14 h-14 rounded-full bg-amber-100 text-amber-600 border-2 border-amber-300 flex items-center justify-center mx-auto text-2xl shadow-xs">
+                  🔒
+                </div>
+
+                <div>
+                  <span className="inline-block px-3 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-300 text-[0.65rem] font-black uppercase tracking-wider mb-2">
+                    Prévia Gratuita Encerrada
+                  </span>
+                  <h3 className="text-xl sm:text-2xl font-serif font-black text-[#2D2114] leading-snug">
+                    O que acontece em seguida? 📖
+                  </h3>
+                  <p className="text-xs sm:text-sm font-semibold text-[#6D4C2B] mt-1.5 max-w-sm mx-auto leading-relaxed">
+                    Você acompanhou o início desta bela jornada! Continue descobrindo a grande vitória de <strong>{getActiveText(story.title)}</strong> e liberte mais de 60 histórias com o Lumikids.
+                  </p>
+                </div>
+
+                <div className="bg-amber-50/80 p-3.5 rounded-2xl border border-amber-200 text-left max-w-sm mx-auto space-y-1.5 shadow-2xs">
+                  <div className="flex items-center gap-2 text-xs font-bold text-[#2D2114]">
+                    <span className="text-[#0D9488]">✓</span> Acesso completo a todas as páginas e cenas
+                  </div>
+                  <div className="flex items-center gap-2 text-xs font-bold text-[#2D2114]">
+                    <span className="text-[#0D9488]">✓</span> Narração em áudio profissional e quizzes
+                  </div>
+                  <div className="flex items-center gap-2 text-xs font-bold text-[#2D2114]">
+                    <span className="text-[#0D9488]">✓</span> Por apenas <strong>R$ 19,90/mês</strong> no plano anual
+                  </div>
+                </div>
+
+                <div className="pt-2 flex flex-col gap-2 max-w-sm mx-auto">
+                  <Link
+                    href="/app/planos"
+                    className="w-full py-3.5 rounded-full bg-[#0D9488] hover:bg-[#0F766E] text-white font-black text-xs sm:text-sm uppercase tracking-wider shadow-md active:scale-95 transition-all text-center"
+                  >
+                    Desbloquear História Completa 🚀
+                  </Link>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      playPageFlipSound();
+                      setCurrentPageIndex(4);
+                    }}
+                    className="w-full py-2 rounded-full bg-white border border-[#D8C29D] text-[#6D4C2B] font-bold text-xs hover:bg-amber-50 transition-colors cursor-pointer"
+                  >
+                    ← Rever Páginas Anteriores
+                  </button>
+                </div>
+              </div>
+            ) : (() => {
               const pIndex = currentPageIndex - 1;
               const p = displayParagraphs[pIndex];
               const isFirstStoryPage = pIndex === 0;
@@ -807,7 +834,7 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
             })()
           )}
 
-          {/* CASO 3: FIM DA HISTÓRIA (Página N+1) */}
+          {/* CASO 3: FIM DA HISTÓRIA & QUIZ PEDAGÓGICO (Página N+1) */}
           {currentPageIndex === totalPagesCount - 1 && (
             <div className="space-y-4 text-center">
               <span className="text-5xl block animate-bounce-subtle">🏆</span>
@@ -818,13 +845,24 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
                 Você completou esta história com honra e sabedoria.
               </p>
 
-              {/* Atividade de Fixação & Selo da Trilha */}
-              <StoryEndActivity 
+              {/* Quiz Interativo de 3 Perguntas com Seleção de Faixa Etária e Multilíngue */}
+              <StoryQuiz 
                 storyTitle={story.title}
-                reflectionQuestion={story.reflection?.question}
-                value={story.value}
-                onComplete={(score) => {
-                  setStarsReward(score);
+                storyCategory={story.category}
+                storyValue={story.value}
+                storySummary={story.description || story.title}
+                onComplete={({ correctCount, earnedPoints }) => {
+                  setStarsReward(Math.min(3, Math.max(1, correctCount)));
+                  // Se o usuário estiver autenticado, pode persistir no Firestore o progresso
+                  if (user?.uid) {
+                    try {
+                      const userStatsKey = `lumikids_stats_${user.uid}`;
+                      const current = JSON.parse(localStorage.getItem(userStatsKey) || '{"storiesRead":0,"correctAnswers":0,"streak":1}');
+                      current.storiesRead = (current.storiesRead || 0) + 1;
+                      current.correctAnswers = (current.correctAnswers || 0) + correctCount;
+                      localStorage.setItem(userStatsKey, JSON.stringify(current));
+                    } catch (e) {}
+                  }
                 }}
               />
 
@@ -835,16 +873,16 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
                     playPageFlipSound();
                     setCurrentPageIndex(0);
                   }}
-                  className="w-full py-3.5 rounded-full bg-[#0D9488] hover:bg-[#0F766E] text-white font-black text-sm shadow-md active:scale-95 transition-transform"
+                  className="w-full py-3.5 rounded-full bg-[#0D9488] hover:bg-[#0F766E] text-white font-black text-sm shadow-md active:scale-95 transition-transform cursor-pointer"
                 >
                   🔄 Reler História
                 </button>
 
                 <Link
-                  href="/app/historias"
+                  href="/app"
                   className="w-full py-3.5 rounded-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-sm shadow-md active:scale-95 transition-transform block text-center"
                 >
-                  🗺️ Voltar ao Mapa
+                  🗺️ Voltar ao Mapa de Aventuras
                 </Link>
               </div>
             </div>
@@ -907,11 +945,28 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
                 : story.coverImageUrl || displayParagraphs[0]?.imageUrl
           } 
           alt={story.title} 
-          className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+          className={`w-full h-full object-cover transition-transform duration-700 ${
+            isLockedByPaywall ? 'blur-md scale-105 opacity-60' : 'hover:scale-105'
+          }`}
           onError={(e) => { 
             e.currentTarget.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800"><rect width="800" height="800" fill="%2387CEEB"/><circle cx="400" cy="300" r="100" fill="%23FFD700"/><text x="50%" y="60%" dominant-baseline="middle" text-anchor="middle" fill="%23FFFFFF" font-size="32" font-family="serif">✨ Ilustração Lumikids</text></svg>'; 
           }}
         />
+
+        {/* Overlay de Bloqueio da Cena no Paywall */}
+        {isLockedByPaywall && (
+          <div className="absolute inset-0 bg-slate-950/50 backdrop-blur-xs flex flex-col items-center justify-center p-6 text-center z-20 pointer-events-none">
+            <div className="w-16 h-16 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center text-3xl shadow-xl mb-3 animate-bounce">
+              👑
+            </div>
+            <h4 className="text-white font-serif font-black text-xl mb-1 drop-shadow-md">
+              Ilustração Exclusiva Lumikids
+            </h4>
+            <p className="text-white/90 text-xs max-w-xs font-semibold drop-shadow-xs">
+              Libere o acesso total por apenas R$ 19,90/mês para ver todas as cenas em altíssima definição.
+            </p>
+          </div>
+        )}
 
         {/* Efeito Visual de Estrelinhas e Faíscas Mágicas ao Tocar na Cena */}
         {interactivePop.active && (
