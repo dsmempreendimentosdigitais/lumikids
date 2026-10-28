@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
-import { Sparkles, Trophy, Star, CheckCircle2, XCircle, ArrowRight, RotateCcw, Brain, Award } from 'lucide-react';
+import { Sparkles, Trophy, CheckCircle2, XCircle, ArrowRight, RotateCcw, Brain } from 'lucide-react';
 
 export type AgeGroup = '3-5' | '6-8' | '9-12';
 
@@ -20,6 +21,7 @@ interface StoryQuizProps {
   storyCategory?: string;
   storySummary?: string;
   initialAgeGroup?: AgeGroup;
+  onReread?: () => void;
   onComplete?: (result: { correctCount: number; total: number; earnedPoints: number }) => void;
 }
 
@@ -35,22 +37,22 @@ function getFallbackQuestions(
       return [
         {
           id: 1,
-          question: `Who is the main hero in "${title}"?`,
-          options: ['A kind and brave character', 'A sleepy cloud', 'A little raindrop'],
+          question: `Who is the main friend in "${title}"?`,
+          options: ['A kind and brave character', 'A sleepy cloud in the sky', 'A little raindrop'],
           correctIndex: 0,
           encouragement: 'Great job noticing our little friend!'
         },
         {
           id: 2,
           question: `What feeling filled their heart when helping others?`,
-          options: ['Joy and happiness', 'Anger and grumpiness', 'Boredom'],
+          options: ['Joy and warmth', 'Anger and grumpiness', 'Boredom'],
           correctIndex: 0,
           encouragement: 'Yes! Helping others brings true joy!'
         },
         {
           id: 3,
           question: `What was the most beautiful thing that happened at the end?`,
-          options: ['Everyone shared smiles and peace', 'They ran away into the dark', 'Nothing at all'],
+          options: ['Everyone shared peace and smiles', 'They ran away into the dark', 'Nothing at all'],
           correctIndex: 0,
           encouragement: 'Wonderful! You listened so well!'
         }
@@ -164,7 +166,7 @@ function getFallbackQuestions(
     return [
       {
         id: 1,
-        question: `Quem foi o grande amiguinho da história "${title}"?`,
+        question: `Quem foi o grande amigo da história "${title}"?`,
         options: ['Um personagem bondoso e valente', 'Uma nuvem rabugenta', 'Um relógio sem ponteiros'],
         correctIndex: 0,
         encouragement: 'Muito bem! Você prestou muita atenção!'
@@ -244,6 +246,7 @@ export default function StoryQuiz({
   storyCategory,
   storySummary,
   initialAgeGroup = '6-8',
+  onReread,
   onComplete
 }: StoryQuizProps) {
   const { language, t } = useLanguage();
@@ -360,132 +363,151 @@ export default function StoryQuiz({
   };
 
   const ageLabels: Record<AgeGroup, string> = {
-    '3-5': t('age_2_4', '🍼 3–5 anos'),
-    '6-8': t('age_5_7', '📚 6–8 anos'),
-    '9-12': t('age_8_10', '🎓 9–12 anos'),
+    '3-5': t('age_2_4', '🍼 2–4 anos'),
+    '6-8': t('age_5_7', '📚 5–7 anos'),
+    '9-12': t('age_8_10', '🎓 8–10 anos'),
   };
 
   return (
-    <div className="w-full bg-white/95 backdrop-blur-md rounded-[28px] border-2 border-amber-300 shadow-md p-5 sm:p-6 text-left my-4 relative overflow-hidden select-none font-sans text-slate-800">
+    <div className="w-full bg-[#FFFDF7]/95 backdrop-blur-md rounded-[32px] border-2 border-[#D8C29D] shadow-2xl p-6 sm:p-8 text-left my-auto relative select-none font-sans text-slate-800">
       
-      {/* Topo do Quiz: Selo & Seletor de Faixa Etária */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 border-b border-amber-100 pb-3">
-        <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center font-black">
-            <Brain size={20} />
-          </div>
-          <div>
-            <h4 className="font-serif font-black text-slate-900 text-base leading-tight">
-              {t('quiz_title', 'Quiz de Descobertas')}
-            </h4>
-            <p className="text-[0.7rem] text-slate-500 font-semibold">
-              3 perguntas para fixar os valores da história
-            </p>
-          </div>
+      {/* ═══ CABEÇALHO DO QUIZ: TROFÉU & SELETOR DE IDADE AMPLIADO ═══ */}
+      <div className="text-center pb-5 mb-5 border-b border-amber-900/10">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-amber-100 text-amber-600 border-2 border-amber-300 shadow-sm text-3xl mb-3 animate-bounce-subtle">
+          🏆
         </div>
+        
+        <h3 className="text-2xl sm:text-3xl font-serif font-black text-[#2D2114] leading-tight">
+          Fim da Aventura!
+        </h3>
+        <p className="text-xs sm:text-sm font-semibold text-[#6D4C2B] mt-1 max-w-md mx-auto">
+          Você completou esta história com honra e sabedoria. Responda ao quiz para consolidar os valores!
+        </p>
 
-        {/* Pílulas de Idade */}
-        <div className="flex items-center gap-1.5 bg-amber-50 p-1 rounded-full border border-amber-200">
-          {(['3-5', '6-8', '9-12'] as AgeGroup[]).map((grp) => (
-            <button
-              key={grp}
-              type="button"
-              onClick={() => setSelectedAge(grp)}
-              className={`px-2.5 py-1 rounded-full text-[0.68rem] font-black transition-all cursor-pointer ${
-                selectedAge === grp
-                  ? 'bg-[#0D9488] text-white shadow-xs scale-105'
-                  : 'text-amber-900 hover:bg-amber-100/60'
-              }`}
-            >
-              {ageLabels[grp]}
-            </button>
-          ))}
+        {/* BOTÕES DE IDADE AMPLIADOS E ESPAÇADOS */}
+        <div className="flex items-center justify-center gap-2 sm:gap-3 mt-4 flex-wrap">
+          {(['3-5', '6-8', '9-12'] as AgeGroup[]).map((grp) => {
+            const isSelected = selectedAge === grp;
+            return (
+              <button
+                key={grp}
+                type="button"
+                onClick={() => setSelectedAge(grp)}
+                className={`py-2 px-4 sm:py-2.5 sm:px-5 rounded-full text-xs sm:text-sm font-black transition-all cursor-pointer shadow-xs active:scale-95 flex items-center gap-1.5 ${
+                  isSelected
+                    ? 'bg-[#0D9488] text-white shadow-md scale-105 ring-2 ring-teal-300'
+                    : 'bg-white border-2 border-[#D8C29D] text-[#6D4C2B] hover:bg-amber-50'
+                }`}
+              >
+                <span>{ageLabels[grp]}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      {/* ESTADO FINAL: TELA DE PONTUAÇÃO E CELEBRAÇÃO */}
+      {/* ═══ ESTADO FINAL: CELEBRAÇÃO & PONTUAÇÃO ═══ */}
       {isFinished ? (
-        <div className="text-center py-4 space-y-4 animate-in fade-in zoom-in-95 duration-200">
+        <div className="text-center py-4 space-y-5 animate-in fade-in zoom-in-95 duration-200">
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-amber-100 border-4 border-amber-300 text-amber-600 shadow-inner">
             <Trophy size={42} className="animate-bounce" />
           </div>
 
           <div>
-            <h3 className="text-xl sm:text-2xl font-serif font-black text-slate-900">
+            <h4 className="text-2xl sm:text-3xl font-serif font-black text-slate-900">
               {correctAnswersCount === 3 ? 'Incrível! 100% de Acertos!' : 'Parabéns pela Conquista!'}
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-600 font-semibold mt-1">
+            </h4>
+            <p className="text-sm sm:text-base text-slate-600 font-semibold mt-1.5">
               Você acertou {correctAnswersCount} de {questions.length} perguntas e ganhou <strong className="text-amber-600">+{(correctAnswersCount * 5) + 10} Pontos</strong>!
             </p>
           </div>
 
           {/* Troféus e Medalhas */}
-          <div className="grid grid-cols-2 gap-3 max-w-xs mx-auto pt-1">
-            <div className="bg-amber-50 rounded-2xl p-3 border border-amber-200 flex flex-col items-center">
-              <span className="text-2xl">⭐</span>
-              <span className="text-[0.7rem] font-bold text-slate-500 uppercase">Sabedoria</span>
-              <span className="text-base font-black text-amber-700">+{correctAnswersCount * 5} pts</span>
+          <div className="grid grid-cols-2 gap-3 max-w-sm mx-auto pt-1">
+            <div className="bg-amber-50 rounded-2xl p-4 border-2 border-amber-200 flex flex-col items-center">
+              <span className="text-3xl mb-1">⭐</span>
+              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Sabedoria</span>
+              <span className="text-lg font-black text-amber-700">+{correctAnswersCount * 5} pts</span>
             </div>
-            <div className="bg-teal-50 rounded-2xl p-3 border border-teal-200 flex flex-col items-center">
-              <span className="text-2xl">📖</span>
-              <span className="text-[0.7rem] font-bold text-slate-500 uppercase">Leitor do Dia</span>
-              <span className="text-base font-black text-[#0D9488]">+10 pts</span>
+            <div className="bg-teal-50 rounded-2xl p-4 border-2 border-teal-200 flex flex-col items-center">
+              <span className="text-3xl mb-1">📖</span>
+              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Leitor do Dia</span>
+              <span className="text-lg font-black text-[#0D9488]">+10 pts</span>
             </div>
           </div>
 
-          <div className="pt-2 flex justify-center">
+          <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
             <button
               type="button"
               onClick={handleRestart}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white border-2 border-amber-300 text-amber-900 text-xs font-black shadow-xs hover:bg-amber-50 active:scale-95 transition-all cursor-pointer"
+              className="w-full sm:w-auto px-6 py-3 rounded-full bg-white border-2 border-amber-300 text-amber-900 text-xs sm:text-sm font-black shadow-xs hover:bg-amber-50 active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-2"
             >
-              <RotateCcw size={14} /> Tentar Novamente
+              <RotateCcw size={16} /> Tentar Novamente
             </button>
+
+            {onReread && (
+              <button
+                type="button"
+                onClick={onReread}
+                className="w-full sm:w-auto px-6 py-3 rounded-full bg-[#0D9488] hover:bg-[#0F766E] text-white text-xs sm:text-sm font-black shadow-md active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-2"
+              >
+                <span>🔄 Reler História</span>
+              </button>
+            )}
+
+            <Link
+              href="/app"
+              className="w-full sm:w-auto px-6 py-3 rounded-full bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs sm:text-sm font-black shadow-md active:scale-95 transition-all text-center"
+            >
+              🗺️ Voltar ao Mapa
+            </Link>
           </div>
         </div>
       ) : (
-        /* ESTADO ATIVO: PERGUNTA ATUAL */
+        /* ═══ ESTADO ATIVO: PERGUNTA ATUAL ═══ */
         currentQ && (
-          <div className="space-y-4">
+          <div className="space-y-5">
             
-            {/* Barra de Progresso das Perguntas (1/3, 2/3, 3/3) */}
-            <div className="flex items-center justify-between text-xs font-black text-slate-500">
-              <span>{t('quiz_question', 'Pergunta')} {currentIndex + 1} de {questions.length}</span>
-              <div className="flex gap-1.5">
+            {/* Barra de Progresso e Identificador da Pergunta */}
+            <div className="flex items-center justify-between text-xs sm:text-sm font-black text-[#6D4C2B]">
+              <span className="bg-amber-100/80 px-3 py-1 rounded-full border border-amber-200/80">
+                {t('quiz_question', 'Pergunta')} {currentIndex + 1} de {questions.length}
+              </span>
+              <div className="flex gap-2">
                 {questions.map((_, i) => (
                   <div
                     key={i}
-                    className={`h-2 rounded-full transition-all ${
+                    className={`h-2.5 rounded-full transition-all ${
                       i === currentIndex
-                        ? 'w-6 bg-[#0D9488]'
+                        ? 'w-8 bg-[#0D9488]'
                         : i < currentIndex
-                          ? 'w-2 bg-amber-400'
-                          : 'w-2 bg-slate-200'
+                          ? 'w-3 bg-amber-400'
+                          : 'w-3 bg-slate-200'
                     }`}
                   />
                 ))}
               </div>
             </div>
 
-            {/* Texto da Pergunta */}
-            <h5 className="font-serif font-black text-slate-900 text-base sm:text-lg leading-snug">
+            {/* Texto da Pergunta em Tamanho Grande e Espaçado */}
+            <h4 className="font-serif font-black text-[#2D2114] text-lg sm:text-2xl leading-snug sm:leading-relaxed">
               {currentQ.question}
-            </h5>
+            </h4>
 
-            {/* 3 Opções de Resposta */}
-            <div className="space-y-2.5 pt-1">
+            {/* 3 Opções de Resposta em Cartões Amplos */}
+            <div className="space-y-3 sm:space-y-3.5 pt-1">
               {currentQ.options.map((opt, oIdx) => {
                 const isSelected = selectedOption === oIdx;
                 const isCorrect = oIdx === currentQ.correctIndex;
                 
-                let btnStyle = 'bg-white border-slate-200 text-slate-800 hover:border-amber-400 hover:bg-amber-50/40';
+                let btnStyle = 'bg-white border-slate-200 text-slate-800 hover:border-amber-400 hover:bg-amber-50/50';
                 if (hasAnswered) {
                   if (isCorrect) {
-                    btnStyle = 'bg-emerald-50 border-emerald-500 text-emerald-950 font-black ring-2 ring-emerald-300/50';
+                    btnStyle = 'bg-emerald-50 border-emerald-500 text-emerald-950 font-black ring-2 ring-emerald-300';
                   } else if (isSelected) {
                     btnStyle = 'bg-rose-50 border-rose-400 text-rose-950 font-semibold';
                   } else {
-                    btnStyle = 'bg-white/60 border-slate-200 text-slate-400 opacity-60';
+                    btnStyle = 'bg-white/50 border-slate-200 text-slate-400 opacity-60';
                   }
                 }
 
@@ -495,14 +517,14 @@ export default function StoryQuiz({
                     type="button"
                     disabled={hasAnswered}
                     onClick={() => handleSelectOption(oIdx)}
-                    className={`w-full p-3.5 rounded-2xl border-2 transition-all text-left flex items-center justify-between gap-3 text-xs sm:text-sm font-bold shadow-2xs cursor-pointer ${btnStyle}`}
+                    className={`w-full p-4 sm:p-5 rounded-2xl border-2 transition-all text-left flex items-center justify-between gap-3 text-sm sm:text-base font-bold shadow-xs cursor-pointer ${btnStyle}`}
                   >
-                    <span className="flex-1">{opt}</span>
+                    <span className="flex-1 leading-snug sm:leading-normal">{opt}</span>
                     {hasAnswered && isCorrect && (
-                      <CheckCircle2 size={18} className="text-emerald-600 shrink-0" />
+                      <CheckCircle2 size={22} className="text-emerald-600 shrink-0" />
                     )}
                     {hasAnswered && isSelected && !isCorrect && (
-                      <XCircle size={18} className="text-rose-500 shrink-0" />
+                      <XCircle size={22} className="text-rose-500 shrink-0" />
                     )}
                   </button>
                 );
@@ -511,14 +533,14 @@ export default function StoryQuiz({
 
             {/* Feedback & Botão Próxima Pergunta */}
             {hasAnswered && (
-              <div className="pt-2 animate-in fade-in duration-150 flex items-center justify-between gap-3 bg-amber-50/80 p-3.5 rounded-2xl border border-amber-200">
-                <div className="text-xs font-bold text-amber-950">
+              <div className="pt-2 animate-in fade-in duration-150 flex flex-col sm:flex-row items-center justify-between gap-3 bg-amber-50/90 p-4 sm:p-5 rounded-2xl border-2 border-amber-200">
+                <div className="text-xs sm:text-sm font-bold text-amber-950 text-center sm:text-left">
                   {selectedOption === currentQ.correctIndex ? (
-                    <span className="flex items-center gap-1.5 text-emerald-700">
-                      <Sparkles size={14} /> {currentQ.encouragement || t('quiz_correct', 'Muito bem! Resposta correta! ⭐')}
+                    <span className="flex items-center gap-2 text-emerald-700 font-black">
+                      <Sparkles size={16} /> {currentQ.encouragement || t('quiz_correct', 'Muito bem! Resposta correta! ⭐')}
                     </span>
                   ) : (
-                    <span className="text-rose-700">
+                    <span className="text-rose-700 font-bold">
                       {t('quiz_try_again', 'Quase lá! A virtude sempre nos guia.')}
                     </span>
                   )}
@@ -527,13 +549,33 @@ export default function StoryQuiz({
                 <button
                   type="button"
                   onClick={handleNext}
-                  className="px-4 py-2 rounded-full bg-[#0D9488] text-white text-xs font-black shadow-xs hover:bg-[#0F766E] flex items-center gap-1.5 shrink-0 cursor-pointer active:scale-95 transition-all"
+                  className="w-full sm:w-auto px-6 py-3 rounded-full bg-[#0D9488] text-white text-xs sm:text-sm font-black shadow-md hover:bg-[#0F766E] flex items-center justify-center gap-2 shrink-0 cursor-pointer active:scale-95 transition-all"
                 >
-                  <span>{currentIndex < questions.length - 1 ? t('quiz_next', 'Próxima') : 'Ver Pontuação'}</span>
-                  <ArrowRight size={13} />
+                  <span>{currentIndex < questions.length - 1 ? t('quiz_next', 'Próxima Pergunta') : 'Ver Pontuação'}</span>
+                  <ArrowRight size={16} />
                 </button>
               </div>
             )}
+
+            {/* Botões de Ação Inferiores */}
+            <div className="pt-4 border-t border-amber-900/10 flex flex-col sm:flex-row items-center gap-2.5">
+              {onReread && (
+                <button
+                  type="button"
+                  onClick={onReread}
+                  className="w-full py-3 rounded-full bg-white border border-[#D8C29D] text-[#6D4C2B] font-bold text-xs sm:text-sm hover:bg-amber-50 transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+                >
+                  <span>🔄 Reler História</span>
+                </button>
+              )}
+
+              <Link
+                href="/app"
+                className="w-full py-3 rounded-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs sm:text-sm shadow-xs transition-colors block text-center"
+              >
+                🗺️ Voltar ao Mapa de Aventuras
+              </Link>
+            </div>
 
           </div>
         )

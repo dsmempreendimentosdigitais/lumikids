@@ -620,6 +620,82 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
   const audioUrl = story.audio?.[story.language || 'pt-BR']?.url;
   const totalPagesCount = totalStoryPages + 2; // Cover (0) + Pages (1..N) + End (N+1)
 
+  // ═══ TELA CHEIA IMERSIVA DO QUIZ & FIM DA AVENTURA (Com imagem de fundo desfocada) ═══
+  if (currentPageIndex === totalPagesCount - 1) {
+    const endBackgroundImg = (displayParagraphs.length > 0 && displayParagraphs[displayParagraphs.length - 1]?.imageUrl) || story.coverImageUrl;
+
+    return (
+      <div className="relative min-h-screen w-full flex flex-col justify-between items-center p-3 sm:p-6 overflow-x-hidden select-none font-sans bg-slate-950">
+        
+        {/* Fundo Cenográfico da História Desfocado (Estilo Lumikids Atual) */}
+        <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+          <img 
+            src={endBackgroundImg} 
+            alt="Cena da História" 
+            className="w-full h-full object-cover filter blur-lg scale-110 opacity-40 brightness-75 transition-all duration-1000"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-amber-950/20 to-black/75" />
+        </div>
+
+        {/* Topo Flutuante: Botão Voltar para Última Página, Idioma e Mapa */}
+        <div className="relative z-20 w-full max-w-2xl flex items-center justify-between pt-2 sm:pt-4 mb-3 sm:mb-4">
+          <button 
+            type="button"
+            onClick={() => {
+              playPageFlipSound();
+              setCurrentPageIndex(totalStoryPages);
+            }}
+            className="btn-round-action w-11 h-11 sm:w-12 sm:h-12 rounded-full text-white flex items-center justify-center font-black text-xl shadow-lg active:scale-95 cursor-pointer"
+            title="Página anterior"
+          >
+            ←
+          </button>
+
+          <div className="flex items-center gap-2">
+            <LanguageSelector variant="pill" />
+          </div>
+
+          <Link 
+            href="/app"
+            className="btn-round-action w-11 h-11 sm:w-12 sm:h-12 rounded-full text-white flex items-center justify-center font-black text-xl shadow-lg active:scale-95 cursor-pointer"
+            title="Voltar ao Mapa de Aventuras"
+          >
+            🗺️
+          </Link>
+        </div>
+
+        {/* Card Centralizado e Amplo do Quiz Pedagógico */}
+        <div className="relative z-20 w-full max-w-2xl my-auto py-2">
+          <StoryQuiz 
+            storyTitle={story.title}
+            storyCategory={story.category}
+            storyValue={story.value}
+            storySummary={story.description || story.title}
+            onReread={() => {
+              playPageFlipSound();
+              setCurrentPageIndex(0);
+            }}
+            onComplete={({ correctCount, earnedPoints }) => {
+              setStarsReward(Math.min(3, Math.max(1, correctCount)));
+              if (user?.uid) {
+                try {
+                  const userStatsKey = `lumikids_stats_${user.uid}`;
+                  const current = JSON.parse(localStorage.getItem(userStatsKey) || '{"storiesRead":0,"correctAnswers":0,"streak":1}');
+                  current.storiesRead = (current.storiesRead || 0) + 1;
+                  current.correctAnswers = (current.correctAnswers || 0) + correctCount;
+                  localStorage.setItem(userStatsKey, JSON.stringify(current));
+                } catch (e) {}
+              }
+            }}
+          />
+        </div>
+
+        {/* Espaçamento Inferior */}
+        <div className="relative z-20 pb-2" />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen w-full flex flex-col md:flex-row bg-[#2C3E50] overflow-x-hidden select-none relative font-sans">
       
@@ -832,60 +908,6 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
                 </div>
               );
             })()
-          )}
-
-          {/* CASO 3: FIM DA HISTÓRIA & QUIZ PEDAGÓGICO (Página N+1) */}
-          {currentPageIndex === totalPagesCount - 1 && (
-            <div className="space-y-4 text-center">
-              <span className="text-5xl block animate-bounce-subtle">🏆</span>
-              <h2 className="text-2xl sm:text-3xl font-serif font-black text-[#2D2114]">
-                Fim da Aventura!
-              </h2>
-              <p className="text-xs sm:text-sm font-bold text-[#6D4C2B]">
-                Você completou esta história com honra e sabedoria.
-              </p>
-
-              {/* Quiz Interativo de 3 Perguntas com Seleção de Faixa Etária e Multilíngue */}
-              <StoryQuiz 
-                storyTitle={story.title}
-                storyCategory={story.category}
-                storyValue={story.value}
-                storySummary={story.description || story.title}
-                onComplete={({ correctCount, earnedPoints }) => {
-                  setStarsReward(Math.min(3, Math.max(1, correctCount)));
-                  // Se o usuário estiver autenticado, pode persistir no Firestore o progresso
-                  if (user?.uid) {
-                    try {
-                      const userStatsKey = `lumikids_stats_${user.uid}`;
-                      const current = JSON.parse(localStorage.getItem(userStatsKey) || '{"storiesRead":0,"correctAnswers":0,"streak":1}');
-                      current.storiesRead = (current.storiesRead || 0) + 1;
-                      current.correctAnswers = (current.correctAnswers || 0) + correctCount;
-                      localStorage.setItem(userStatsKey, JSON.stringify(current));
-                    } catch (e) {}
-                  }
-                }}
-              />
-
-              <div className="pt-2 flex flex-col gap-2.5">
-                <button
-                  type="button"
-                  onClick={() => {
-                    playPageFlipSound();
-                    setCurrentPageIndex(0);
-                  }}
-                  className="w-full py-3.5 rounded-full bg-[#0D9488] hover:bg-[#0F766E] text-white font-black text-sm shadow-md active:scale-95 transition-transform cursor-pointer"
-                >
-                  🔄 Reler História
-                </button>
-
-                <Link
-                  href="/app"
-                  className="w-full py-3.5 rounded-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-sm shadow-md active:scale-95 transition-transform block text-center"
-                >
-                  🗺️ Voltar ao Mapa de Aventuras
-                </Link>
-              </div>
-            </div>
           )}
 
         </div>
