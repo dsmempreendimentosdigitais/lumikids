@@ -89,6 +89,96 @@ const LOCALE_BY_LANG: Record<string, string> = {
   it: 'it-IT',
 };
 
+function isHighQualityVoice(name: string): boolean {
+  const n = name.toLowerCase();
+  return (
+    n.includes('natural') ||
+    n.includes('neural') ||
+    n.includes('online') ||
+    n.includes('google') ||
+    n.includes('siri') ||
+    n.includes('premium') ||
+    n.includes('enhanced') ||
+    n.includes('francisca') ||
+    n.includes('antonio') ||
+    n.includes('luciana') ||
+    n.includes('felipe') ||
+    n.includes('denise') ||
+    n.includes('henri') ||
+    n.includes('elvira') ||
+    n.includes('alvaro') ||
+    n.includes('dalia') ||
+    n.includes('jorge') ||
+    n.includes('elsa') ||
+    n.includes('cosimo') ||
+    n.includes('jenny') ||
+    n.includes('guy') ||
+    n.includes('aria')
+  );
+}
+
+function selectBestSpeechVoice(voices: SpeechSynthesisVoice[], language: string): SpeechSynthesisVoice | null {
+  if (!voices || voices.length === 0) return null;
+
+  const targetLocale = (LOCALE_BY_LANG[language] || 'pt-BR').toLowerCase();
+
+  // ═══ 1. PORTUGUÊS DO BRASIL: PROIBIDO SOTAQUE DE PORTUGAL (pt-PT) ═══
+  if (language === 'pt' || targetLocale.includes('br')) {
+    // 1a. Buscar vozes neurais / naturais brasileiras (ex: Francisca, Antonio, Google português do Brasil, Luciana)
+    const naturalBr = voices.find(v => {
+      const vLang = v.lang.toLowerCase().replace('_', '-');
+      const vName = v.name.toLowerCase();
+      const isBr = vLang === 'pt-br' || vLang.includes('br') || vName.includes('brazil') || vName.includes('brasil');
+      const isNotPortugal = !vLang.includes('pt-pt') && !vName.includes('portugal') && !vName.includes('helia');
+      return isBr && isNotPortugal && isHighQualityVoice(vName);
+    });
+    if (naturalBr) return naturalBr;
+
+    // 1b. Qualquer voz pt-BR do sistema (excluindo rigorosamente qualquer voz de Portugal)
+    const anyBr = voices.find(v => {
+      const vLang = v.lang.toLowerCase().replace('_', '-');
+      const vName = v.name.toLowerCase();
+      const isBr = vLang === 'pt-br' || vLang.includes('br') || vName.includes('brazil') || vName.includes('brasil');
+      const isNotPortugal = !vLang.includes('pt-pt') && !vName.includes('portugal') && !vName.includes('helia');
+      return isBr && isNotPortugal;
+    });
+    if (anyBr) return anyBr;
+
+    // 1c. Se só houver voz 'pt' genérica, certifique-se que não é Portugal
+    const genericPt = voices.find(v => {
+      const vLang = v.lang.toLowerCase().replace('_', '-');
+      const vName = v.name.toLowerCase();
+      return vLang.startsWith('pt') && !vLang.includes('pt-pt') && !vName.includes('portugal');
+    });
+    if (genericPt) return genericPt;
+  }
+
+  // ═══ 2. DEMAIS IDIOMAS (Francês, Espanhol, Italiano, Inglês) ═══
+  // 2a. Voz neural / natural com locale exato (ex: fr-FR, es-ES, it-IT, en-US)
+  const naturalExact = voices.find(v => {
+    const vLang = v.lang.toLowerCase().replace('_', '-');
+    const vName = v.name.toLowerCase();
+    return vLang.startsWith(targetLocale) && isHighQualityVoice(vName);
+  });
+  if (naturalExact) return naturalExact;
+
+  // 2b. Qualquer voz com locale exato
+  const anyExact = voices.find(v => {
+    const vLang = v.lang.toLowerCase().replace('_', '-');
+    return vLang.startsWith(targetLocale);
+  });
+  if (anyExact) return anyExact;
+
+  // 2c. Qualquer voz que comece com o código do idioma
+  const anyLang = voices.find(v => {
+    const vLang = v.lang.toLowerCase().replace('_', '-');
+    return vLang.startsWith(language);
+  });
+  if (anyLang) return anyLang;
+
+  return null;
+}
+
 export default function StoryReaderPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = React.use(params);
   const { user } = useAuth();
@@ -117,12 +207,30 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
   const [translatedParagraphs, setTranslatedParagraphs] = useState<Record<string, string>>({});
   const [isTranslating, setIsTranslating] = useState(false);
 
-  // Referências para o áudio profissional humanizado
+  // Referências para o áudio e sincronização de fala
   const audioElementRef = React.useRef<HTMLAudioElement | null>(null);
-  const audioCacheRef = React.useRef<Map<string, string>>(new Map());
+  const wordIntervalRef = React.useRef<any>(null);
+
+  // Pré-aquecimento das vozes neurais instaladas no navegador / sistema operacional
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.getVoices();
+      const onVoicesChanged = () => {
+        window.speechSynthesis.getVoices();
+      };
+      window.speechSynthesis.addEventListener('voiceschanged', onVoicesChanged);
+      return () => {
+        window.speechSynthesis.removeEventListener('voiceschanged', onVoicesChanged);
+      };
+    }
+  }, []);
 
   // Narração Imersiva: Áudio Realista com IA e Sincronização
   const stopNarration = () => {
+    if (wordIntervalRef.current) {
+      clearInterval(wordIntervalRef.current);
+      wordIntervalRef.current = null;
+    }
     if (audioElementRef.current) {
       audioElementRef.current.pause();
       audioElementRef.current.currentTime = 0;
@@ -135,114 +243,95 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
     setActiveWordIndex(null);
   };
 
-  const fallbackSpeechSynthesis = (text: string) => {
+  const speakText = (text: string) => {
+    stopNarration();
+    if (!text || !text.trim()) return;
+
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
       setIsSpeaking(false);
       setIsAudioLoading(false);
       return;
     }
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    const targetLocale = LOCALE_BY_LANG[language] || 'pt-BR';
-    utterance.lang = targetLocale;
-    utterance.rate = 0.92;
-    utterance.pitch = 1.05;
-
-    const voices = window.speechSynthesis.getVoices();
-    const matchedVoice = voices.find(v => 
-      v.lang.toLowerCase().replace('_', '-').startsWith(language) ||
-      v.lang.toLowerCase().includes(targetLocale.toLowerCase())
-    );
-    if (matchedVoice) utterance.voice = matchedVoice;
-
-    utterance.onboundary = (event) => {
-      if (event.name === 'word') {
-        const charIdx = event.charIndex;
-        const textBefore = text.slice(0, charIdx);
-        const wordCount = textBefore.trim() ? textBefore.trim().split(/\s+/).length : 0;
-        setActiveWordIndex(wordCount);
-      }
-    };
-
-    utterance.onstart = () => {
-      setIsSpeaking(true);
-      setIsAudioLoading(false);
-    };
-    utterance.onend = () => {
-      setIsSpeaking(false);
-      setActiveWordIndex(null);
-    };
-    utterance.onerror = () => {
-      setIsSpeaking(false);
-      setIsAudioLoading(false);
-      setActiveWordIndex(null);
-    };
-
-    window.speechSynthesis.speak(utterance);
-  };
-
-  const speakText = async (text: string) => {
-    stopNarration();
-    if (!text || !text.trim()) return;
 
     setIsAudioLoading(true);
 
     try {
-      let audioBlobUrl = audioCacheRef.current.get(text);
+      const utterance = new SpeechSynthesisUtterance(text);
+      const targetLocale = LOCALE_BY_LANG[language] || 'pt-BR';
+      utterance.lang = targetLocale;
+      // Cadência calma e acolhedora de livro infantil
+      utterance.rate = 0.88;
+      utterance.pitch = 1.02;
 
-      if (!audioBlobUrl) {
-        const res = await fetch('/api/ai/narrate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text, voice: 'Aoede' })
-        });
+      const voices = window.speechSynthesis.getVoices();
+      const matchedVoice = selectBestSpeechVoice(voices, language);
+      if (matchedVoice) {
+        utterance.voice = matchedVoice;
+        utterance.lang = matchedVoice.lang;
+      }
 
-        if (res.ok) {
-          const blob = await res.blob();
-          audioBlobUrl = URL.createObjectURL(blob);
-          audioCacheRef.current.set(text, audioBlobUrl);
+      const words = text.trim().split(/\s+/);
+      let boundaryTriggered = false;
+
+      utterance.onboundary = (event) => {
+        if (event.name === 'word') {
+          boundaryTriggered = true;
+          const charIdx = event.charIndex;
+          const textBefore = text.slice(0, charIdx);
+          const wordCount = textBefore.trim() ? textBefore.trim().split(/\s+/).length : 0;
+          setActiveWordIndex(wordCount);
         }
-      }
+      };
 
-      if (audioBlobUrl) {
-        const audio = new Audio(audioBlobUrl);
-        audioElementRef.current = audio;
+      utterance.onstart = () => {
+        setIsSpeaking(true);
+        setIsAudioLoading(false);
 
-        const words = text.trim().split(/\s+/);
-        audio.ontimeupdate = () => {
-          if (audio.duration && audio.duration > 0) {
-            const progress = audio.currentTime / audio.duration;
-            const currentWord = Math.min(
-              words.length - 1,
-              Math.floor(progress * words.length)
-            );
-            setActiveWordIndex(currentWord);
+        // Fallback suave para navegadores móveis onde onboundary não é emitido
+        setTimeout(() => {
+          if (!boundaryTriggered && words.length > 0) {
+            let currentW = 0;
+            wordIntervalRef.current = setInterval(() => {
+              currentW++;
+              if (currentW < words.length) {
+                setActiveWordIndex(currentW);
+              } else {
+                if (wordIntervalRef.current) {
+                  clearInterval(wordIntervalRef.current);
+                  wordIntervalRef.current = null;
+                }
+              }
+            }, 360);
           }
-        };
+        }, 400);
+      };
 
-        audio.onplay = () => {
-          setIsSpeaking(true);
-          setIsAudioLoading(false);
-        };
+      utterance.onend = () => {
+        if (wordIntervalRef.current) {
+          clearInterval(wordIntervalRef.current);
+          wordIntervalRef.current = null;
+        }
+        setIsSpeaking(false);
+        setIsAudioLoading(false);
+        setActiveWordIndex(null);
+      };
 
-        audio.onended = () => {
-          setIsSpeaking(false);
-          setActiveWordIndex(null);
-        };
+      utterance.onerror = () => {
+        if (wordIntervalRef.current) {
+          clearInterval(wordIntervalRef.current);
+          wordIntervalRef.current = null;
+        }
+        setIsSpeaking(false);
+        setIsAudioLoading(false);
+        setActiveWordIndex(null);
+      };
 
-        audio.onerror = () => {
-          console.warn('Falha no playback de áudio, usando fallback');
-          fallbackSpeechSynthesis(text);
-        };
-
-        await audio.play();
-        return;
-      }
+      window.speechSynthesis.speak(utterance);
     } catch (e) {
-      console.warn('Erro ao chamar API de narração, usando sintetizador nativo', e);
+      console.warn('Erro ao reproduzir voz:', e);
+      setIsSpeaking(false);
+      setIsAudioLoading(false);
     }
-
-    fallbackSpeechSynthesis(text);
   };
 
   // Para narração ao mudar de página
@@ -380,10 +469,15 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
   // useMemo DEVE estar antes de qualquer return condicional (Rules of Hooks)
   const displayParagraphs = useMemo(() => {
     if (!story?.content?.paragraphs) return [];
+
+    // Se houver tradução gravada no banco de dados para o idioma ativo, utiliza diretamente
+    const preTranslatedParagraphs = story?.translations?.[language]?.paragraphs;
+
     const list: { text: string; imageUrl: string; originalIndex: number; subIndex: number; totalSubs: number; interactiveChallenge?: any }[] = [];
     story.content.paragraphs.forEach((p: any, pIndex: number) => {
       const img = p.imageUrl || story.nanoBananaImageUrl || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="%23150F2D"/><stop offset="100%" stop-color="%230B0819"/></linearGradient></defs><rect width="800" height="800" fill="url(%23g)"/><circle cx="400" cy="350" r="120" fill="%238B5CF6" opacity="0.3"/><text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" fill="%23F3E8FF" font-size="72" font-family="serif">✨</text><text x="50%" y="60%" dominant-baseline="middle" text-anchor="middle" fill="%23D8B4FE" font-size="28" font-family="sans-serif" font-weight="bold">Ilustração Lumikids</text></svg>';
-      const splits = splitParagraphIntoSubtitles(p.text, img);
+      const rawText = (preTranslatedParagraphs && preTranslatedParagraphs[pIndex]) ? preTranslatedParagraphs[pIndex] : p.text;
+      const splits = splitParagraphIntoSubtitles(rawText, img);
       splits.forEach((sp, sIndex) => {
         list.push({
           text: sp.text,
@@ -396,13 +490,15 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
       });
     });
     return list;
-  }, [story?.content?.paragraphs, story?.nanoBananaImageUrl]);
+  }, [story?.content?.paragraphs, story?.translations, story?.nanoBananaImageUrl, language]);
 
   const totalStoryPages = displayParagraphs.length;
 
-  // Tradução dinâmica sob demanda quando o usuário seleciona en, es, fr, it
+  // Tradução dinâmica sob demanda apenas se a história ainda não tiver tradução gravada no banco
   useEffect(() => {
     if (!story || language === 'pt') return;
+    // Se já estiver gravado no documento da história no banco, não precisa de fetch sob demanda
+    if (story?.translations?.[language]) return;
 
     const currentParagraph = currentPageIndex > 0 && currentPageIndex <= totalStoryPages 
       ? displayParagraphs[currentPageIndex - 1]?.text 
@@ -438,6 +534,15 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
 
   const getActiveText = (rawText: string) => {
     if (language === 'pt' || !rawText) return rawText;
+
+    // 1. Verifica se a história tem tradução gravada no banco de dados (zero delay)
+    if (story?.translations?.[language]) {
+      const tr = story.translations[language];
+      if (rawText === story.title && tr.title) return tr.title;
+      if (rawText === story.description && tr.description) return tr.description;
+    }
+
+    // 2. Cache em memória / dinâmica sob demanda
     const cacheKey = `${language}:${rawText.slice(0, 40)}`;
     return translatedParagraphs[cacheKey] || rawText;
   };
@@ -667,10 +772,10 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
         {/* Card Centralizado e Amplo do Quiz Pedagógico */}
         <div className="relative z-20 w-full max-w-2xl my-auto py-2">
           <StoryQuiz 
-            storyTitle={story.title}
+            storyTitle={getActiveText(story.title)}
             storyCategory={story.category}
             storyValue={story.value}
-            storySummary={story.description || story.title}
+            storySummary={getActiveText(story.description || story.title)}
             onReread={() => {
               playPageFlipSound();
               setCurrentPageIndex(0);
@@ -869,16 +974,18 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
                       activeContent.split(/\s+/).map((word: string, wIdx: number) => {
                         const isCurrentWord = activeWordIndex === wIdx;
                         return (
-                          <span
-                            key={wIdx}
-                            className={`transition-all duration-150 inline-block mr-1.5 ${
-                              isCurrentWord
-                                ? 'bg-amber-300 text-slate-950 font-black px-1.5 py-0.5 rounded-lg shadow-sm scale-105'
-                                : 'text-[#2D2114]'
-                            }`}
-                          >
-                            {word}
-                          </span>
+                          <React.Fragment key={wIdx}>
+                            <span
+                              className={`transition-all duration-150 inline-block rounded-md px-1 -mx-0.5 ${
+                                isCurrentWord
+                                  ? 'bg-amber-300 text-slate-950 font-black shadow-xs scale-105'
+                                  : 'text-[#2D2114]'
+                              }`}
+                            >
+                              {word}
+                            </span>
+                            {' '}
+                          </React.Fragment>
                         );
                       })
                     ) : (
