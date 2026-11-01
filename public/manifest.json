@@ -1,17 +1,18 @@
 {
-  "name": "Lumikids - Histórias Mágicas",
+  "name": "Lumikids - Histórias com Valores e Virtudes",
   "short_name": "Lumikids",
-  "description": "Histórias infantis personalizadas com IA e valores cristãos",
+  "description": "Histórias infantis clássicas com ilustrações estilo Puffin Rock, narração acolhedora e valores para a família.",
   "start_url": "/app",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#0B0819",
-  "theme_color": "#0B0819",
+  "background_color": "#F8F7F2",
+  "theme_color": "#1D4ED8",
   "orientation": "portrait",
   "icons": [
+    { "src": "/icons/lumikids-star-logo.svg", "sizes": "512x512", "type": "image/svg+xml", "purpose": "any maskable" },
     { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
     { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ],
-  "categories": ["education", "kids", "entertainment", "books"],
+  "categories": ["education", "kids", "books", "family"],
   "lang": "pt-BR"
 }

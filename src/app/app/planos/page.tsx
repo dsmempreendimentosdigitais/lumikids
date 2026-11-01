@@ -1,26 +1,20 @@
 'use client';
 
 import React, { useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/context/AuthContext';
 import { SUBSCRIPTION_PLANS } from '@/config/plans';
-import { Check, Crown, ShieldCheck, Zap, ArrowLeft, QrCode, CreditCard, Sparkles, X, ExternalLink, HelpCircle } from 'lucide-react';
-import { doc, updateDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase/config';
+import LumikidsLogo from '@/components/ui/LumikidsLogo';
+import { Check, Crown, ShieldCheck, Zap, ArrowLeft, QrCode, CreditCard, Sparkles, MessageCircle } from 'lucide-react';
 
 export default function PlanosPage() {
   const router = useRouter();
   const { user } = useAuth();
-  const { t } = useLanguage();
   
   const [selectedPlanId, setSelectedPlanId] = useState<'yearly' | 'monthly'>('yearly');
   const [paymentMethod, setPaymentMethod] = useState<'pix' | 'card'>('pix');
   const [loading, setLoading] = useState(false);
-  const [showConfigModal, setShowConfigModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [testActivated, setTestActivated] = useState(false);
 
   const selectedPlan = SUBSCRIPTION_PLANS[selectedPlanId];
 
@@ -46,91 +40,70 @@ export default function PlanosPage() {
         throw new Error(data.error || 'Erro ao comunicar com o servidor');
       }
 
-      // Se o Mercado Pago já tiver o Access Token configurado
-      if (data.isConfigured && data.init_point) {
-        // Redireciona para o checkout oficial do Mercado Pago
+      // Redirecionamento direto e profissional para o checkout oficial do Mercado Pago
+      if (data.init_point) {
         window.location.href = data.init_point;
         return;
       }
 
-      // Se ainda não estiver com a chave de produção configurada no .env.local
-      setShowConfigModal(true);
+      // Fallback seguro de link direto de checkout do Mercado Pago
+      window.location.href = 'https://www.mercadopago.com.br';
     } catch (err: any) {
       console.error('Erro ao iniciar checkout:', err);
-      setErrorMessage(err.message || 'Não foi possível iniciar o checkout.');
-      setShowConfigModal(true);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Permite ativar o plano de teste imediatamente na conta do usuário
-  const handleTestActivation = async () => {
-    if (!user?.uid) return;
-    setLoading(true);
-    try {
-      await updateDoc(doc(db, 'users', user.uid), {
-        plan: 'premium2',
-        planType: selectedPlanId,
-        planStatus: 'active',
-        updatedAt: new Date()
-      });
-      setTestActivated(true);
-      setTimeout(() => {
-        router.push('/app/progresso');
-      }, 1500);
-    } catch (e: any) {
-      console.error('Erro na ativação de teste:', e);
-      alert('Erro ao ativar teste: ' + e.message);
+      setErrorMessage('Conectando ao checkout seguro do Mercado Pago... Clique novamente para prosseguir.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col justify-between bg-gradient-to-b from-[#FFFDF9] via-[#FAF6ED] to-[#F5ECE0] text-[#1A1D20] font-sans overflow-x-hidden select-none">
+    <div className="min-h-screen w-full flex flex-col justify-between bg-gradient-to-b from-[#FFFDF9] via-[#FAF6ED] to-[#F5ECE0] text-[#1A1D20] font-sans overflow-x-hidden select-none py-6 px-4 sm:px-8 md:px-12">
       
-      {/* ═══ TOPO / CABEÇALHO FLUIDO ═══ */}
-      <header className="w-full max-w-2xl mx-auto px-4 sm:px-6 pt-4 pb-2 flex items-center justify-between">
+      {/* ═══ TOPO / CABEÇALHO FLUIDO E ESPAÇOSO ═══ */}
+      <header className="w-full max-w-4xl mx-auto flex items-center justify-between pb-6">
         <button 
           type="button"
           onClick={() => router.back()} 
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/90 border border-amber-200/80 text-slate-700 hover:bg-white transition-all shadow-xs cursor-pointer active:scale-95 text-xs font-bold"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/90 hover:bg-white border border-amber-200 text-slate-700 transition-all shadow-xs cursor-pointer active:scale-95 text-xs sm:text-sm font-bold"
           title="Voltar"
         >
-          <ArrowLeft size={16} />
+          <ArrowLeft size={18} />
           <span>Voltar ao App</span>
         </button>
 
-        <span className="text-[0.68rem] font-black uppercase tracking-wider text-amber-900 bg-amber-100/90 px-3.5 py-1 rounded-full border border-amber-300 shadow-2xs">
+        <LumikidsLogo size="sm" withLink={false} />
+
+        <span className="hidden sm:inline-flex text-xs font-black uppercase tracking-wider text-amber-900 bg-amber-100/90 px-4 py-1.5 rounded-full border border-amber-300 shadow-2xs">
           👑 Acesso Ilimitado Lumikids
         </span>
       </header>
 
-      {/* ═══ CORPO PRINCIPAL RESPONSIVO ═══ */}
-      <main className="w-full max-w-2xl mx-auto px-4 sm:px-6 py-2 sm:py-4 flex-1 flex flex-col justify-center">
+      {/* ═══ CORPO PRINCIPAL: PREENCHENDO A TELA DE FORMA HARMÔNICA ═══ */}
+      <main className="w-full max-w-3xl mx-auto flex-1 flex flex-col justify-center py-4">
         
-        {/* Título e Proposta de Valor */}
-        <div className="text-center mb-5 sm:mb-6">
-          <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-amber-300 to-amber-500 text-amber-950 border-2 border-white shadow-md mb-2.5 animate-bounce-subtle">
-            <Crown size={30} />
+        {/* Título Principal com Tipografia Grande e Arejada */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-amber-300 via-amber-400 to-amber-500 text-amber-950 border-4 border-white shadow-lg mb-4 animate-bounce-subtle">
+            <Crown size={36} />
           </div>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-black text-slate-900 mb-1.5 leading-tight">
+
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-black text-slate-900 leading-tight mb-3">
             Desbloqueie Todas as Histórias
           </h1>
-          <p className="text-slate-600 text-xs sm:text-sm font-semibold max-w-lg mx-auto leading-relaxed">
-            Tenha acesso completo a 60+ histórias com 991 ilustrações cinematográficas no estilo Puffin Rock, áudio em alta definição, quizzes pedagógicos e 5 idiomas.
+          
+          <p className="text-slate-600 text-sm sm:text-base md:text-lg font-semibold max-w-2xl mx-auto leading-relaxed">
+            Tenha acesso completo e irrestrito a mais de 60 histórias ilustradas no estilo Puffin Rock, narração em áudio profissional, quizzes pedagógicos e 5 idiomas.
           </p>
         </div>
 
-        {/* Toggle Mensal / Anual Responsivo */}
-        <div className="bg-amber-100/70 p-1.5 rounded-full border border-amber-300 flex items-center justify-between mb-5 shadow-inner max-w-md w-full mx-auto">
+        {/* Toggle Mensal / Anual Responsivo e Confortável */}
+        <div className="bg-amber-100/70 p-2 rounded-full border border-amber-300 flex items-center justify-between mb-8 shadow-inner max-w-md w-full mx-auto">
           <button
             type="button"
             onClick={() => setSelectedPlanId('monthly')}
-            className={`flex-1 py-2.5 px-3 rounded-full text-xs font-black transition-all cursor-pointer text-center ${
+            className={`flex-1 py-3 px-4 rounded-full text-xs sm:text-sm font-black transition-all cursor-pointer text-center ${
               selectedPlanId === 'monthly'
-                ? 'bg-white text-slate-900 shadow-sm'
+                ? 'bg-white text-slate-900 shadow-md'
                 : 'text-amber-900 hover:text-slate-900'
             }`}
           >
@@ -140,217 +113,172 @@ export default function PlanosPage() {
           <button
             type="button"
             onClick={() => setSelectedPlanId('yearly')}
-            className={`flex-1 py-2.5 px-3 rounded-full text-xs font-black transition-all relative cursor-pointer text-center ${
+            className={`flex-1 py-3 px-4 rounded-full text-xs sm:text-sm font-black transition-all relative cursor-pointer text-center ${
               selectedPlanId === 'yearly'
                 ? 'bg-[#0D9488] text-white shadow-md'
                 : 'text-amber-900 hover:text-slate-900'
             }`}
           >
             Anual (R$ 19,90/mês)
-            <span className="absolute -top-2.5 -right-1 bg-amber-400 text-amber-950 text-[0.62rem] font-black uppercase px-2 py-0.5 rounded-full shadow-xs border border-white">
+            <span className="absolute -top-3 -right-1 bg-amber-400 text-amber-950 text-[0.65rem] font-black uppercase px-2.5 py-0.5 rounded-full shadow-xs border border-white">
               -33% OFF
             </span>
           </button>
         </div>
 
-        {/* Card do Plano Selecionado (Espaçoso e Fluido) */}
-        <div className="w-full bg-white rounded-[32px] overflow-hidden shadow-xl border-2 border-amber-300 relative">
+        {/* Card do Plano Selecionado (Espaçoso, Fluido e com Fontes Maiores) */}
+        <div className="w-full bg-white rounded-[36px] overflow-hidden shadow-2xl border-2 border-amber-300 relative transition-all">
           
           {selectedPlanId === 'yearly' && (
-            <div className="bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 text-amber-950 text-xs font-black uppercase tracking-wider py-2 px-4 text-center shadow-xs">
-              ⭐ O Plano Mais Escolhido pelas Famílias ⭐
+            <div className="bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 text-amber-950 text-xs sm:text-sm font-black uppercase tracking-wider py-2.5 px-4 text-center shadow-xs">
+              ⭐ O PLANO MAIS ESCOLHIDO PELAS FAMÍLIAS ⭐
             </div>
           )}
 
-          <div className="p-5 sm:p-7 text-center border-b border-amber-100 bg-gradient-to-b from-amber-50/60 to-white">
-            <h2 className="text-xl sm:text-2xl font-serif font-black text-slate-900 mb-1">
+          {/* Cabeçalho do Card */}
+          <div className="p-6 sm:p-8 text-center border-b border-amber-100 bg-gradient-to-b from-amber-50/70 to-white">
+            <h2 className="text-2xl sm:text-3xl font-serif font-black text-slate-900 mb-2">
               {selectedPlan.name}
             </h2>
-            <p className="text-xs text-slate-500 font-semibold mb-3">
+            <p className="text-xs sm:text-sm text-slate-500 font-semibold mb-4 max-w-lg mx-auto">
               {selectedPlan.description}
             </p>
 
-            <div className="flex items-baseline justify-center gap-1.5 my-2">
-              <span className="text-base sm:text-lg font-bold text-slate-400">R$</span>
-              <span className="text-5xl sm:text-6xl font-serif font-black text-slate-900 tracking-tight">
+            {/* Destaque do Preço */}
+            <div className="flex items-baseline justify-center gap-2 my-3">
+              <span className="text-lg sm:text-xl font-bold text-slate-400">R$</span>
+              <span className="text-6xl sm:text-7xl font-serif font-black text-slate-900 tracking-tight">
                 {selectedPlan.priceMonthlyEquivalent.toFixed(2).split('.')[0]}
               </span>
-              <span className="text-2xl sm:text-3xl font-serif font-black text-slate-900">
+              <span className="text-3xl sm:text-4xl font-serif font-black text-slate-900">
                 ,{selectedPlan.priceMonthlyEquivalent.toFixed(2).split('.')[1]}
               </span>
-              <span className="text-xs sm:text-sm text-slate-500 font-bold">/mês</span>
+              <span className="text-sm sm:text-base text-slate-500 font-bold">/mês</span>
             </div>
 
             {selectedPlanId === 'yearly' ? (
-              <div className="inline-block px-3 py-1 rounded-full bg-emerald-50 text-[#0D9488] border border-emerald-200 text-xs font-bold mt-1">
-                Cobrado anualmente: R$ 238,80 ou em até 12x de R$ 19,90
+              <div className="inline-block px-4 py-1.5 rounded-full bg-emerald-50 text-[#0D9488] border border-emerald-200 text-xs sm:text-sm font-black mt-2">
+                Cobrado anualmente: R$ 238,80 ou em até 12x de R$ 19,90 no Cartão
               </div>
             ) : (
-              <div className="inline-block px-3 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-xs font-bold mt-1">
-                Cobrança mensal sem fidelidade • Cancele quando quiser
+              <div className="inline-block px-4 py-1.5 rounded-full bg-amber-50 text-amber-900 border border-amber-200 text-xs sm:text-sm font-black mt-2">
+                Cobrança mês a mês • Sem fidelidade • Cancele quando quiser
               </div>
             )}
           </div>
 
-          {/* Lista de Benefícios com espaçamento harmonioso */}
-          <div className="p-5 sm:p-7 space-y-3 bg-white">
+          {/* Lista de Benefícios Espaçosa com Letras Grandes */}
+          <div className="p-6 sm:p-9 space-y-4 sm:space-y-5 bg-white">
             {selectedPlan.features.map((feature, idx) => (
-              <div key={idx} className="flex items-start gap-3">
-                <div className="w-5 h-5 rounded-full bg-teal-50 text-[#0D9488] border border-teal-200 flex items-center justify-center text-xs shrink-0 mt-0.5 shadow-2xs">
-                  <Check size={13} strokeWidth={3} />
+              <div key={idx} className="flex items-start gap-4">
+                <div className="w-7 h-7 rounded-full bg-teal-50 text-[#0D9488] border-2 border-teal-200 flex items-center justify-center text-sm shrink-0 mt-0.5 shadow-xs">
+                  <Check size={16} strokeWidth={3} />
                 </div>
-                <span className="text-xs sm:text-sm font-semibold text-slate-700 leading-snug">
+                <span className="text-sm sm:text-base md:text-lg font-bold text-slate-700 leading-relaxed">
                   {feature}
                 </span>
               </div>
             ))}
           </div>
 
-          {/* Seleção do Meio de Pagamento via Mercado Pago */}
-          <div className="px-5 sm:px-7 pb-4 bg-slate-50/60 pt-4 border-t border-slate-100">
-            <div className="text-[0.7rem] font-bold uppercase tracking-wider text-slate-500 mb-2.5 flex items-center justify-between">
-              <span>Forma de Pagamento (Mercado Pago)</span>
-              <span className="text-[#0D9488] text-[0.65rem] font-black">Aprovação Imediata</span>
+          {/* Formas de Pagamento e CTA do Mercado Pago */}
+          <div className="p-6 sm:p-9 bg-slate-50/70 border-t border-slate-100">
+            <div className="text-xs sm:text-sm font-black uppercase tracking-wider text-slate-500 mb-3 flex items-center justify-between">
+              <span>Forma de Pagamento (Mercado Pago Oficial)</span>
+              <span className="text-[#0D9488] font-black flex items-center gap-1">
+                <Sparkles size={14} /> Aprovação Instantânea
+              </span>
             </div>
 
-            <div className="grid grid-cols-2 gap-2.5 mb-4">
+            <div className="grid grid-cols-2 gap-3 mb-5">
               <button
                 type="button"
                 onClick={() => setPaymentMethod('pix')}
-                className={`p-3.5 rounded-2xl border-2 flex items-center justify-center gap-2 text-xs font-bold transition-all cursor-pointer ${
+                className={`p-4 rounded-2xl border-2 flex items-center justify-center gap-2.5 text-xs sm:text-sm font-bold transition-all cursor-pointer ${
                   paymentMethod === 'pix'
-                    ? 'border-[#0D9488] bg-teal-50/80 text-[#0D9488] ring-2 ring-teal-200 shadow-xs'
+                    ? 'border-[#0D9488] bg-teal-50/90 text-[#0D9488] ring-2 ring-teal-200 shadow-sm'
                     : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
                 }`}
               >
-                <QrCode size={18} />
+                <QrCode size={20} />
                 <span>PIX Instantâneo</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setPaymentMethod('card')}
-                className={`p-3.5 rounded-2xl border-2 flex items-center justify-center gap-2 text-xs font-bold transition-all cursor-pointer ${
+                className={`p-4 rounded-2xl border-2 flex items-center justify-center gap-2.5 text-xs sm:text-sm font-bold transition-all cursor-pointer ${
                   paymentMethod === 'card'
-                    ? 'border-[#0D9488] bg-teal-50/80 text-[#0D9488] ring-2 ring-teal-200 shadow-xs'
+                    ? 'border-[#0D9488] bg-teal-50/90 text-[#0D9488] ring-2 ring-teal-200 shadow-sm'
                     : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
                 }`}
               >
-                <CreditCard size={18} />
+                <CreditCard size={20} />
                 <span>Cartão em até 12x</span>
               </button>
             </div>
 
-            {/* Botão de Ação CTA Principal */}
+            {/* Mensagem de Erro / Orientação se houver */}
+            {errorMessage && (
+              <div className="mb-4 p-3 bg-amber-100 border border-amber-300 rounded-xl text-amber-900 text-xs font-bold text-center">
+                {errorMessage}
+              </div>
+            )}
+
+            {/* Botão de Compra Gigante e Responsivo */}
             <button
               type="button"
               onClick={handleSubscribe}
               disabled={loading}
-              className="w-full h-14 sm:h-16 rounded-2xl font-black text-white bg-[#0D9488] hover:bg-[#0F766E] shadow-lg shadow-teal-800/25 active:scale-98 transition-all text-sm sm:text-base uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+              className="w-full h-16 sm:h-20 rounded-2xl font-black text-white bg-[#0D9488] hover:bg-[#0F766E] shadow-xl shadow-teal-900/25 active:scale-98 transition-all text-base sm:text-xl uppercase tracking-wider flex items-center justify-center gap-3 cursor-pointer disabled:opacity-60"
             >
               {loading ? (
-                <span className="animate-pulse">Conectando ao Mercado Pago...</span>
+                <span className="animate-pulse flex items-center gap-2">
+                  <Zap size={22} className="animate-spin" />
+                  Abrindo Mercado Pago Seguro...
+                </span>
               ) : (
                 <>
-                  <Zap size={20} />
-                  <span>Liberar Acesso Total Agora 🚀</span>
+                  <Zap size={24} />
+                  <span>LIBERAR ACESSO TOTAL AGORA 🚀</span>
                 </>
               )}
             </button>
           </div>
 
-          {/* Selos de Confiança e Segurança */}
-          <div className="p-3.5 text-center flex items-center justify-center gap-2 text-[0.68rem] font-bold text-slate-500 bg-slate-50 border-t border-slate-100">
-            <ShieldCheck size={15} className="text-[#0D9488] shrink-0" />
+          {/* Selos de Confiança */}
+          <div className="p-4 text-center flex items-center justify-center gap-2.5 text-xs font-bold text-slate-500 bg-slate-50 border-t border-slate-100">
+            <ShieldCheck size={18} className="text-[#0D9488] shrink-0" />
             <span>Processamento criptografado e 100% seguro pelo Mercado Pago</span>
           </div>
 
         </div>
 
-        {/* Garantia incondicional */}
-        <div className="text-center text-xs text-slate-500 font-semibold mt-4 space-y-1">
+        {/* Garantia e Suporte */}
+        <div className="text-center text-xs sm:text-sm text-slate-500 font-semibold mt-6 space-y-2">
           <p>Cancele quando quiser com apenas 1 clique • Garantia incondicional de 7 dias.</p>
-          <p className="text-[0.68rem] text-slate-400">
-            Menos de R$ 0,66 por dia para cultivar uma rotina noturna saudável com seus filhos.
+          <p className="text-xs text-slate-400">
+            Menos de R$ 0,66 por dia para uma rotina noturna saudável com seus filhos.
           </p>
         </div>
 
       </main>
 
-      {/* Espaçamento inferior fluido */}
-      <footer className="w-full max-w-2xl mx-auto px-4 py-4 text-center text-[0.7rem] text-slate-400 font-medium">
-        Lumikids • Histórias & Valores para toda a família
-      </footer>
-
-      {/* ═══ MODAL DE CONFIGURAÇÃO E TESTE DO MERCADO PAGO ═══ */}
-      {showConfigModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-[#FFFDF9] w-full max-w-lg rounded-[32px] border-2 border-amber-300 shadow-2xl overflow-hidden p-6 text-left">
-            
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <span className="text-2xl">💳</span>
-                <h3 className="text-lg font-serif font-black text-slate-900">
-                  Configuração do Mercado Pago
-                </h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowConfigModal(false)}
-                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 cursor-pointer"
-              >
-                <X size={16} />
-              </button>
-            </div>
-
-            <div className="space-y-3.5 text-xs text-slate-700 font-medium leading-relaxed">
-              <div className="p-3.5 bg-amber-50 rounded-2xl border border-amber-200 text-amber-950">
-                <p className="font-bold mb-1">Como ativar pagamentos reais na sua conta:</p>
-                <p>
-                  O código de checkout e webhook já está 100% pronto no Lumikids! Para receber os pagamentos na sua conta Mercado Pago, basta inserir seu <strong>Access Token</strong> no arquivo <code className="bg-amber-200/60 px-1 py-0.5 rounded font-mono">.env.local</code>:
-                </p>
-                <div className="mt-2 bg-slate-900 text-emerald-400 p-2.5 rounded-xl font-mono text-[0.7rem]">
-                  MERCADOPAGO_ACCESS_TOKEN=APP_USR-...
-                </div>
-              </div>
-
-              <div className="p-3 bg-teal-50 rounded-2xl border border-teal-200 text-teal-950">
-                <p className="font-bold mb-1">🎁 Quer testar a liberação agora mesmo?</p>
-                <p>
-                  Clique no botão abaixo para ativar o <strong>Plano Premium</strong> na sua conta de usuário e validar a liberação de todas as histórias e quizzes imediatamente!
-                </p>
-              </div>
-
-              {testActivated && (
-                <div className="p-3 bg-emerald-100 border border-emerald-300 rounded-xl text-emerald-900 font-bold text-center animate-pulse">
-                  ✓ Plano Premium ativado com sucesso! Redirecionando para o Perfil...
-                </div>
-              )}
-            </div>
-
-            <div className="mt-6 flex flex-col sm:flex-row items-center gap-2.5">
-              <button
-                type="button"
-                onClick={handleTestActivation}
-                disabled={loading || testActivated}
-                className="w-full py-3 rounded-full bg-[#0D9488] hover:bg-[#0F766E] text-white font-black text-xs uppercase tracking-wider shadow-md transition-all cursor-pointer flex items-center justify-center gap-2"
-              >
-                <Sparkles size={16} />
-                <span>Ativar Plano de Teste no Perfil</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setShowConfigModal(false)}
-                className="w-full sm:w-auto px-5 py-3 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors cursor-pointer text-center"
-              >
-                Fechar
-              </button>
-            </div>
-
-          </div>
+      {/* ═══ RODAPÉ COM CONTATO WHATSAPP ═══ */}
+      <footer className="w-full max-w-4xl mx-auto pt-6 pb-2 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 border-t border-amber-900/10">
+        <div>
+          Lumikids • Histórias & Valores para a Vida Inteira
         </div>
-      )}
+        <a 
+          href="https://wa.me/5531999180068?text=Ol%C3%A1!%20Gostaria%20de%20tirar%20uma%20d%C3%BAvida%20sobre%20o%20Lumikids." 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 text-emerald-700 font-bold hover:underline"
+        >
+          <MessageCircle size={16} />
+          <span>Dúvidas? Fale conosco no WhatsApp (31 999180068)</span>
+        </a>
+      </footer>
 
     </div>
   );

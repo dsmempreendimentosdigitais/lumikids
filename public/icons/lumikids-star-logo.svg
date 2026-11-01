@@ -1,0 +1,108 @@
+<svg viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fundo Quadrado Arredondado Azul Real Vibrante -->
+  <rect width="512" height="512" rx="128" fill="url(#bg_gradient)" />
+  <rect x="8" y="8" width="496" height="496" rx="120" stroke="url(#border_glow)" stroke-width="8" opacity="0.4" />
+
+  <!-- Brilho Ambiente Central -->
+  <circle cx="256" cy="256" r="180" fill="url(#star_glow)" opacity="0.6" />
+
+  <!-- Estrelinhas e Faíscas de Luz ao Redor -->
+  <path d="M120 160L126 176L142 182L126 188L120 204L114 188L98 182L114 176Z" fill="#FFFFFF" opacity="0.9" />
+  <path d="M380 140L385 154L399 159L385 164L380 178L375 164L361 159L375 154Z" fill="#FFFFFF" opacity="0.95" />
+  <path d="M400 340L404 352L416 356L404 360L400 372L396 360L384 356L396 352Z" fill="#FDE047" opacity="0.85" />
+  <path d="M110 350L114 360L124 364L114 368L110 378L106 368L96 364L106 360Z" fill="#FDE047" opacity="0.85" />
+  
+  <circle cx="200" cy="110" r="4" fill="#FFFFFF" opacity="0.8" />
+  <circle cx="320" cy="120" r="5" fill="#FFFFFF" opacity="0.9" />
+  <circle cx="150" cy="270" r="3.5" fill="#FDE047" opacity="0.7" />
+  <circle cx="370" cy="260" r="4.5" fill="#FFFFFF" opacity="0.8" />
+  <circle cx="260" cy="410" r="3" fill="#FFFFFF" opacity="0.7" />
+
+  <!-- Sombra Projetada da Estrela -->
+  <ellipse cx="256" cy="385" rx="130" ry="24" fill="#0A2269" opacity="0.5" filter="blur(10px)" />
+
+  <!-- Braços / Mãozinhas Amigáveis da Estrela -->
+  <path d="M142 270C132 260 120 268 126 284C134 304 165 305 178 296Z" fill="#F59E0B" />
+  <path d="M140 272C133 264 124 270 128 282C135 298 160 299 172 292Z" fill="#FBBF24" />
+
+  <path d="M370 270C380 260 392 268 386 284C378 304 347 305 334 296Z" fill="#F59E0B" />
+  <path d="M372 272C379 264 388 270 384 282C377 298 352 299 340 292Z" fill="#FBBF24" />
+
+  <!-- Corpo Dourado da Estrela com Cantos Curvos Aconchegantes -->
+  <path d="M256 96
+           C264 126 276 170 292 196
+           C326 200 376 210 406 226
+           C384 252 350 286 338 316
+           C348 350 362 398 352 422
+           C324 410 284 384 256 384
+           C228 384 188 410 160 422
+           C150 398 164 350 174 316
+           C162 286 128 252 106 226
+           C136 210 186 200 220 196
+           C236 170 248 126 256 96Z" 
+        fill="url(#star_gold_body)" 
+        stroke="#F59E0B" 
+        stroke-width="6" 
+        stroke-linejoin="round" />
+
+  <!-- Destaque Superior de Volume 3D (Highlights) -->
+  <path d="M256 112
+           C262 136 272 172 286 194
+           C316 198 360 206 386 220
+           C370 238 344 264 334 288
+           C322 248 290 208 256 196
+           C222 208 190 248 178 288
+           C168 264 142 238 126 220
+           C152 206 196 198 226 194
+           C240 172 250 136 256 112Z" 
+        fill="url(#star_top_shine)" 
+        opacity="0.6" />
+
+  <!-- Bochechinhas Rosadas Fofas -->
+  <circle cx="204" cy="308" r="18" fill="#F87171" opacity="0.65" />
+  <circle cx="308" cy="308" r="18" fill="#F87171" opacity="0.65" />
+
+  <!-- Olhos Pretos Carinhosos Grandes com Brilho Anime/Pixar -->
+  <ellipse cx="218" cy="274" rx="16" ry="20" fill="#1E1B4B" />
+  <circle cx="213" cy="266" r="6.5" fill="#FFFFFF" />
+  <circle cx="223" cy="282" r="3" fill="#FFFFFF" />
+
+  <ellipse cx="294" cy="274" rx="16" ry="20" fill="#1E1B4B" />
+  <circle cx="289" cy="266" r="6.5" fill="#FFFFFF" />
+  <circle cx="299" cy="282" r="3" fill="#FFFFFF" />
+
+  <!-- Sorriso Doce e Acolhedor -->
+  <path d="M240 300C240 318 272 318 272 300" stroke="#78350F" stroke-width="6" stroke-linecap="round" fill="#B45309" />
+  <path d="M246 302C250 312 262 312 266 302" fill="#F87171" />
+
+  <!-- Gradientes e Filtros -->
+  <defs>
+    <linearGradient id="bg_gradient" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2563EB" />
+      <stop offset="50%" stop-color="#1D4ED8" />
+      <stop offset="100%" stop-color="#1E3A8A" />
+    </linearGradient>
+
+    <linearGradient id="border_glow" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#93C5FD" />
+      <stop offset="100%" stop-color="#3B82F6" />
+    </linearGradient>
+
+    <radialGradient id="star_glow" cx="0.5" cy="0.5" r="0.5" gradientUnits="userSpaceOnUse" gradientTransform="translate(256 256) scale(180)">
+      <stop offset="0%" stop-color="#FEF08A" stop-opacity="0.5" />
+      <stop offset="100%" stop-color="#3B82F6" stop-opacity="0" />
+    </radialGradient>
+
+    <linearGradient id="star_gold_body" x1="256" y1="96" x2="256" y2="422" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FEF08A" />
+      <stop offset="35%" stop-color="#FDE047" />
+      <stop offset="70%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#D97706" />
+    </linearGradient>
+
+    <linearGradient id="star_top_shine" x1="256" y1="100" x2="256" y2="280" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="#FEF08A" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+</svg>

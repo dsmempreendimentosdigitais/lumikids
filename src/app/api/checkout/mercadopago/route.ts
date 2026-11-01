@@ -10,17 +10,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Plano inválido' }, { status: 400 });
     }
 
-    const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN;
-    const origin = req.headers.get('origin') || process.env.NEXT_PUBLIC_APP_URL || 'https://lumikids.app';
-
-    // Se o usuário ainda não adicionou o Access Token no arquivo .env.local
-    if (!accessToken) {
-      return NextResponse.json({
-        isConfigured: false,
-        plan,
-        message: 'Credencial MERCADOPAGO_ACCESS_TOKEN ainda não configurada no servidor.'
-      });
-    }
+    const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN || 'APP_USR-1324350483582570-110115-b0202a72deaa5be6126027a0dc68aa33-3258566705';
+    const origin = req.headers.get('origin') || process.env.NEXT_PUBLIC_APP_URL || 'https://lumikids.app.br';
 
     // Chamada oficial à API de Preferências do Mercado Pago
     const mpResponse = await fetch('https://api.mercadopago.com/checkout/preferences', {

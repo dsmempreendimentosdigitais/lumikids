@@ -14,11 +14,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ received: true, status: 'ignored_no_id' }, { status: 200 });
     }
 
-    const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN;
-    if (!accessToken) {
-      console.warn('Webhook Mercado Pago recebido, mas MERCADOPAGO_ACCESS_TOKEN não está configurado.');
-      return NextResponse.json({ received: true, status: 'no_token' }, { status: 200 });
-    }
+    const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN || 'APP_USR-1324350483582570-110115-b0202a72deaa5be6126027a0dc68aa33-3258566705';
 
     // Consulta os detalhes reais do pagamento no Mercado Pago
     const mpRes = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, {

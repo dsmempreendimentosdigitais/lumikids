@@ -725,6 +725,119 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
   const audioUrl = story.audio?.[story.language || 'pt-BR']?.url;
   const totalPagesCount = totalStoryPages + 2; // Cover (0) + Pages (1..N) + End (N+1)
 
+  // ═══ TELA CHEIA IMERSIVA DE PRÉVIA GRATUITA ENCERRADA (Grande, Legível & Botão Amplo) ═══
+  if (isLockedByPaywall) {
+    const paywallBackgroundImg = (displayParagraphs.length >= 4 && displayParagraphs[3]?.imageUrl) || story.coverImageUrl;
+
+    return (
+      <div className="relative min-h-screen w-full flex flex-col justify-between items-center p-4 sm:p-8 overflow-x-hidden select-none font-sans bg-slate-950">
+        
+        {/* Fundo com Ilustração da História Suavemente Desfocada */}
+        <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+          <img 
+            src={paywallBackgroundImg} 
+            alt="Cena da História" 
+            className="w-full h-full object-cover filter blur-xl scale-110 opacity-30 brightness-75 transition-all duration-1000"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-amber-950/25 to-black/85" />
+        </div>
+
+        {/* Topo Flutuante */}
+        <div className="relative z-20 w-full max-w-xl flex items-center justify-between pt-2 sm:pt-4 mb-2">
+          <button 
+            type="button"
+            onClick={() => {
+              playPageFlipSound();
+              setCurrentPageIndex(4);
+            }}
+            className="btn-round-action w-12 h-12 rounded-full text-white flex items-center justify-center font-black text-xl shadow-lg active:scale-95 cursor-pointer"
+            title="Voltar para a página anterior"
+          >
+            ←
+          </button>
+
+          <span className="text-xs font-black uppercase tracking-wider text-amber-200 bg-amber-900/60 px-4 py-1.5 rounded-full border border-amber-500/40 shadow-sm backdrop-blur-md">
+            🔒 Prévia Gratuita Encerrada
+          </span>
+
+          <Link 
+            href="/app"
+            className="btn-round-action w-12 h-12 rounded-full text-white flex items-center justify-center font-black text-xl shadow-lg active:scale-95 cursor-pointer"
+            title="Voltar ao Mapa de Aventuras"
+          >
+            🗺️
+          </Link>
+        </div>
+
+        {/* Card Centralizado, Espaçoso e com Tipografia Grande */}
+        <div className="relative z-20 w-full max-w-xl my-auto py-4">
+          <div className="bg-[#FFFDF7]/98 border-2 border-amber-300 rounded-[32px] p-6 sm:p-9 shadow-2xl text-center space-y-5 backdrop-blur-md">
+            
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-amber-200 to-amber-400 text-amber-950 border-2 border-white shadow-md flex items-center justify-center mx-auto text-3xl sm:text-4xl animate-bounce-subtle">
+              👑
+            </div>
+
+            <div>
+              <span className="inline-block px-3.5 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-300 text-xs font-black uppercase tracking-wider mb-2.5">
+                Capítulo Bloqueado
+              </span>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif font-black text-[#2D2114] leading-snug">
+                O que acontece em seguida? 📖
+              </h2>
+              <p className="text-sm sm:text-base font-semibold text-[#6D4C2B] mt-2.5 max-w-md mx-auto leading-relaxed">
+                Você acompanhou o início desta jornada emocionante! Descubra o desfecho vitorioso de <strong className="text-[#2D2114]">{getActiveText(story.title)}</strong> e liberte mais de 60 histórias completas no Lumikids.
+              </p>
+            </div>
+
+            {/* Vantagens em destaque com fonte expandida */}
+            <div className="bg-amber-50/90 p-4 sm:p-5 rounded-2xl border-2 border-amber-200 text-left space-y-2.5 shadow-xs">
+              <div className="flex items-center gap-3 text-xs sm:text-sm font-bold text-[#2D2114]">
+                <span className="text-[#0D9488] text-base font-black">✓</span>
+                <span>Acesso ilimitado a todas as páginas e cenas em altíssima definição</span>
+              </div>
+              <div className="flex items-center gap-3 text-xs sm:text-sm font-bold text-[#2D2114]">
+                <span className="text-[#0D9488] text-base font-black">✓</span>
+                <span>Narração de voz profissional, trilha sonora e quizzes interativos</span>
+              </div>
+              <div className="flex items-center gap-3 text-xs sm:text-sm font-bold text-[#2D2114]">
+                <span className="text-[#0D9488] text-base font-black">✓</span>
+                <span>Por apenas <strong className="text-[#0D9488]">R$ 19,90/mês</strong> no plano anual (ou 12x de R$ 19,90)</span>
+              </div>
+            </div>
+
+            {/* BOTÃO GRANDE NA PARTE INFERIOR (Chamada Principal) */}
+            <div className="pt-2 flex flex-col gap-3">
+              <Link
+                href="/app/planos"
+                className="w-full h-15 sm:h-18 rounded-2xl bg-[#0D9488] hover:bg-[#0F766E] text-white font-black text-sm sm:text-lg uppercase tracking-wider shadow-xl shadow-teal-900/30 active:scale-98 transition-all text-center flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <span>DESBLOQUEAR HISTÓRIA COMPLETA 🚀</span>
+              </Link>
+
+              <button
+                type="button"
+                onClick={() => {
+                  playPageFlipSound();
+                  setCurrentPageIndex(4);
+                }}
+                className="w-full py-3 rounded-full bg-white border border-[#D8C29D] text-[#6D4C2B] font-bold text-xs sm:text-sm hover:bg-amber-50 transition-colors cursor-pointer"
+              >
+                ← Rever Páginas Anteriores Gratuitas
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        {/* Rodapé Flutuante */}
+        <div className="relative z-20 pb-2 text-center text-xs text-amber-200/60 font-semibold">
+          Lumikids • Histórias & Valores para a Vida Inteira
+        </div>
+
+      </div>
+    );
+  }
+
   // ═══ TELA CHEIA IMERSIVA DO QUIZ & FIM DA AVENTURA (Com imagem de fundo desfocada) ═══
   if (currentPageIndex === totalPagesCount - 1) {
     const endBackgroundImg = (displayParagraphs.length > 0 && displayParagraphs[displayParagraphs.length - 1]?.imageUrl) || story.coverImageUrl;
@@ -892,67 +1005,16 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
             </div>
           )}
 
-          {/* CASO 2: CENAS DA HISTÓRIA (Páginas 1 até N) OU PAYWALL DE CONTINUAÇÃO */}
-          {currentPageIndex > 0 && currentPageIndex <= totalStoryPages && (
-            isLockedByPaywall ? (
-              <div className="space-y-4 text-center my-auto py-2 animate-in fade-in duration-200">
-                <div className="w-14 h-14 rounded-full bg-amber-100 text-amber-600 border-2 border-amber-300 flex items-center justify-center mx-auto text-2xl shadow-xs">
-                  🔒
-                </div>
+          {/* CASO 2: CENAS DA HISTÓRIA (Páginas 1 até N) */}
+          {currentPageIndex > 0 && currentPageIndex <= totalStoryPages && (() => {
+            const pIndex = currentPageIndex - 1;
+            const p = displayParagraphs[pIndex];
+            const isFirstStoryPage = pIndex === 0;
+            const activeContent = getActiveText(p.text);
+            const firstLetter = activeContent ? activeContent.charAt(0) : '';
+            const restOfText = activeContent ? activeContent.slice(1) : '';
 
-                <div>
-                  <span className="inline-block px-3 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-300 text-[0.65rem] font-black uppercase tracking-wider mb-2">
-                    Prévia Gratuita Encerrada
-                  </span>
-                  <h3 className="text-xl sm:text-2xl font-serif font-black text-[#2D2114] leading-snug">
-                    O que acontece em seguida? 📖
-                  </h3>
-                  <p className="text-xs sm:text-sm font-semibold text-[#6D4C2B] mt-1.5 max-w-sm mx-auto leading-relaxed">
-                    Você acompanhou o início desta bela jornada! Continue descobrindo a grande vitória de <strong>{getActiveText(story.title)}</strong> e liberte mais de 60 histórias com o Lumikids.
-                  </p>
-                </div>
-
-                <div className="bg-amber-50/80 p-3.5 rounded-2xl border border-amber-200 text-left max-w-sm mx-auto space-y-1.5 shadow-2xs">
-                  <div className="flex items-center gap-2 text-xs font-bold text-[#2D2114]">
-                    <span className="text-[#0D9488]">✓</span> Acesso completo a todas as páginas e cenas
-                  </div>
-                  <div className="flex items-center gap-2 text-xs font-bold text-[#2D2114]">
-                    <span className="text-[#0D9488]">✓</span> Narração em áudio profissional e quizzes
-                  </div>
-                  <div className="flex items-center gap-2 text-xs font-bold text-[#2D2114]">
-                    <span className="text-[#0D9488]">✓</span> Por apenas <strong>R$ 19,90/mês</strong> no plano anual
-                  </div>
-                </div>
-
-                <div className="pt-2 flex flex-col gap-2 max-w-sm mx-auto">
-                  <Link
-                    href="/app/planos"
-                    className="w-full py-3.5 rounded-full bg-[#0D9488] hover:bg-[#0F766E] text-white font-black text-xs sm:text-sm uppercase tracking-wider shadow-md active:scale-95 transition-all text-center"
-                  >
-                    Desbloquear História Completa 🚀
-                  </Link>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      playPageFlipSound();
-                      setCurrentPageIndex(4);
-                    }}
-                    className="w-full py-2 rounded-full bg-white border border-[#D8C29D] text-[#6D4C2B] font-bold text-xs hover:bg-amber-50 transition-colors cursor-pointer"
-                  >
-                    ← Rever Páginas Anteriores
-                  </button>
-                </div>
-              </div>
-            ) : (() => {
-              const pIndex = currentPageIndex - 1;
-              const p = displayParagraphs[pIndex];
-              const isFirstStoryPage = pIndex === 0;
-              const activeContent = getActiveText(p.text);
-              const firstLetter = activeContent ? activeContent.charAt(0) : '';
-              const restOfText = activeContent ? activeContent.slice(1) : '';
-
-              return (
+            return (
                 <div className="space-y-4">
                   {isTranslating && (
                     <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-100/80 border border-amber-300 text-[0.68rem] font-bold text-amber-900 animate-pulse">
@@ -1014,8 +1076,7 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
                   )}
                 </div>
               );
-            })()
-          )}
+            })()}
 
         </div>
 

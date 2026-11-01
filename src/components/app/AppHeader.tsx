@@ -3,6 +3,7 @@
 import React from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import LanguageSelector from '@/components/ui/LanguageSelector';
+import LumikidsLogo from '@/components/ui/LumikidsLogo';
 
 interface AppHeaderProps {
   userName: string;
@@ -19,9 +20,7 @@ export default function AppHeader({ userName, childName }: AppHeaderProps) {
       <div className="absolute bottom-[-20px] left-[-30px] w-[110px] h-[110px] bg-[rgba(255,255,255,0.05)] rounded-full"></div>
       
       <div className="header-top flex justify-between items-center mb-[18px] relative z-10">
-        <div className="header-logo text-[1.32rem] font-[900] text-white tracking-[-0.5px]">
-          Lumi<em className="font-normal text-[var(--gold)] not-italic">kids</em>
-        </div>
+        <LumikidsLogo size="sm" variant="light" withLink={false} />
         <div className="flex items-center gap-2.5">
           <LanguageSelector variant="pill" />
           <div className="header-avatar w-[38px] h-[38px] bg-[var(--gold)] rounded-full flex items-center justify-center font-[900] text-[0.95rem] text-[var(--blue-dark)] shadow-[0_2px_10px_rgba(249,168,37,0.4)] cursor-pointer hover:scale-105 transition-transform">
