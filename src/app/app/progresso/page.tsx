@@ -4,6 +4,9 @@ import { useAuth } from '@/context/AuthContext';
 import { db } from '@/lib/firebase/config';
 import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import Link from 'next/link';
+import ProfileCustomizerModal from '@/components/app/ProfileCustomizerModal';
+import { AVATAR_OPTIONS, COVER_OPTIONS } from '@/config/profileCustomization';
+import { Paintbrush, Sparkles } from 'lucide-react';
 
 export default function ProgressoPage() {
   const { user } = useAuth();
@@ -19,6 +22,21 @@ export default function ProgressoPage() {
     streakDays: 3,
   });
   const [loading, setLoading] = useState(true);
+
+  // Estados de Personalização de Perfil (Avatar & Capa)
+  const [isCustomizerOpen, setIsCustomizerOpen] = useState(false);
+  const [userAvatarId, setUserAvatarId] = useState<string>('lion');
+  const [userCoverId, setUserCoverId] = useState<string>('night_stars');
+
+  useEffect(() => {
+    // Carrega personalização do localStorage
+    if (typeof window !== 'undefined' && user?.uid) {
+      const savedAvatar = localStorage.getItem(`lumikids_avatar_${user.uid}`);
+      const savedCover = localStorage.getItem(`lumikids_cover_${user.uid}`);
+      if (savedAvatar) setUserAvatarId(savedAvatar);
+      if (savedCover) setUserCoverId(savedCover);
+    }
+  }, [user]);
 
   useEffect(() => {
     // Carrega estatísticas de leitura e quiz locais / do usuário
@@ -41,9 +59,12 @@ export default function ProgressoPage() {
     const fetchStats = async () => {
       if (!user) return;
       try {
-        // Obter contagem de uso do plano
+        // Obter contagem de uso do plano e dados de personalização
         const userDoc = await getDoc(doc(db, 'users', user.uid));
         const userData = userDoc.data();
+
+        if (userData?.avatarId) setUserAvatarId(userData.avatarId);
+        if (userData?.coverId) setUserCoverId(userData.coverId);
         
         // Obter total de histórias geradas pelo usuário
         const q = query(collection(db, 'stories'), where('generatedForUid', '==', user.uid));
@@ -68,27 +89,95 @@ export default function ProgressoPage() {
   const planName = stats.plan === 'free' ? 'Plano Básico' : stats.plan === 'familia' ? 'Plano Família' : 'Plano Premium';
   const planColor = stats.plan === 'free' ? 'text-gray-500' : 'text-gold-500';
 
+  const currentCover = COVER_OPTIONS.find(c => c.id === userCoverId) || COVER_OPTIONS[0];
+  const currentAvatar = AVATAR_OPTIONS.find(a => a.id === userAvatarId) || AVATAR_OPTIONS[0];
+
   return (
-    <div className="p-6 font-sans bg-[#F8F7F2] text-[#1A1D20] min-h-screen pb-32 max-w-2xl mx-auto">
-      <div className="flex items-center justify-between pt-2 mb-6">
+    <div className="p-4 sm:p-6 font-sans bg-[#F8F7F2] text-[#1A1D20] min-h-screen pb-32 max-w-2xl mx-auto">
+      <div className="flex items-center justify-between pt-2 mb-4">
         <h1 className="text-2xl font-serif font-bold text-slate-900">Perfil</h1>
-        <Link href="/app/configuracoes" className="w-9 h-9 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-600 shadow-xs hover:bg-slate-50 transition-all" title="Configurações">
+        <Link href="/app/configuracoes" className="w-9 h-9 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-600 shadow-xs hover:bg-slate-50 transition-all cursor-pointer" title="Configurações">
           ⚙️
         </Link>
       </div>
 
-      {/* User Info Card */}
-      <div className="bg-white rounded-[24px] border border-slate-200/80 p-5 shadow-xs mb-6 flex items-center gap-4">
-        <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-[#0D9488] shadow-xs flex-shrink-0">
-          <img src={user?.photoURL || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix'} alt="Avatar" className="w-full h-full object-cover" />
+      {/* User Info Card com Capa Personalizável & Avatar Interativo */}
+      <div className="bg-white rounded-[28px] border border-slate-200/90 overflow-hidden shadow-xs mb-6 relative">
+        {/* Banner de Capa */}
+        <div 
+          className={`h-28 sm:h-32 w-full bg-gradient-to-r ${currentCover.gradient} relative transition-all duration-300 p-3 flex items-start justify-end`}
+          style={{ backgroundImage: currentCover.pattern }}
+        >
+          <button
+            type="button"
+            onClick={() => setIsCustomizerOpen(true)}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md text-white text-[0.68rem] font-black uppercase tracking-wider transition-all cursor-pointer shadow-sm active:scale-95"
+            title="Alterar Capa e Avatar"
+          >
+            <Paintbrush size={12} />
+            <span>Mudar Capa & Avatar</span>
+          </button>
         </div>
-        <div className="flex-1">
-          <h2 className="text-lg font-serif font-bold text-slate-900">{user?.displayName || 'Aventureiro Lumikids'}</h2>
-          <span className="inline-flex items-center gap-1 text-xs font-bold text-[#F59E0B] bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full mt-0.5">
-            👑 {planName}
-          </span>
+
+        {/* Informações do Usuário com Avatar Sobreposto */}
+        <div className="px-5 pb-5 pt-0 relative flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+          <div className="flex items-end gap-3.5">
+            {/* Avatar Clicável com badge de edição */}
+            <div 
+              onClick={() => setIsCustomizerOpen(true)}
+              className="-mt-12 w-20 h-20 rounded-full border-4 border-white shadow-md overflow-hidden bg-white shrink-0 relative group cursor-pointer transition-transform hover:scale-105 active:scale-95"
+              title="Clique para trocar seu avatar"
+            >
+              <div 
+                className="w-full h-full flex items-center justify-center"
+                dangerouslySetInnerHTML={{ __html: currentAvatar.svg }}
+              />
+              <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-black">
+                ✏️
+              </div>
+            </div>
+
+            <div className="pb-1">
+              <h2 className="text-xl font-serif font-black text-slate-900 leading-tight">
+                {user?.displayName || 'admin'}
+              </h2>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="inline-flex items-center gap-1 text-xs font-bold text-[#F59E0B] bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full shadow-2xs">
+                  👑 {planName}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setIsCustomizerOpen(true)}
+                  className="text-[0.7rem] font-bold text-[#0D9488] hover:underline cursor-pointer"
+                >
+                  Personalizar
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <Link
+            href="/app/planos"
+            className="sm:mb-1 self-start sm:self-end px-3.5 py-1.5 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-amber-950 font-black text-[0.72rem] shadow-xs hover:brightness-105 transition-all flex items-center gap-1.5"
+          >
+            <Sparkles size={13} />
+            <span>Ver Planos</span>
+          </Link>
         </div>
       </div>
+
+      {/* Modal de Personalização de Perfil */}
+      <ProfileCustomizerModal 
+        isOpen={isCustomizerOpen}
+        onClose={() => setIsCustomizerOpen(false)}
+        user={user}
+        currentAvatar={userAvatarId}
+        currentCoverId={userCoverId}
+        onSaveSuccess={(newAvatarId, newCoverId) => {
+          setUserAvatarId(newAvatarId);
+          setUserCoverId(newCoverId);
+        }}
+      />
 
       {/* Stats Row (Estilo Readmio Image 8) */}
       <div className="grid grid-cols-3 gap-3 mb-8">

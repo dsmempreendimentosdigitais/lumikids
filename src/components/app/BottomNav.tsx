@@ -9,8 +9,8 @@ export default function BottomNav() {
   const pathname = usePathname();
   const { t } = useLanguage();
 
-  // No mapa principal (/app) e no leitor (/app/historias/[id]), o app tem seus próprios controles flutuantes
-  if (pathname === '/app' || pathname.startsWith('/app/historias/')) {
+  // No mapa principal (/app), na tela de planos (/app/planos) e no leitor (/app/historias/[id]), o app tem experiência imersiva própria
+  if (pathname === '/app' || pathname === '/app/planos' || pathname.startsWith('/app/historias/')) {
     return null;
   }
 
