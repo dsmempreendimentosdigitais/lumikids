@@ -1,5 +1,5 @@
-// Service Worker v3 — network-first para páginas (evita servir HTML antigo com CSS inexistente)
-const CACHE_NAME = 'lumikids-v3';
+// Service Worker Contos & Virtudes v1 — network-first para páginas
+const CACHE_NAME = 'contos-virtudes-v1';
 const ASSETS_TO_CACHE = ['/manifest.json', '/icons/icon-192.png', '/icons/icon-512.png'];
 
 self.addEventListener('install', (event) => {

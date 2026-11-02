@@ -42,7 +42,7 @@ export default function LoginPage() {
     try {
       const email = emailOrUsername.includes('@') 
         ? emailOrUsername.trim().toLowerCase()
-        : `${emailOrUsername.trim().toLowerCase()}@lumikids.app`;
+        : `${emailOrUsername.trim().toLowerCase()}@contosevirtudes.com.br`;
 
       await signInWithEmail(email, password);
       router.push('/app');
@@ -88,7 +88,7 @@ export default function LoginPage() {
               type="text" 
               required 
               className="w-full bg-[#FAF9F5] border border-slate-300 h-[50px] rounded-[16px] px-4 font-bold text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-[#0D9488] outline-none transition-all text-sm"
-              placeholder="Ex: lumikids ou seu@email.com"
+              placeholder="Ex: usuario ou seu@email.com"
               value={emailOrUsername} 
               onChange={e => setEmailOrUsername(e.target.value)}
             />

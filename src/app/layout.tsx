@@ -15,13 +15,13 @@ const merriweather = Merriweather({
 });
 
 export const metadata: Metadata = {
-  title: "Lumikids - Histórias Clássicas com Valores e Ilustrações",
-  description: "Histórias infantis clássicas com ilustrações 2D estilo livro impresso, valores morais e virtudes.",
+  title: "Contos & Virtudes - Histórias Clássicas com Valores e Virtudes",
+  description: "Histórias infantis clássicas com ilustrações 2D estilo livro impresso em aquarela, narração acolhedora, quizzes e virtudes morais para toda a família.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Lumikids",
+    title: "Contos & Virtudes",
   },
 };
 

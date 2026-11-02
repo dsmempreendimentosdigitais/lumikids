@@ -785,7 +785,7 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
                 O que acontece em seguida? 📖
               </h2>
               <p className="text-sm sm:text-base font-semibold text-[#6D4C2B] mt-2.5 max-w-md mx-auto leading-relaxed">
-                Você acompanhou o início desta jornada emocionante! Descubra o desfecho vitorioso de <strong className="text-[#2D2114]">{getActiveText(story.title)}</strong> e liberte mais de 60 histórias completas no Lumikids.
+                Você acompanhou o início desta jornada emocionante! Descubra o desfecho vitorioso de <strong className="text-[#2D2114]">{getActiveText(story.title)}</strong> e liberte mais de 60 histórias completas no Contos & Virtudes.
               </p>
             </div>
 
@@ -831,7 +831,7 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
 
         {/* Rodapé Flutuante */}
         <div className="relative z-20 pb-2 text-center text-xs text-amber-200/60 font-semibold">
-          Lumikids • Histórias & Valores para a Vida Inteira
+          Contos & Virtudes • Histórias & Valores para a Vida Inteira
         </div>
 
       </div>
@@ -1139,7 +1139,7 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
             isLockedByPaywall ? 'blur-md scale-105 opacity-60' : 'hover:scale-105'
           }`}
           onError={(e) => { 
-            e.currentTarget.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800"><rect width="800" height="800" fill="%2387CEEB"/><circle cx="400" cy="300" r="100" fill="%23FFD700"/><text x="50%" y="60%" dominant-baseline="middle" text-anchor="middle" fill="%23FFFFFF" font-size="32" font-family="serif">✨ Ilustração Lumikids</text></svg>'; 
+            e.currentTarget.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800"><rect width="800" height="800" fill="%2387CEEB"/><circle cx="400" cy="300" r="100" fill="%23FFD700"/><text x="50%" y="60%" dominant-baseline="middle" text-anchor="middle" fill="%23FFFFFF" font-size="32" font-family="serif">✨ Ilustração Contos & Virtudes</text></svg>'; 
           }}
         />
 
@@ -1150,7 +1150,7 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
               👑
             </div>
             <h4 className="text-white font-serif font-black text-xl mb-1 drop-shadow-md">
-              Ilustração Exclusiva Lumikids
+              Ilustração Exclusiva Contos & Virtudes
             </h4>
             <p className="text-white/90 text-xs max-w-xs font-semibold drop-shadow-xs">
               Libere o acesso total por apenas R$ 19,90/mês para ver todas as cenas em altíssima definição.

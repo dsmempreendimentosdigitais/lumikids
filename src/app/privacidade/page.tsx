@@ -4,12 +4,12 @@ import LumikidsLogo from '@/components/ui/LumikidsLogo';
 import { ArrowLeft, Shield, Lock, EyeOff, UserCheck, HeartHandshake } from 'lucide-react';
 
 export const metadata = {
-  title: 'Política de Privacidade & LGPD Infantil | Lumikids',
-  description: 'Compromisso com a proteção integral da privacidade das crianças e das famílias no Lumikids.',
+  title: 'Política de Privacidade & LGPD Infantil | Contos & Virtudes',
+  description: 'Compromisso com a proteção integral da privacidade das crianças e das famílias no Contos & Virtudes.',
 };
 
 export default function PrivacidadePage() {
-  const whatsappUrl = "https://wa.me/5531999180068?text=Ol%C3%A1!%20Gostaria%20de%20falar%20sobre%20a%20pol%C3%ADtica%20de%20privacidade%20do%20Lumikids.";
+  const whatsappUrl = "https://wa.me/5531999180068?text=Ol%C3%A1!%20Gostaria%20de%20falar%20sobre%20a%20pol%C3%ADtica%20de%20privacidade%20do%20Contos%20%26%20Virtudes.";
 
   return (
     <div className="min-h-screen bg-[#FFFDF9] text-[#1A1D20] font-sans antialiased selection:bg-amber-200 selection:text-amber-950">
@@ -78,7 +78,7 @@ export default function PrivacidadePage() {
               <span className="text-[#0D9488]">1.</span> Nosso Compromisso Ético com a Família
             </h2>
             <p>
-              No <strong>Lumikids</strong>, acreditamos que a infância deve ser preservada. Ao contrário de plataformas de vídeos e redes sociais gratuitas que monetizam a atenção das crianças por meio de algoritmos viciantes e coleta de dados comportamentais, o Lumikids é um <strong>ambiente digital protegido</strong>.
+              No <strong>Contos & Virtudes</strong>, acreditamos que a infância deve ser preservada. Ao contrário de plataformas de vídeos e redes sociais gratuitas que monetizam a atenção das crianças por meio de algoritmos viciantes e coleta de dados comportamentais, o Contos & Virtudes é um <strong>ambiente digital protegido</strong>.
             </p>
             <p className="mt-2">
               Tratamos os dados de crianças exclusivamente no seu <strong>melhor interesse</strong>, atendendo com rigor ao <strong>Artigo 14 da Lei Geral de Proteção de Dados (Lei nº 13.709/2018 - LGPD)</strong>.
@@ -103,7 +103,7 @@ export default function PrivacidadePage() {
                 <strong>Progresso Educativo:</strong> Histórias concluídas, tempo estimado de leitura e adesivos desbloqueados, armazenados no dispositivo e no banco para exibir a medalha e o progresso do Desafio dos 30 Dias.
               </li>
               <li>
-                <strong>Dados de Pagamento:</strong> Processados diretamente em ambiente seguro pelo Mercado Pago. O Lumikids <em>não armazena</em> números de cartão de crédito nem códigos CVV.
+                <strong>Dados de Pagamento:</strong> Processados diretamente em ambiente seguro pelo Mercado Pago. O Contos & Virtudes <em>não armazena</em> números de cartão de crédito nem códigos CVV.
               </li>
             </ul>
           </section>
@@ -113,7 +113,7 @@ export default function PrivacidadePage() {
               <span className="text-[#0D9488]">3.</span> Consentimento Parental e Trava de Segurança
             </h2>
             <p>
-              O cadastro e o pagamento no Lumikids devem ser realizados exclusivamente por maiores de 18 anos. Implementamos travas parentais e proteção por PIN para alterações de planos, configurações sensíveis ou contato com suporte, garantindo que a criança utilize o aplicativo com total serenidade.
+              O cadastro e o pagamento no Contos & Virtudes devem ser realizados exclusivamente por maiores de 18 anos. Implementamos travas parentais e proteção por PIN para alterações de planos, configurações sensíveis ou contato com suporte, garantindo que a criança utilize o aplicativo com total serenidade.
             </p>
           </section>
 
@@ -153,7 +153,7 @@ export default function PrivacidadePage() {
             </p>
             <div className="mt-3 p-4 rounded-2xl bg-teal-50 border border-teal-200 text-slate-800 text-sm font-semibold flex flex-col sm:flex-row items-center justify-between gap-3">
               <div>
-                <p className="text-xs text-[#0D9488] uppercase font-black tracking-wider">Atendimento LGPD Lumikids</p>
+                <p className="text-xs text-[#0D9488] uppercase font-black tracking-wider">Atendimento LGPD Contos & Virtudes</p>
                 <p className="text-slate-900 font-bold">DSM Empreendimentos Digitais</p>
                 <p className="text-slate-600 text-xs">WhatsApp: (31) 99918-0068 • Belo Horizonte / MG</p>
               </div>
@@ -174,7 +174,7 @@ export default function PrivacidadePage() {
 
       {/* Footer Mínimo */}
       <footer className="border-t border-amber-900/10 py-8 px-4 text-center text-xs text-slate-500">
-        <p>© {new Date().getFullYear()} Lumikids • DSM Empreendimentos Digitais. Protegendo a infância com amor.</p>
+        <p>© {new Date().getFullYear()} Contos & Virtudes • DSM Empreendimentos Digitais. Protegendo a infância com amor.</p>
       </footer>
 
     </div>

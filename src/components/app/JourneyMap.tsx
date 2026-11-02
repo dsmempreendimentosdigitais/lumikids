@@ -521,7 +521,7 @@ export default function JourneyMap({ stories, userPlan = 'free', isAdmin = false
                   📖 Grande Livro de Histórias
                 </h3>
                 <p className="text-[0.68rem] text-amber-200 font-bold uppercase tracking-wider">
-                  Todas as Trilhas do Lumikids
+                  Todas as Trilhas do Contos & Virtudes
                 </p>
               </div>
               <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-sm font-bold border border-white/30">

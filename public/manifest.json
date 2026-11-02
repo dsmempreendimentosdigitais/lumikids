@@ -1,12 +1,12 @@
 {
-  "name": "Lumikids - Histórias com Valores e Virtudes",
-  "short_name": "Lumikids",
-  "description": "Histórias infantis clássicas com ilustrações estilo Puffin Rock, narração acolhedora e valores para a família.",
+  "name": "Contos & Virtudes - Histórias Clássicas com Valores",
+  "short_name": "Contos & Virtudes",
+  "description": "Histórias infantis clássicas com ilustrações em aquarela estilo Puffin Rock, narração acolhedora, valores e virtudes para a família.",
   "start_url": "/app",
   "scope": "/",
   "display": "standalone",
   "background_color": "#F8F7F2",
-  "theme_color": "#1D4ED8",
+  "theme_color": "#0D9488",
   "orientation": "portrait",
   "icons": [
     { "src": "/icons/lumikids-star-logo.svg", "sizes": "512x512", "type": "image/svg+xml", "purpose": "any maskable" },

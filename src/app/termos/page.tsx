@@ -4,12 +4,12 @@ import LumikidsLogo from '@/components/ui/LumikidsLogo';
 import { ArrowLeft, ShieldCheck, FileText, CheckCircle2 } from 'lucide-react';
 
 export const metadata = {
-  title: 'Termos de Uso | Lumikids',
-  description: 'Termos e Condições de Uso da plataforma e aplicativo educativo Lumikids.',
+  title: 'Termos de Uso | Contos & Virtudes',
+  description: 'Termos e Condições de Uso da plataforma e aplicativo educativo Contos & Virtudes.',
 };
 
 export default function TermosPage() {
-  const whatsappUrl = "https://wa.me/5531999180068?text=Ol%C3%A1!%20Tenho%20uma%20d%C3%BAvida%20sobre%20os%20Termos%20do%20Lumikids.";
+  const whatsappUrl = "https://wa.me/5531999180068?text=Ol%C3%A1!%20Tenho%20uma%20d%C3%BAvida%20sobre%20os%20Termos%20do%20Contos%20%26%20Virtudes.";
 
   return (
     <div className="min-h-screen bg-[#FFFDF9] text-[#1A1D20] font-sans antialiased selection:bg-amber-200 selection:text-amber-950">
@@ -40,7 +40,7 @@ export default function TermosPage() {
             Termos e Condições de Uso
           </h1>
           <p className="text-slate-500 text-xs sm:text-sm">
-            Última atualização: Novembro de 2026 • DSM Empreendimentos Digitais (Lumikids)
+            Última atualização: Novembro de 2026 • DSM Empreendimentos Digitais (Contos & Virtudes)
           </p>
         </div>
 
@@ -51,10 +51,10 @@ export default function TermosPage() {
               <span className="text-[#0D9488]">1.</span> Visão Geral e Identificação
             </h2>
             <p>
-              Estes Termos de Uso regulam o acesso e a utilização do serviço digital <strong>Lumikids</strong> (disponível através do domínio <code>lumikids.app.br</code> e seus aplicativos correlatos), de propriedade e gerido por <strong>DSM Empreendimentos Digitais</strong>.
+              Estes Termos de Uso regulam o acesso e a utilização do serviço digital <strong>Contos & Virtudes</strong> (disponível através do domínio <code>contosevirtudes.com.br</code> e seus aplicativos correlatos), de propriedade e gerido por <strong>DSM Empreendimentos Digitais</strong>.
             </p>
             <p className="mt-2">
-              Ao criar uma conta, navegar ou assinar qualquer plano no Lumikids, o responsável legal declara ter lido, compreendido e concordado integralmente com estes termos, bem como com a nossa Política de Privacidade.
+              Ao criar uma conta, navegar ou assinar qualquer plano no Contos & Virtudes, o responsável legal declara ter lido, compreendido e concordado integralmente com estes termos, bem como com a nossa Política de Privacidade.
             </p>
           </section>
 
@@ -63,7 +63,7 @@ export default function TermosPage() {
               <span className="text-[#0D9488]">2.</span> Natureza do Serviço e Conteúdo Educativo
             </h2>
             <p>
-              O <strong>Lumikids</strong> é uma plataforma de leitura interativa infantil, com acervo de histórias ilustradas no estilo clássico aquarela, narrações em áudio relaxante, quizzes pedagógicos por faixa etária e ferramentas de incentivo ao hábito de leitura (como o Desafio dos 30 Dias e Álbum de Conquistas).
+              O <strong>Contos & Virtudes</strong> é uma plataforma de leitura interativa infantil, com acervo de histórias ilustradas no estilo clássico aquarela, narrações em áudio relaxante, quizzes pedagógicos por faixa etária e ferramentas de incentivo ao hábito de leitura (como o Desafio dos 30 Dias e Álbum de Conquistas).
             </p>
             <p className="mt-2">
               O conteúdo é estritamente planejado para nutrir virtudes humanas e morais (como honestidade, respeito, generosidade, perdão e perseverança), lições históricas e narrativas inspiradoras, <strong>sem qualquer conteúdo de teor violento, esotérico nocivo ou hiperestimulante</strong>.
@@ -79,7 +79,7 @@ export default function TermosPage() {
                 <strong>Planos Disponíveis:</strong> Oferecemos opções de assinatura mensal e anual com desconto, conforme tabela de preços vigente na página de Planos.
               </li>
               <li>
-                <strong>Processamento Seguro:</strong> Todas as transações financeiras (PIX ou Cartão de Crédito) são intermediadas pelo <strong>Mercado Pago</strong>, com criptografia ponta a ponta e total conformidade com padrões de segurança bancária PCI-DSS. O Lumikids não armazena dados de cartão de crédito.
+                <strong>Processamento Seguro:</strong> Todas as transações financeiras (PIX ou Cartão de Crédito) são intermediadas pelo <strong>Mercado Pago</strong>, com criptografia ponta a ponta e total conformidade com padrões de segurança bancária PCI-DSS. O Contos & Virtudes não armazena dados de cartão de crédito.
               </li>
               <li>
                 <strong>Liberação Instantânea:</strong> O acesso total a todas as histórias, áudios e quizzes é liberado imediatamente após a confirmação do pagamento.
@@ -110,7 +110,7 @@ export default function TermosPage() {
               <span className="text-[#0D9488]">5.</span> Supervisão Parental e Segurança Infantil
             </h2>
             <p>
-              O Lumikids foi desenvolvido para ser utilizado sob a mediação ou consentimento dos pais ou responsáveis legais. A plataforma é um ambiente <strong>100% livre de anúncios comerciais</strong>, sem links externos para redes sociais e com travas parentais para acesso a áreas financeiras.
+              O Contos & Virtudes foi desenvolvido para ser utilizado sob a mediação ou consentimento dos pais ou responsáveis legais. A plataforma é um ambiente <strong>100% livre de anúncios comerciais</strong>, sem links externos para redes sociais e com travas parentais para acesso a áreas financeiras.
             </p>
           </section>
 
@@ -152,7 +152,7 @@ export default function TermosPage() {
 
       {/* Footer Mínimo */}
       <footer className="border-t border-amber-900/10 py-8 px-4 text-center text-xs text-slate-500">
-        <p>© {new Date().getFullYear()} Lumikids • DSM Empreendimentos Digitais. Todos os direitos reservados.</p>
+        <p>© {new Date().getFullYear()} Contos & Virtudes • DSM Empreendimentos Digitais. Todos os direitos reservados.</p>
       </footer>
 
     </div>

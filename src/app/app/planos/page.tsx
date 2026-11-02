@@ -74,7 +74,7 @@ export default function PlanosPage() {
         <LumikidsLogo size="sm" withLink={false} />
 
         <span className="hidden sm:inline-flex text-xs font-black uppercase tracking-wider text-amber-900 bg-amber-100/90 px-4 py-1.5 rounded-full border border-amber-300 shadow-2xs">
-          👑 Acesso Ilimitado Lumikids
+          👑 Acesso Ilimitado Contos & Virtudes
         </span>
       </header>
 
@@ -267,10 +267,10 @@ export default function PlanosPage() {
       {/* ═══ RODAPÉ COM CONTATO WHATSAPP ═══ */}
       <footer className="w-full max-w-4xl mx-auto pt-6 pb-2 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 border-t border-amber-900/10">
         <div>
-          Lumikids • Histórias & Valores para a Vida Inteira
+          Contos & Virtudes • Histórias & Valores para a Vida Inteira
         </div>
         <a 
-          href="https://wa.me/5531999180068?text=Ol%C3%A1!%20Gostaria%20de%20tirar%20uma%20d%C3%BAvida%20sobre%20o%20Lumikids." 
+          href="https://wa.me/5531999180068?text=Ol%C3%A1!%20Gostaria%20de%20tirar%20uma%20d%C3%BAvida%20sobre%20o%20Contos%20%26%20Virtudes." 
           target="_blank" 
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 text-emerald-700 font-bold hover:underline"

@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     }
 
     const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN || 'APP_USR-1324350483582570-110115-b0202a72deaa5be6126027a0dc68aa33-3258566705';
-    const origin = req.headers.get('origin') || process.env.NEXT_PUBLIC_APP_URL || 'https://lumikids.app.br';
+    const origin = req.headers.get('origin') || process.env.NEXT_PUBLIC_APP_URL || 'https://contosevirtudes.com.br';
 
     // Chamada oficial à API de Preferências do Mercado Pago
     const mpResponse = await fetch('https://api.mercadopago.com/checkout/preferences', {
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
         items: [
           {
             id: plan.id,
-            title: `Lumikids - ${plan.name} (${plan.billingPeriod === 'yearly' ? 'Anual' : 'Mensal'})`,
+            title: `Contos & Virtudes - ${plan.name} (${plan.billingPeriod === 'yearly' ? 'Anual' : 'Mensal'})`,
             description: plan.description,
             quantity: 1,
             currency_id: 'BRL',
@@ -32,8 +32,8 @@ export async function POST(req: NextRequest) {
           }
         ],
         payer: {
-          email: userEmail || 'cliente@lumikids.app',
-          name: userName || 'Assinante Lumikids'
+          email: userEmail || 'contato@contosevirtudes.com.br',
+          name: userName || 'Assinante Contos & Virtudes'
         },
         back_urls: {
           success: `${origin}/app/progresso?payment=success&plan=${plan.id}`,
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
         },
         auto_return: 'approved',
         notification_url: `${origin}/api/webhooks/mercadopago`,
-        statement_descriptor: 'LUMIKIDS',
+        statement_descriptor: 'CONTOSVIRTUDES',
         external_reference: userId || 'anonymous',
         metadata: {
           plan_id: plan.id,

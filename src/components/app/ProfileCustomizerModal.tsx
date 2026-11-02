@@ -125,7 +125,7 @@ export default function ProfileCustomizerModal({
 
               <div className="flex-1 pb-1">
                 <div className="text-sm font-bold text-slate-900 font-serif leading-tight">
-                  {user?.displayName || 'Aventureiro Lumikids'}
+                  {user?.displayName || 'Leitor Contos & Virtudes'}
                 </div>
                 <div className="text-[0.65rem] text-[#D97706] font-bold flex items-center gap-1">
                   <Crown size={11} /> Plano Premium

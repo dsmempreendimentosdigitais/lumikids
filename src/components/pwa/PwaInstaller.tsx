@@ -92,7 +92,7 @@ export default function PwaInstaller() {
                 <Sparkles size={14} className="text-yellow-300 animate-pulse" />
               </div>
               <p className="text-purple-200/70 text-[0.68rem] font-semibold leading-tight">
-                Salvar Lumikids no seu Celular ou Tablet!
+                Salvar Contos & Virtudes no seu Celular ou Tablet!
               </p>
             </div>
 
@@ -135,7 +135,7 @@ export default function PwaInstaller() {
               Instalar no iPhone / Android
             </h3>
             <p className="text-center text-purple-200/70 text-xs font-semibold mb-6">
-              Siga os passos abaixo para ter o ícone do Lumikids direto na tela inicial do seu aparelho:
+              Siga os passos abaixo para ter o ícone do Contos & Virtudes direto na tela inicial do seu aparelho:
             </p>
 
             <div className="space-y-4 bg-purple-950/40 border border-purple-500/20 rounded-[24px] p-4 mb-6">
@@ -166,7 +166,7 @@ export default function PwaInstaller() {
                   3
                 </div>
                 <div className="text-xs text-purple-100 font-medium">
-                  Toque em <strong>"Adicionar"</strong> no canto superior direito. Pronto! O Lumikids estará salvo no seu celular! ✨
+                  Toque em <strong>"Adicionar"</strong> no canto superior direito. Pronto! O Contos & Virtudes estará salvo no seu celular! ✨
                 </div>
               </div>
             </div>

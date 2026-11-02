@@ -79,7 +79,7 @@ export default function CadastroPage() {
           <h1 className="text-2xl font-serif font-bold text-slate-900 mb-1">
             Crie sua conta mágica
           </h1>
-          <p className="text-slate-500 text-xs font-semibold">Junte-se ao Lumikids hoje mesmo.</p>
+          <p className="text-slate-500 text-xs font-semibold">Junte-se ao Contos & Virtudes hoje mesmo.</p>
         </div>
 
         {error && (
