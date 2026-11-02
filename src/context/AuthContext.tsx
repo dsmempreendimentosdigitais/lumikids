@@ -42,7 +42,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (currentUser) {
         // Obter o token do Firebase e salvar como cookie para o proxy.ts
         const token = await currentUser.getIdToken();
-        document.cookie = `session=${token}; path=/; max-age=3600; SameSite=Lax`;
+        // Cookie de 30 dias: o Firebase mantém o login no cliente, então o cookie não pode expirar antes
+        document.cookie = `session=${token}; path=/; max-age=2592000; SameSite=Lax`;
         
         try {
           const docSnap = await getDoc(doc(db, 'users', currentUser.uid));

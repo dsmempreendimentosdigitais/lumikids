@@ -9,8 +9,11 @@ export default function NotFound() {
 
   // Redireciona automaticamente para o app principal em caso de rota não encontrada
   useEffect(() => {
+    // Evita loop infinito: só redireciona automaticamente uma vez por sessão
+    if (typeof window !== 'undefined' && sessionStorage.getItem('nf-redirected')) return;
     const timer = setTimeout(() => {
-      router.push('/app');
+      sessionStorage.setItem('nf-redirected', '1');
+      router.replace('/');
     }, 2500);
     return () => clearTimeout(timer);
   }, [router]);
@@ -39,7 +42,7 @@ export default function NotFound() {
         </p>
 
         <Link
-          href="/app"
+          href="/"
           className="w-full h-[52px] rounded-full bg-gradient-to-r from-[#0284C7] to-[#0EA5E9] text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-md shadow-sky-600/25 transition-all hover:scale-105 active:scale-95 uppercase tracking-wider"
         >
           <MapPin size={18} /> Voltar ao Mapa de Aventuras

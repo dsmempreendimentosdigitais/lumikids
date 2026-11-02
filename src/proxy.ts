@@ -1,28 +1,29 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-const protectedRoutes = ['/app', '/app/historias', '/app/criar', '/app/progresso', '/app/configuracoes'];
-const authRoutes = ['/auth/login', '/auth/signup'];
+// Rotas que exigem login. A leitura de histórias (/app/historias/[id]) fica aberta
+// para permitir o teste gratuito sem cadastro — o paywall é controlado no cliente.
+const protectedRoutes = ['/app/criar', '/app/progresso', '/app/configuracoes', '/app/admin'];
+const authRoutes = ['/login', '/cadastro'];
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  
-  // Exemplo simplificado de verificação de sessão
-  // No mundo real, usaríamos o Firebase Admin ou um cookie seguro com o token
+
+  // Cookie espelhado do token Firebase (renovado automaticamente no AuthContext)
   const session = request.cookies.get('session')?.value;
 
   const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
-  const isAuthRoute = authRoutes.some(route => pathname.startsWith(route));
+  const isAuthRoute = authRoutes.some(route => pathname === route);
 
   if (isProtectedRoute && !session) {
-    // Se tentar acessar rota protegida sem sessão, manda pro login
-    const loginUrl = new URL('/auth/login', request.url);
+    // Página de login real do app é /login (antes apontava para /auth/login, que não existe
+    // e causava o loop "Voltando à Trilha de Histórias")
+    const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('from', pathname);
     return NextResponse.redirect(loginUrl);
   }
 
   if (isAuthRoute && session) {
-    // Se já estiver logado e tentar acessar login/cadastro, manda pro app
     return NextResponse.redirect(new URL('/app', request.url));
   }
 
@@ -30,5 +31,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/app/:path*', '/auth/:path*'],
+  matcher: ['/app/:path*', '/login', '/cadastro'],
 };
