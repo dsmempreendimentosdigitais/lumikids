@@ -2,7 +2,7 @@ import React from 'react';
 import AppDashboard from '@/components/app/AppDashboard';
 
 export const metadata = {
-  title: 'Meu Painel | Lumikids',
+  title: 'Meu Painel | Contos & Virtudes',
 };
 
 export default function AppPage() {

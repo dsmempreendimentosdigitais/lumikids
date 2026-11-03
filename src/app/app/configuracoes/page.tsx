@@ -93,7 +93,7 @@ export default function ConfigPage() {
         </div>
 
         <div className="text-center text-xs font-semibold text-slate-400 mt-8">
-          Lumikids App v1.0.0 📖
+          Contos & Virtudes App v1.0.0 📖
         </div>
       </div>
     </div>

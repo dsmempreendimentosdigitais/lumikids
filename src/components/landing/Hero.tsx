@@ -8,7 +8,7 @@ export default function Hero() {
 
   useEffect(() => {
     const handlePwaReady = () => setCanInstall(true);
-    if (typeof window !== 'undefined' && window.pwaPrompt) {
+    if (typeof window !== 'undefined' && (window as any).pwaPrompt) {
       setCanInstall(true);
     }
     if (typeof window !== 'undefined') {
@@ -22,10 +22,10 @@ export default function Hero() {
   }, []);
 
   const handleInstallClick = () => {
-    if (typeof window !== 'undefined' && window.pwaPrompt) {
-      window.pwaPrompt.prompt();
-      window.pwaPrompt.userChoice.then(() => {
-        window.pwaPrompt = null;
+    if (typeof window !== 'undefined' && (window as any).pwaPrompt) {
+      (window as any).pwaPrompt.prompt();
+      (window as any).pwaPrompt.userChoice.then(() => {
+        (window as any).pwaPrompt = null;
         setCanInstall(false);
       });
     } else {
@@ -73,7 +73,7 @@ export default function Hero() {
         <div className="phone-frame shadow-[0_0_50px_rgba(139,92,246,0.3)] border border-purple-500/30">
           <div className="app-header" style={{ padding: '28px 16px 56px' }}>
             <div className="header-top">
-              <div className="header-logo" style={{ fontSize: '1.05rem' }}>Lumi<em>kids</em></div>
+              <div className="header-logo" style={{ fontSize: '1.05rem' }}>Contos &<em> Virtudes</em></div>
               <div className="header-avatar" style={{ width: '30px', height: '30px', fontSize: '.78rem' }}>S</div>
             </div>
             <div className="header-greeting" style={{ fontSize: '.75rem' }}>Boa noite, Explorador 👋</div>

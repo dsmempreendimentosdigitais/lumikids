@@ -20,7 +20,7 @@ export default function Testimonials() {
         <div className="testi-card">
           <div className="testi-quote">"</div>
           <div className="testi-stars">★★★★★</div>
-          <p>Meu filho tem TDAH e nunca focava em livros. Com o Lumikids ele termina as histórias, faz as missões e ainda pede mais. Transformador.</p>
+          <p>Meu filho tem TDAH e nunca focava em livros. Com o Contos & Virtudes ele termina as histórias, faz as missões e ainda pede mais. Transformador.</p>
           <div className="testi-author"><div className="ta-av" style={{ background: 'var(--coral)' }}>R</div><div><div className="ta-name">Ricardo F.</div><div className="ta-role">Pai · Goiânia, GO</div></div></div>
         </div>
       </div>

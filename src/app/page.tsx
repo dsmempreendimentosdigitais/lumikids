@@ -46,9 +46,9 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#FFFDF9] text-[#1A1D20] font-sans antialiased overflow-x-hidden selection:bg-amber-200 selection:text-amber-950">
       
-      {/* ═══ 1. NAVBAR PROFISSIONAL E MODERNA ═══ */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-[#FFFDF9]/95 backdrop-blur-md border-b border-amber-900/10 px-4 sm:px-8 py-3.5 transition-all">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
+      {/* ═══ 1. NAVBAR PROFISSIONAL E MODERNA COM BOTÕES AMPLOS ═══ */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-[#FFFDF9]/95 backdrop-blur-md border-b border-amber-900/10 px-3 sm:px-8 py-3 transition-all">
+        <div className="max-w-6xl mx-auto flex items-center justify-between gap-2">
           
           {/* Logo Oficial Contos & Virtudes */}
           <LumikidsLogo size="md" />
@@ -62,11 +62,11 @@ export default function LandingPage() {
             <a href="#planos" className="hover:text-[#0D9488] transition-colors text-amber-600 font-black">Planos</a>
           </div>
 
-          {/* Botões de Ação */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          {/* Botões de Ação com Tamanho Confortável */}
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <Link 
               href={freeDemoStoryUrl}
-              className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full font-bold text-xs text-amber-900 bg-amber-100 hover:bg-amber-200 border border-amber-300 transition-all cursor-pointer"
+              className="hidden md:inline-flex items-center gap-1.5 px-4 py-2 rounded-full font-bold text-xs text-amber-900 bg-amber-100 hover:bg-amber-200 border border-amber-300 transition-all cursor-pointer"
             >
               <Play size={13} className="fill-amber-900" />
               <span>História Grátis</span>
@@ -74,14 +74,14 @@ export default function LandingPage() {
 
             <Link 
               href={user ? "/app" : "/login"} 
-              className="px-3.5 sm:px-4 py-2 rounded-full font-bold text-xs sm:text-sm text-slate-700 hover:text-slate-900 hover:bg-amber-50 border border-amber-200/80 transition-all cursor-pointer"
+              className="px-4 sm:px-5 py-2.5 rounded-full font-extrabold text-xs sm:text-sm text-slate-800 bg-amber-50/90 hover:bg-amber-100 border border-amber-300 shadow-2xs transition-all cursor-pointer"
             >
               {user ? "Meu Painel" : "Entrar"}
             </Link>
 
             <a 
               href="#planos" 
-              className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-full font-black text-xs sm:text-sm text-white bg-[#0D9488] hover:bg-[#0F766E] shadow-md shadow-teal-700/20 active:scale-95 transition-all flex items-center gap-1.5"
+              className="px-4 sm:px-6 py-2.5 rounded-full font-black text-xs sm:text-sm text-white bg-[#0D9488] hover:bg-[#0F766E] shadow-md shadow-teal-800/25 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer"
             >
               <span>Assinar (33% OFF)</span>
               <Sparkles size={14} />
@@ -91,32 +91,32 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      {/* ═══ 2. HERO SECTION COM ESTÉTICA LIMPA & ACOLHEDORA ═══ */}
-      <section className="relative pt-32 sm:pt-40 pb-16 sm:pb-24 px-4 sm:px-8 bg-gradient-to-b from-amber-50/60 via-[#FFFDF9] to-white overflow-hidden">
+      {/* ═══ 2. HERO SECTION COM ESPAÇAMENTO GENEROSO & LIMPO ═══ */}
+      <section className="relative pt-36 sm:pt-44 md:pt-48 pb-16 sm:pb-24 px-4 sm:px-8 bg-gradient-to-b from-amber-50/60 via-[#FFFDF9] to-white overflow-hidden">
         
         {/* Fundo Atmosférico de Aquarela Suave */}
-        <div className="absolute top-12 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-r from-amber-200/30 via-teal-100/30 to-amber-100/40 blur-3xl pointer-events-none rounded-full" />
+        <div className="absolute top-16 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-r from-amber-200/30 via-teal-100/30 to-amber-100/40 blur-3xl pointer-events-none rounded-full" />
 
-        <div className="max-w-5xl mx-auto text-center relative z-10">
+        <div className="max-w-4xl mx-auto text-center relative z-10">
           
-          {/* Badge de Autoridade */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-100/90 border border-amber-300 text-amber-950 text-xs sm:text-sm font-black mb-6 shadow-2xs">
+          {/* Badge de Autoridade com espaçamento */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-100/90 border border-amber-300 text-amber-950 text-xs sm:text-sm font-black mb-5 shadow-2xs">
             <Sparkles size={16} className="text-amber-600" />
-            <span>O Clube de Histórias com Valores Morais, Fé e Caráter para Crianças</span>
+            <span>O Clube de Histórias com Valores & Fé para Famílias</span>
           </div>
 
-          {/* Headline Principal */}
-          <h1 className="text-3xl sm:text-5xl md:text-6xl font-serif font-black text-slate-900 leading-[1.18] tracking-tight max-w-4xl mx-auto mb-6">
+          {/* Headline Principal Limpa e Imponente */}
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-serif font-black text-slate-900 leading-[1.2] tracking-tight max-w-3xl mx-auto mb-6">
             Substitua os vídeos frenéticos por momentos de <span className="text-[#0D9488]">conexão</span>, <span className="text-[#D97706]">virtudes</span> e sono tranquilo.
           </h1>
 
-          {/* Subheadline Explicativa */}
-          <p className="text-slate-600 text-base sm:text-xl font-medium max-w-3xl mx-auto leading-relaxed mb-8 sm:mb-10">
-            O <strong>Contos & Virtudes</strong> é o refúgio seguro que resgata a pureza das histórias clássicas, valores eternos e ilustrações artísticas no estilo <em>Puffin Rock</em> — criando uma rotina noturna saudável de 5 a 7 minutos com narração suave, quizzes educativos e 5 idiomas para crianças de 2 a 10 anos.
+          {/* Subheadline Concisa e Respirada */}
+          <p className="text-slate-600 text-base sm:text-lg md:text-xl font-medium max-w-2xl mx-auto leading-relaxed mb-8 sm:mb-10">
+            Histórias clássicas em aquarela <em>Puffin Rock</em>, narração acolhedora, quizzes e 5 idiomas. Uma rotina serena de 5 a 7 minutos que resgata valores para crianças de 2 a 10 anos.
           </p>
 
           {/* Botões de Ação Principais */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 sm:gap-4 mb-5 max-w-xl mx-auto">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 sm:gap-4 mb-5 max-w-lg mx-auto">
             
             <a 
               href="#planos" 
@@ -131,38 +131,44 @@ export default function LandingPage() {
               className="w-full sm:w-auto px-6 py-4 sm:py-5 rounded-full bg-white hover:bg-amber-50/80 text-amber-950 font-black text-sm sm:text-base border-2 border-amber-300 transition-all text-center flex items-center justify-center gap-2 cursor-pointer shadow-xs active:scale-95"
             >
               <BookOpen size={18} className="text-amber-700" />
-              <span>Experimentar Grátis Agora</span>
+              <span>Ler História Grátis</span>
             </Link>
 
           </div>
 
-          <p className="text-xs text-slate-500 font-semibold mb-10 flex items-center justify-center gap-1.5">
+          <p className="text-xs text-slate-500 font-semibold mb-8 flex items-center justify-center gap-1.5">
             <Check size={14} className="text-[#0D9488]" strokeWidth={3} />
-            <span>Sem necessidade de cadastro prévio para ler a primeira história demonstrativa</span>
+            <span>Sem necessidade de cadastro prévio para ler a primeira história</span>
           </p>
 
-          {/* Badges de Confiança */}
-          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-xs sm:text-sm font-bold text-slate-500">
-            <div className="flex items-center gap-2">
-              <Check size={18} className="text-[#0D9488]" strokeWidth={3} />
-              <span>60+ Histórias Publicadas</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Check size={18} className="text-[#0D9488]" strokeWidth={3} />
-              <span>991 Ilustrações em Aquarela</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Check size={18} className="text-[#0D9488]" strokeWidth={3} />
-              <span>Narração Acolhedora</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Check size={18} className="text-[#0D9488]" strokeWidth={3} />
-              <span>5 Idiomas com 1 Toque</span>
-            </div>
+          {/* Faixa Limpa de Destaques (Respirada e Elegante) */}
+          <div className="inline-flex flex-wrap items-center justify-center gap-3 sm:gap-6 py-2.5 px-5 rounded-full bg-amber-50/80 border border-amber-200/80 text-xs sm:text-sm font-bold text-slate-700 shadow-2xs">
+            <span>📖 60+ Histórias</span>
+            <span className="text-amber-300">•</span>
+            <span>🎨 991 Ilustrações</span>
+            <span className="text-amber-300">•</span>
+            <span>🎙️ Áudio Suave</span>
+            <span className="text-amber-300">•</span>
+            <span>🌍 5 Idiomas</span>
           </div>
 
-          {/* Vitrine Visual de Livros do Acervo */}
-          <div className="mt-14 sm:mt-16 grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5 max-w-4xl mx-auto">
+        </div>
+      </section>
+
+      {/* ═══ 3. VITRINE DE HISTÓRIAS (COM ESPAÇAMENTO RESPIRADO) ═══ */}
+      <section className="py-12 sm:py-16 px-4 sm:px-8 bg-gradient-to-b from-white via-amber-50/30 to-white">
+        <div className="max-w-5xl mx-auto">
+          
+          <div className="text-center max-w-2xl mx-auto mb-10">
+            <span className="text-xs font-black uppercase tracking-wider text-amber-900 bg-amber-100 px-3.5 py-1 rounded-full border border-amber-300">
+              Acervo de Clássicos & Valores
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-serif font-black text-slate-900 mt-2">
+              Histórias que inspiram virtudes reais
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
             {[
               { id: '396iy19bfOCQBuTK0aGe', title: 'A Rainha Ester', tag: 'Coragem & Fé' },
               { id: '10RcwpUmFQWwJ1hikODu', title: 'Mahatma Gandhi', tag: 'Paz & Verdade' },
@@ -200,7 +206,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ═══ 3. CARD LIMPO ESTILO PLAN FOR EXPLORER (O DILEMA DOS PAIS) ═══ */}
+      {/* ═══ 4. O DILEMA DOS PAIS (ESTILO CARD LIMPO E AREJADO) ═══ */}
       <section id="solucao" className="py-16 sm:py-24 px-4 sm:px-8 bg-white border-y border-amber-900/10">
         <div className="max-w-4xl mx-auto">
           
@@ -216,7 +222,6 @@ export default function LandingPage() {
             </p>
           </div>
 
-          {/* Card Duplo Limpo e Espaçoso */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
             
             {/* O Que Evitar */}
@@ -276,7 +281,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ═══ 4. CARD ESTILO PLAN FOR EXPLORER (RECURSOS POR DENTRO) ═══ */}
+      {/* ═══ 5. CARD LIMPO CENTRAL (ESTILO PLAN FOR EXPLORER) ═══ */}
       <section id="como-funciona" className="py-16 sm:py-24 px-4 sm:px-8 bg-gradient-to-b from-white via-amber-50/40 to-white">
         <div className="max-w-4xl mx-auto">
           
@@ -292,7 +297,7 @@ export default function LandingPage() {
             </p>
           </div>
 
-          {/* CARD CENTRAL BRANCO ARREDONDADO (INSPIRAÇÃO PLAN FOR EXPLORER) */}
+          {/* CARD CENTRAL BRANCO ARREDONDADO */}
           <div className="bg-white rounded-[36px] border border-amber-200/80 shadow-[0_20px_50px_rgba(45,33,20,0.06)] p-6 sm:p-10">
             
             {/* Cabeçalho do Card */}
@@ -407,7 +412,7 @@ export default function LandingPage() {
 
             </div>
 
-            {/* Botão de Ação Inferior Grande e Limpo (Estilo Plan for Explorer) */}
+            {/* Botão de Ação Inferior Grande e Limpo */}
             <div className="pt-8 mt-2">
               <a
                 href="#planos"
@@ -426,7 +431,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ═══ 5. AS 8 TRILHAS DE HISTÓRIAS ═══ */}
+      {/* ═══ 6. AS 8 TRILHAS DE HISTÓRIAS ═══ */}
       <section id="historias" className="py-16 sm:py-24 px-4 sm:px-8 bg-white border-t border-amber-900/10">
         <div className="max-w-5xl mx-auto">
           
@@ -474,7 +479,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ═══ 6. QUEM CRIOU & O PROPÓSITO DO CONTOS & VIRTUDES ═══ */}
+      {/* ═══ 7. QUEM CRIOU & O PROPÓSITO DO CONTOS & VIRTUDES ═══ */}
       <section id="missao" className="py-16 sm:py-24 px-4 sm:px-8 bg-gradient-to-b from-white via-amber-50/50 to-white border-t border-amber-900/10">
         <div className="max-w-4xl mx-auto">
           
@@ -531,93 +536,6 @@ export default function LandingPage() {
               </a>
             </div>
 
-          </div>
-
-        </div>
-      </section>
-
-      {/* ═══ 7. VALIDAÇÃO PEDAGÓGICA E PAIS BETA-READERS ═══ */}
-      <section className="py-16 sm:py-20 px-4 sm:px-8 bg-white border-t border-amber-900/10">
-        <div className="max-w-5xl mx-auto">
-          
-          <div className="text-center max-w-2xl mx-auto mb-14">
-            <span className="text-xs font-black uppercase tracking-wider text-amber-800 bg-amber-100 px-3.5 py-1 rounded-full border border-amber-300">
-              Comunidade & Pedagogia
-            </span>
-            <h2 className="text-2xl sm:text-4xl font-serif font-black text-slate-900 mt-3 mb-3">
-              O que as famílias que já testam estão vivendo
-            </h2>
-            <p className="text-slate-600 text-sm sm:text-base">
-              Veja os benefícios reais relatados por pais que incluíram o Contos & Virtudes na rotina noturna.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            
-            <div className="p-6 rounded-3xl bg-amber-50/40 border border-amber-200 shadow-sm flex flex-col justify-between">
-              <div>
-                <div className="flex text-amber-500 mb-3 text-sm">★★★★★</div>
-                <h4 className="font-serif font-bold text-slate-900 text-base mb-2">
-                  O fim das birras na hora de dormir
-                </h4>
-                <p className="text-xs sm:text-sm text-slate-700 leading-relaxed mb-4">
-                  "A transição das telas hiperativas para as páginas em aquarela foi imediata. A voz suave desacelera a mente das crianças e elas dormem com serenidade logo após a leitura."
-                </p>
-              </div>
-              <div className="pt-3 border-t border-amber-200/60 text-xs text-slate-500 font-semibold">
-                — Relato de Família Beta • Criança de 4 anos
-              </div>
-            </div>
-
-            <div className="p-6 rounded-3xl bg-amber-50/40 border border-amber-200 shadow-sm flex flex-col justify-between">
-              <div>
-                <div className="flex text-amber-500 mb-3 text-sm">★★★★★</div>
-                <h4 className="font-serif font-bold text-slate-900 text-base mb-2">
-                  Diálogo sobre honestidade e respeito
-                </h4>
-                <p className="text-xs sm:text-sm text-slate-700 leading-relaxed mb-4">
-                  "O quiz no final é o ponto alto: em vez de apenas fechar a história, ele nos dá o gancho perfeito para conversar sobre escolhas morais certas do dia a dia da escola."
-                </p>
-              </div>
-              <div className="pt-3 border-t border-amber-200/60 text-xs text-slate-500 font-semibold">
-                — Pais Educadores • Filhos de 6 e 8 anos
-              </div>
-            </div>
-
-            <div className="p-6 rounded-3xl bg-amber-50/40 border border-amber-200 shadow-sm flex flex-col justify-between">
-              <div>
-                <div className="flex text-amber-500 mb-3 text-sm">★★★★★</div>
-                <h4 className="font-serif font-bold text-slate-900 text-base mb-2">
-                  Bilinguismo natural e sem pressão
-                </h4>
-                <p className="text-xs sm:text-sm text-slate-700 leading-relaxed mb-4">
-                  "O botão de alternar para o inglês é fantástico. Lemos primeiro em português e depois deixamos a narração em inglês tocando baixinho. O vocabulário se expande naturalmente."
-                </p>
-              </div>
-              <div className="pt-3 border-t border-amber-200/60 text-xs text-slate-500 font-semibold">
-                — Família Bilíngue • Criança de 5 anos
-              </div>
-            </div>
-
-          </div>
-
-          {/* Convite para Pais Beta-Readers */}
-          <div className="mt-8 p-6 rounded-3xl bg-teal-50 border-2 border-teal-300 text-center max-w-2xl mx-auto">
-            <h4 className="font-serif font-black text-slate-900 text-lg mb-1">
-              Quer ajudar a escolher os próximos temas do Contos & Virtudes?
-            </h4>
-            <p className="text-xs sm:text-sm text-slate-600 mb-4">
-              Nossa comunidade de pais beta recebe histórias em primeira mão e envia sugestões diretamente aos autores.
-            </p>
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0D9488] hover:bg-[#0F766E] text-white font-bold text-xs uppercase tracking-wider transition-all"
-            >
-              <MessageCircle size={15} />
-              <span>Participar da Comunidade de Pais no WhatsApp</span>
-            </a>
           </div>
 
         </div>

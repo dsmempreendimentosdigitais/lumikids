@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
           updatedAt: new Date()
         }, { merge: true });
 
-        console.log(`🎉 Usuário ${uid} atualizado com sucesso para Plano Premium Lumikids!`);
+        console.log(`🎉 Usuário ${uid} atualizado com sucesso para Plano Premium Contos & Virtudes!`);
       }
     }
 

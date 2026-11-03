@@ -53,7 +53,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Lumikids" />
+        <meta name="apple-mobile-web-app-title" content="Contos & Virtudes" />
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
       </head>
       <body className="min-h-full flex flex-col font-sans bg-[#F8F7F2] text-[#1A1D20]">
