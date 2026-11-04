@@ -23,19 +23,39 @@ export default function AppDashboard() {
   const [loadingStories, setLoadingStories] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
     const fetchStories = async () => {
       try {
-        const q = query(collection(db, 'stories'), orderBy('createdAt', 'desc'), limit(50));
+        // 1. Tentar via API interna do servidor (acessível por visitantes e usuários logados)
+        const res = await fetch('/api/stories');
+        if (res.ok) {
+          const json = await res.json();
+          if (json.stories && json.stories.length > 0) {
+            if (isMounted) {
+              setAllJourneyStories(json.stories);
+              setLoadingStories(false);
+              return;
+            }
+          }
+        }
+      } catch (apiErr) {
+        console.warn('API /api/stories falhou, tentando Firestore cliente:', apiErr);
+      }
+
+      // 2. Fallback via cliente Firestore
+      try {
+        const q = query(collection(db, 'stories'), orderBy('createdAt', 'desc'), limit(100));
         const snap = await getDocs(q);
         const data = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setAllJourneyStories(data);
+        if (isMounted) setAllJourneyStories(data);
       } catch (err) {
         console.error('Error fetching stories:', err);
       } finally {
-        setLoadingStories(false);
+        if (isMounted) setLoadingStories(false);
       }
     };
     fetchStories();
+    return () => { isMounted = false; };
   }, []);
 
   const userName = user?.displayName ? user.displayName.split(' ')[0] : 'Explorador(a)';

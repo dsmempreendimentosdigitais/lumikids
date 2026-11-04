@@ -19,7 +19,7 @@ const LanguageContext = createContext<LanguageContextType>({
   languages: SUPPORTED_LANGUAGES,
 });
 
-const STORAGE_KEY = 'lumikids_language';
+const STORAGE_KEY = 'contosevirtudes_language';
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguageState] = useState<SupportedLanguage>('pt');

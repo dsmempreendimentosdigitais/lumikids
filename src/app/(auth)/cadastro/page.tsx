@@ -77,7 +77,7 @@ export default function CadastroPage() {
         <div className="text-center mb-6 flex flex-col items-center">
           <Logo size="lg" className="mb-4" />
           <h1 className="text-2xl font-serif font-bold text-slate-900 mb-1">
-            Crie sua conta mágica
+            Crie sua conta gratuita
           </h1>
           <p className="text-slate-500 text-xs font-semibold">Junte-se ao Contos & Virtudes hoje mesmo.</p>
         </div>

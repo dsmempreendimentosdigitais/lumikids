@@ -475,7 +475,7 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
 
     const list: { text: string; imageUrl: string; originalIndex: number; subIndex: number; totalSubs: number; interactiveChallenge?: any }[] = [];
     story.content.paragraphs.forEach((p: any, pIndex: number) => {
-      const img = p.imageUrl || story.nanoBananaImageUrl || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="%23150F2D"/><stop offset="100%" stop-color="%230B0819"/></linearGradient></defs><rect width="800" height="800" fill="url(%23g)"/><circle cx="400" cy="350" r="120" fill="%238B5CF6" opacity="0.3"/><text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" fill="%23F3E8FF" font-size="72" font-family="serif">✨</text><text x="50%" y="60%" dominant-baseline="middle" text-anchor="middle" fill="%23D8B4FE" font-size="28" font-family="sans-serif" font-weight="bold">Ilustração Lumikids</text></svg>';
+      const img = p.imageUrl || story.nanoBananaImageUrl || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="%23150F2D"/><stop offset="100%" stop-color="%230B0819"/></linearGradient></defs><rect width="800" height="800" fill="url(%23g)"/><circle cx="400" cy="350" r="120" fill="%238B5CF6" opacity="0.3"/><text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" fill="%23F3E8FF" font-size="72" font-family="serif">✨</text><text x="50%" y="60%" dominant-baseline="middle" text-anchor="middle" fill="%23D8B4FE" font-size="28" font-family="sans-serif" font-weight="bold">Ilustração Contos & Virtudes</text></svg>';
       const rawText = (preTranslatedParagraphs && preTranslatedParagraphs[pIndex]) ? preTranslatedParagraphs[pIndex] : p.text;
       const splits = splitParagraphIntoSubtitles(rawText, img);
       splits.forEach((sp, sIndex) => {
@@ -548,30 +548,54 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
   };
 
   useEffect(() => {
+    let isMounted = true;
     const fetchStory = async () => {
       try {
         const docRef = doc(db, 'stories', id);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           const data = docSnap.data();
-          setStory({ id: docSnap.id, ...data });
-          
-          if (data?.isPlaceholder) {
-            setShowNameForm(true);
-            if (user?.displayName) {
-              setChildNameInput(user.displayName.split(' ')[0]);
+          if (isMounted) {
+            setStory({ id: docSnap.id, ...data });
+            if (data?.isPlaceholder) {
+              setShowNameForm(true);
+              if (user?.displayName) {
+                setChildNameInput(user.displayName.split(' ')[0]);
+              }
             }
+            setLoading(false);
+            return;
           }
         }
       } catch (err) {
-        console.error('Error fetching story:', err);
+        console.warn('Client getDoc failed, trying server API:', err);
+      }
+
+      // Fallback via API do servidor (funciona para visitantes não-logados)
+      try {
+        const res = await fetch(`/api/stories/${id}`);
+        if (res.ok) {
+          const json = await res.json();
+          if (json.story && isMounted) {
+            setStory(json.story);
+            if (json.story.isPlaceholder) {
+              setShowNameForm(true);
+              if (user?.displayName) {
+                setChildNameInput(user.displayName.split(' ')[0]);
+              }
+            }
+          }
+        }
+      } catch (apiErr) {
+        console.error('Error fetching story via server API:', apiErr);
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     };
     if (id) {
       fetchStory();
     }
+    return () => { isMounted = false; };
   }, [id, user]);
 
   const handleStartAdventure = async (chosenName: string) => {
@@ -845,7 +869,7 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
     return (
       <div className="relative min-h-screen w-full flex flex-col justify-between items-center p-3 sm:p-6 overflow-x-hidden select-none font-sans bg-slate-950">
         
-        {/* Fundo Cenográfico da História Desfocado (Estilo Lumikids Atual) */}
+        {/* Fundo Cenográfico da História Desfocado (Estilo Contos & Virtudes) */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
           <img 
             src={endBackgroundImg} 
@@ -897,7 +921,7 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
               setStarsReward(Math.min(3, Math.max(1, correctCount)));
               if (user?.uid) {
                 try {
-                  const userStatsKey = `lumikids_stats_${user.uid}`;
+                  const userStatsKey = `contosevirtudes_stats_${user.uid}`;
                   const current = JSON.parse(localStorage.getItem(userStatsKey) || '{"storiesRead":0,"correctAnswers":0,"streak":1}');
                   current.storiesRead = (current.storiesRead || 0) + 1;
                   current.correctAnswers = (current.correctAnswers || 0) + correctCount;

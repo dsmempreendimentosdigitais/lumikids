@@ -71,7 +71,7 @@ export default function LoginPage() {
             Bem-vindo de volta!
           </h1>
           <p className="text-slate-500 text-xs font-semibold">
-            Entre na sua conta para criar novas histórias mágicas.
+            Entre na sua conta para explorar histórias com virtudes e valores.
           </p>
         </div>
 

@@ -270,15 +270,21 @@ export default function JourneyMap({ stories, userPlan = 'free', isAdmin = false
               </div>
             </button>
 
-            {/* CENTRO: LOGO LUMIKIDS */}
-            <div className="flex items-center gap-2">
-              <span className="font-serif font-black text-xl sm:text-2xl tracking-tight text-[#0D9488]">
-                Lumi<span className="text-amber-500">kids</span>
-              </span>
-              <span className="hidden sm:inline-block text-[0.68rem] bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full font-bold text-amber-800">
-                Aventura Contínua ✨
-              </span>
-            </div>
+            {/* CENTRO: LOGO CONTOS & VIRTUDES */}
+            <Link href="/" className="flex items-center gap-2 hover:opacity-95 transition-opacity">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-300 via-amber-400 to-amber-500 p-0.5 shadow-xs flex items-center justify-center shrink-0">
+                <img 
+                  src="/icons/lumikids-star-logo.svg" 
+                  alt="Contos & Virtudes" 
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <div className="flex flex-col leading-tight">
+                <span className="font-serif font-black text-lg sm:text-xl tracking-tight text-slate-900">
+                  Contos <span className="text-[#0D9488]">&</span> <span className="text-[#D97706]">Virtudes</span>
+                </span>
+              </div>
+            </Link>
 
             {/* LADO DIREITO: SELETOR DE IDIOMA, ADMIN & TROFÉU */}
             <div className="flex items-center gap-2 shrink-0">

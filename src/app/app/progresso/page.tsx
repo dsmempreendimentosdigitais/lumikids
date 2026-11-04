@@ -31,8 +31,8 @@ export default function ProgressoPage() {
   useEffect(() => {
     // Carrega personalização do localStorage
     if (typeof window !== 'undefined' && user?.uid) {
-      const savedAvatar = localStorage.getItem(`lumikids_avatar_${user.uid}`);
-      const savedCover = localStorage.getItem(`lumikids_cover_${user.uid}`);
+      const savedAvatar = localStorage.getItem(`contosevirtudes_avatar_${user.uid}`) || localStorage.getItem(`lumikids_avatar_${user.uid}`);
+      const savedCover = localStorage.getItem(`contosevirtudes_cover_${user.uid}`) || localStorage.getItem(`lumikids_cover_${user.uid}`);
       if (savedAvatar) setUserAvatarId(savedAvatar);
       if (savedCover) setUserCoverId(savedCover);
     }
@@ -42,7 +42,7 @@ export default function ProgressoPage() {
     // Carrega estatísticas de leitura e quiz locais / do usuário
     if (typeof window !== 'undefined' && user?.uid) {
       try {
-        const saved = localStorage.getItem(`lumikids_stats_${user.uid}`);
+        const saved = localStorage.getItem(`contosevirtudes_stats_${user.uid}`) || localStorage.getItem(`lumikids_stats_${user.uid}`);
         if (saved) {
           const parsed = JSON.parse(saved);
           setQuizStats({

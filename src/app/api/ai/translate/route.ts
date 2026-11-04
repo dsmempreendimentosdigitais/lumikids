@@ -19,7 +19,7 @@ async function translateWithFallback(text: string, targetLang: string): Promise<
   const clean = text.trim();
   if (clean.length <= 400) {
     const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(clean)}&langpair=pt|${targetLang}`;
-    const res = await fetch(url, { headers: { 'User-Agent': 'LumikidsApp/1.0' } });
+    const res = await fetch(url, { headers: { 'User-Agent': 'ContosEVirtudesApp/1.0' } });
     if (!res.ok) throw new Error(`MyMemory HTTP ${res.status}`);
     const data = await res.json();
     return data?.responseData?.translatedText || clean;
@@ -32,7 +32,7 @@ async function translateWithFallback(text: string, targetLang: string): Promise<
     const part = s.trim();
     if (!part) continue;
     const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(part)}&langpair=pt|${targetLang}`;
-    const res = await fetch(url, { headers: { 'User-Agent': 'LumikidsApp/1.0' } });
+    const res = await fetch(url, { headers: { 'User-Agent': 'ContosEVirtudesApp/1.0' } });
     if (res.ok) {
       const data = await res.json();
       translatedSentences.push(data?.responseData?.translatedText || part);

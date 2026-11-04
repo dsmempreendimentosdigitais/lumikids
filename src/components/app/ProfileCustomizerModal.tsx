@@ -45,8 +45,8 @@ export default function ProfileCustomizerModal({
     try {
       // Salva no localStorage para carregamento instantâneo
       if (user?.uid) {
-        localStorage.setItem(`lumikids_avatar_${user.uid}`, activeAvatarObj.id);
-        localStorage.setItem(`lumikids_cover_${user.uid}`, activeCoverObj.id);
+        localStorage.setItem(`contosevirtudes_avatar_${user.uid}`, activeAvatarObj.id);
+        localStorage.setItem(`contosevirtudes_cover_${user.uid}`, activeCoverObj.id);
 
         // Salva no documento do usuário no Firestore
         await updateDoc(doc(db, 'users', user.uid), {
