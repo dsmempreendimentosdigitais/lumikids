@@ -130,8 +130,13 @@ export default function LoginPage() {
           <i className="fab fa-google text-red-500"></i> Entrar com Google
         </button>
 
-        <div className="mt-6 text-center text-xs text-slate-500 font-semibold">
-          Não tem uma conta? <Link href="/cadastro" className="text-[#0D9488] font-bold hover:underline">Cadastre-se grátis</Link>
+        <div className="mt-6 text-center text-xs text-slate-500 font-semibold space-y-2">
+          <div>
+            Não tem uma conta? <Link href="/cadastro" className="text-[#0D9488] font-bold hover:underline">Cadastre-se grátis</Link>
+          </div>
+          <div className="pt-2 border-t border-slate-100">
+            Já assinou pelo Mercado Pago ou PIX? <Link href="/app/sucesso" className="text-amber-700 font-bold hover:underline">Ativar meu acesso</Link>
+          </div>
         </div>
       </div>
     </div>

@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { adminDb } from '@/lib/firebase/admin';
+import { adminDb, adminAuth } from '@/lib/firebase/admin';
 
 export async function POST(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
-    const topic = searchParams.get('topic') || searchParams.get('type');
     const id = searchParams.get('id') || searchParams.get('data.id');
 
     const body = await req.json().catch(() => ({}));
@@ -29,12 +28,34 @@ export async function POST(req: NextRequest) {
     }
 
     const payment = await mpRes.json();
-    console.log(`Mercado Pago status: ${payment.status} | ref: ${payment.external_reference} | val: ${payment.transaction_amount}`);
+    console.log(`Mercado Pago status: ${payment.status} | ref: ${payment.external_reference} | val: ${payment.transaction_amount} | email: ${payment.payer?.email}`);
 
     // Se o pagamento foi aprovado (seja PIX ou Cartão de Crédito)
     if (payment.status === 'approved') {
-      const uid = payment.external_reference || payment.metadata?.user_id;
+      let uid = payment.external_reference || payment.metadata?.user_id;
       const planId = payment.metadata?.plan_id || 'yearly';
+      const payerEmail = payment.payer?.email?.toLowerCase().trim();
+      const payerName = [payment.payer?.first_name, payment.payer?.last_name].filter(Boolean).join(' ').trim();
+
+      // Se não havia uid ou era 'anonymous', localiza ou cria o usuário pelo e-mail do pagador
+      if ((!uid || uid === 'anonymous') && payerEmail) {
+        try {
+          const existingUser = await adminAuth.getUserByEmail(payerEmail);
+          uid = existingUser.uid;
+        } catch (authErr: any) {
+          if (authErr.code === 'auth/user-not-found') {
+            const newUser = await adminAuth.createUser({
+              email: payerEmail,
+              displayName: payerName || 'Assinante Contos & Virtudes',
+              emailVerified: true
+            });
+            uid = newUser.uid;
+            console.log(`✨ Novo usuário criado automaticamente no Firebase Auth: ${payerEmail} (${uid})`);
+          } else {
+            console.error('Erro ao buscar usuário por e-mail no Auth:', authErr);
+          }
+        }
+      }
 
       if (uid && uid !== 'anonymous') {
         const expiresAt = new Date();
@@ -44,17 +65,22 @@ export async function POST(req: NextRequest) {
           expiresAt.setMonth(expiresAt.getMonth() + 1);
         }
 
-        await adminDb.collection('users').doc(uid).set({
+        const userPayload: any = {
           plan: 'premium2',
           planType: planId,
           planStatus: 'active',
           planExpiresAt: expiresAt,
-          lastPaymentId: paymentId,
+          lastPaymentId: String(paymentId),
           paymentProvider: 'mercadopago',
           updatedAt: new Date()
-        }, { merge: true });
+        };
 
-        console.log(`🎉 Usuário ${uid} atualizado com sucesso para Plano Premium Contos & Virtudes!`);
+        if (payerEmail) userPayload.email = payerEmail;
+        if (payerName) userPayload.displayName = payerName;
+
+        await adminDb.collection('users').doc(uid).set(userPayload, { merge: true });
+
+        console.log(`🎉 Assinatura ativada com sucesso para usuário ${uid} (${payerEmail || 'sem email'})!`);
       }
     }
 

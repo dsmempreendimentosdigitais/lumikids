@@ -29,6 +29,15 @@ export default function ProgressoPage() {
   const [userCoverId, setUserCoverId] = useState<string>('night_stars');
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('payment') === 'success' || params.get('payment_id')) {
+        window.location.href = `/app/sucesso${window.location.search}`;
+      }
+    }
+  }, []);
+
+  useEffect(() => {
     // Carrega personalização do localStorage
     if (typeof window !== 'undefined' && user?.uid) {
       const savedAvatar = localStorage.getItem(`contosevirtudes_avatar_${user.uid}`) || localStorage.getItem(`lumikids_avatar_${user.uid}`);

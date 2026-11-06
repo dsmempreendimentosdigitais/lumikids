@@ -36,9 +36,9 @@ export async function POST(req: NextRequest) {
           name: userName || 'Assinante Contos & Virtudes'
         },
         back_urls: {
-          success: `${origin}/app/progresso?payment=success&plan=${plan.id}`,
+          success: `${origin}/app/sucesso`,
           failure: `${origin}/app/planos?payment=failure`,
-          pending: `${origin}/app/progresso?payment=pending&plan=${plan.id}`
+          pending: `${origin}/app/sucesso?payment=pending`
         },
         auto_return: 'approved',
         notification_url: `${origin}/api/webhooks/mercadopago`,

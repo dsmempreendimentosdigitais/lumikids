@@ -150,8 +150,13 @@ export default function CadastroPage() {
           <i className="fab fa-google text-red-500"></i> Entrar com Google
         </button>
 
-        <div className="mt-5 text-center text-xs text-slate-500 font-semibold">
-          Já tem uma conta? <Link href="/login" className="text-[#0D9488] font-bold hover:underline">Fazer Login</Link>
+        <div className="mt-5 text-center text-xs text-slate-500 font-semibold space-y-2">
+          <div>
+            Já tem uma conta? <Link href="/login" className="text-[#0D9488] font-bold hover:underline">Fazer Login</Link>
+          </div>
+          <div className="pt-2 border-t border-slate-100">
+            Já assinou pelo Mercado Pago ou PIX? <Link href="/app/sucesso" className="text-amber-700 font-bold hover:underline">Ativar meu acesso</Link>
+          </div>
         </div>
       </div>
     </div>
