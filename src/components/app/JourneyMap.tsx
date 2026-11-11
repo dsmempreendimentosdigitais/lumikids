@@ -243,74 +243,120 @@ export default function JourneyMap({ stories, userPlan = 'free', isAdmin = false
       {/* ═══ CONTEÚDO PRINCIPAL DO MAPA ═══ */}
       <div className="relative z-10 w-full max-w-5xl mx-auto px-4 sm:px-6 pt-4 pb-28">
         
-        {/* ═══ BARRA SUPERIOR: DESTAQUE DO LIVRO DE AVENTURAS & TRILHAS ═══ */}
-        <div className="sticky top-2 z-40 mb-6 py-1">
-          <div className="flex items-center justify-between gap-2.5 sm:gap-4 bg-white/95 backdrop-blur-md rounded-full px-3 py-2 sm:px-4 sm:py-2.5 shadow-[0_10px_30px_rgba(0,0,0,0.08)] border-2 border-white">
+        {/* ═══ BARRA SUPERIOR FLUTUANTE (Estilo Lumi Kids Explorer) ═══ */}
+        <div className="sticky top-2 z-40 mb-3 py-1">
+          <div className="flex items-center justify-between gap-2 bg-white/95 backdrop-blur-md rounded-full px-3.5 py-2 shadow-sm border border-slate-200/80 max-w-md mx-auto">
             
-            {/* BOTÃO DO LIVRO EM SUPER DESTAQUE (Topo Superior Esquerdo) */}
-            <button
-              type="button"
-              onClick={() => {
-                playSound(580);
-                setIsCatalogOpen(true);
-              }}
-              className="flex items-center gap-2 sm:gap-3 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-full bg-gradient-to-r from-amber-400 via-amber-500 to-orange-500 text-slate-950 font-black shadow-[0_6px_20px_rgba(245,158,11,0.4)] border-2 border-white hover:scale-105 active:scale-95 transition-all cursor-pointer group shrink-0"
-              title="Abrir Todas as Trilhas e Histórias"
-            >
-              <span className="text-2xl sm:text-3xl leading-none drop-shadow-sm group-hover:scale-110 group-hover:rotate-6 transition-transform">
-                📖
-              </span>
-              <div className="text-left">
-                <span className="text-xs sm:text-sm font-black uppercase tracking-tight block leading-tight text-slate-950">
-                  Todas as Trilhas
-                </span>
-                <span className="text-[0.62rem] sm:text-[0.68rem] font-bold text-amber-950/80 block leading-none">
-                  Escolher História 📚
-                </span>
-              </div>
-            </button>
-
-            {/* CENTRO: LOGO CONTOS & VIRTUDES */}
-            <Link href="/" className="flex items-center gap-2 hover:opacity-95 transition-opacity">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-300 via-amber-400 to-amber-500 p-0.5 shadow-xs flex items-center justify-center shrink-0">
-                <img 
-                  src="/icons/lumikids-star-logo.svg" 
-                  alt="Contos & Virtudes" 
-                  className="w-full h-full object-contain"
-                />
-              </div>
+            {/* Lado Esquerdo: Avatar + Nome + Bandeira + Meta */}
+            <div className="flex items-center gap-2.5">
+              <Link 
+                href="/app/progresso" 
+                className="w-10 h-10 rounded-full bg-amber-100 border-2 border-white shadow-xs overflow-hidden flex items-center justify-center shrink-0 hover:scale-105 transition-transform" 
+                title="Meu Perfil"
+              >
+                <span className="text-xl">🦁</span>
+              </Link>
               <div className="flex flex-col leading-tight">
-                <span className="font-serif font-black text-lg sm:text-xl tracking-tight text-slate-900">
-                  Contos <span className="text-[#0D9488]">&</span> <span className="text-[#D97706]">Virtudes</span>
+                <span className="font-bold text-xs sm:text-sm text-slate-900 truncate max-w-[100px] sm:max-w-[130px]">
+                  {userName}
                 </span>
+                <div className="flex items-center gap-1.5 text-[0.62rem] text-slate-500 font-semibold">
+                  <span className="inline-flex items-center gap-0.5">🇧🇷 Português</span>
+                  <span className="text-slate-300">•</span>
+                  <span className="text-purple-600 font-bold inline-flex items-center gap-0.5">
+                    🎯 {completedCount}/{trailStories.length || 4}
+                  </span>
+                </div>
               </div>
-            </Link>
+            </div>
 
-            {/* LADO DIREITO: SELETOR DE IDIOMA, ADMIN & TROFÉU */}
-            <div className="flex items-center gap-2 shrink-0">
-              <LanguageSelector variant="pill" />
-              
+            {/* Lado Direito: Estrelas + Botão Família / Perfil */}
+            <div className="flex items-center gap-1.5 shrink-0">
+              {/* Pill de Estrelas */}
+              <div className="px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-700 font-black text-xs flex items-center gap-1 shadow-2xs">
+                <span>⭐</span>
+                <span>{totalStarsCount}</span>
+              </div>
+
+              {/* Botão de Família / Perfil */}
+              <Link
+                href="/app/progresso"
+                onClick={() => playSound(480)}
+                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center text-sm shadow-2xs transition-all cursor-pointer"
+                title="Família & Progresso"
+              >
+                👥
+              </Link>
+
               {isAdmin && (
                 <Link
                   href="/app/admin"
-                  className="px-2.5 py-1 rounded-full bg-amber-400 text-slate-950 font-black text-xs shadow-xs border border-white flex items-center gap-1 hover:scale-105 transition-transform"
+                  className="px-2 py-1 rounded-full bg-amber-400 text-slate-950 font-black text-[0.65rem] shadow-xs"
                   title="Admin"
                 >
                   👑
                 </Link>
               )}
-
-              <Link
-                href="/app/progresso"
-                onClick={() => playSound(480)}
-                className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-amber-50 text-amber-500 border-2 border-amber-300 shadow-xs flex items-center justify-center font-black text-lg hover:scale-105 active:scale-95 transition-all"
-                title="Meu Álbum & Progresso"
-              >
-                🏆
-              </Link>
             </div>
 
           </div>
+        </div>
+
+        {/* ═══ CARD FLUTUANTE: PRÓXIMA ILHA / HISTÓRIA (Estilo Lumi Kids) ═══ */}
+        {trailStories.length > 0 && (
+          <div className="max-w-md mx-auto mb-3 px-1">
+            {(() => {
+              const nextStory = trailStories.find(s => !s.isCompleted) || trailStories[0];
+              const completedInCurrent = trailStories.filter(s => s.isCompleted || (s.stars && s.stars > 0)).length;
+              const totalInCurrent = trailStories.length || 4;
+
+              return (
+                <Link
+                  href={`/app/historias/${nextStory.id}`}
+                  onClick={() => playSound(640)}
+                  className="bg-white/95 backdrop-blur-md rounded-3xl p-3.5 shadow-sm border border-purple-100/90 flex items-center justify-between gap-3 group hover:shadow-md transition-all block text-left"
+                >
+                  {/* Anel de Progresso Circular */}
+                  <div className="relative w-12 h-12 rounded-full bg-purple-50 border-2 border-purple-300 flex items-center justify-center shrink-0">
+                    <span className="font-bold text-xs text-purple-700">
+                      {completedInCurrent}/{totalInCurrent}
+                    </span>
+                  </div>
+
+                  {/* Textos da Próxima Ilha */}
+                  <div className="flex-1 min-w-0">
+                    <span className="text-[0.65rem] font-bold text-purple-600 uppercase tracking-wider block">
+                      Próxima Aventura
+                    </span>
+                    <h3 className="font-serif font-bold text-slate-900 text-sm truncate leading-tight group-hover:text-[#6C47FF] transition-colors">
+                      {nextStory.title}
+                    </h3>
+                    <p className="text-[0.68rem] text-slate-500 font-semibold truncate mt-0.5">
+                      {activeTrail.title} • 5-7 min • {nextStory.value || 'Sabedoria'}
+                    </p>
+                  </div>
+
+                  {/* Botão de Ação Roxo com Sparkle */}
+                  <div className="w-10 h-10 rounded-full bg-[#6C47FF] text-white flex items-center justify-center shrink-0 shadow-md group-hover:scale-105 active:scale-95 transition-transform">
+                    <Sparkles size={18} />
+                  </div>
+                </Link>
+              );
+            })()}
+          </div>
+        )}
+
+        {/* ═══ PILL DE NÍVEL / TRILHA ATIVA ═══ */}
+        <div className="max-w-md mx-auto mb-6 flex justify-start px-2">
+          <button
+            type="button"
+            onClick={() => setIsCatalogOpen(true)}
+            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-600 text-white font-bold text-xs shadow-xs hover:bg-emerald-700 transition-colors cursor-pointer"
+          >
+            <span>🎓</span>
+            <span>Trilha: {activeTrail.title}</span>
+            <span className="text-emerald-200 text-[0.65rem] ml-1">Trocar ▾</span>
+          </button>
         </div>
 
         {/* ═══ MAPA DE AVENTURA CONTÍNUO (TODOS OS MUNDOS INTEGRADOS NA MESMA TRILHA) ═══ */}
@@ -367,24 +413,23 @@ export default function JourneyMap({ stories, userPlan = 'free', isAdmin = false
                       return (
                         <div key={story.id} className={`relative flex flex-col items-center transition-all ${posClass}`}>
                           
-                          {/* PONTILHADO DOURADO CONECTANDO OS NÓS */}
+                          {/* PEDRINHAS DE PASSAGEM (STEPPING STONES) CONECTANDO OS NÓS */}
                           {index < worldStories.length - 1 && (
-                            <div className="absolute top-20 flex flex-col items-center gap-1.5 -z-0 pointer-events-none opacity-80">
-                              <div className="w-2.5 h-2.5 rounded-full bg-amber-400 border border-amber-500 shadow-xs"></div>
-                              <div className="w-2.5 h-2.5 rounded-full bg-amber-400 border border-amber-500 shadow-xs"></div>
-                              <div className="w-2.5 h-2.5 rounded-full bg-amber-400 border border-amber-500 shadow-xs"></div>
-                              <div className="w-2.5 h-2.5 rounded-full bg-amber-400 border border-amber-500 shadow-xs"></div>
+                            <div className="absolute top-24 flex flex-col items-center gap-2 -z-0 pointer-events-none opacity-85">
+                              <div className="w-4 h-3 rounded-full bg-[#E5D7B8] border border-[#C5B38F] shadow-2xs"></div>
+                              <div className="w-4 h-3 rounded-full bg-[#E5D7B8] border border-[#C5B38F] shadow-2xs"></div>
+                              <div className="w-4 h-3 rounded-full bg-[#E5D7B8] border border-[#C5B38F] shadow-2xs"></div>
                             </div>
                           )}
 
-                          {/* LINK DO NÓ DE HISTÓRIA */}
+                          {/* LINK DA ILHA DE HISTÓRIA */}
                           <Link
                             href={`/app/historias/${story.id}`}
                             onClick={() => playSound(640)}
                             className="group relative flex flex-col items-center focus:outline-none"
                           >
-                            {/* NÓ METÁLICO 3D */}
-                            <div className={`metallic-node-rim relative w-24 h-24 sm:w-28 sm:h-28 rounded-full flex items-center justify-center cursor-pointer ${
+                            {/* ILHA FLUTUANTE ILUSTRADA */}
+                            <div className={`relative w-24 h-24 sm:w-28 sm:h-28 rounded-full p-1 bg-white border-3 sm:border-4 border-white shadow-[0_12px_24px_rgba(0,0,0,0.14)] flex items-center justify-center cursor-pointer transition-transform duration-300 group-hover:scale-108 ${
                               isLocked ? 'grayscale opacity-75' : ''
                             }`}>
                               <div className="w-full h-full rounded-full overflow-hidden bg-slate-100 flex items-center justify-center">
@@ -397,37 +442,21 @@ export default function JourneyMap({ stories, userPlan = 'free', isAdmin = false
                                 )}
                               </div>
 
-                              {/* Mini-Badge de Atividade no Canto Superior Direito */}
-                              <div className={`absolute -top-1.5 -right-1.5 w-7 h-7 rounded-full ${tag.bg} text-white flex items-center justify-center text-xs shadow-md border-2 border-white`}>
-                                <span>{tag.emoji}</span>
-                              </div>
-
-                              {/* PEDESTAL DAS 3 ESTRELAS NA BASE INFERIOR */}
-                              <div className="stars-pedestal absolute -bottom-3 z-10 px-3 py-0.5 rounded-full flex items-center gap-1">
-                                {[1, 2, 3].map((s) => (
-                                  <Star
-                                    key={s}
-                                    size={12}
-                                    className={`${
-                                      s <= starsCount
-                                        ? 'text-amber-400 fill-amber-400 drop-shadow-xs'
-                                        : 'text-slate-300 fill-slate-300'
-                                    }`}
-                                  />
-                                ))}
+                              {/* BADGE DE CADEADO OU ESTRELA NO CANTO DA ILHA (Estilo Lumi Kids) */}
+                              <div className="absolute -top-1 -right-1 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white text-slate-800 flex items-center justify-center text-xs shadow-md border border-slate-200">
+                                {isLocked ? (
+                                  <Lock size={13} className="text-slate-600" />
+                                ) : (
+                                  <Star size={13} className="text-amber-500 fill-amber-500" />
+                                )}
                               </div>
                             </div>
 
-                            {/* TÍTULO DA HISTÓRIA EM CARTÃO LÚDICO */}
-                            <div className="mt-4 bg-white/95 backdrop-blur-sm px-3.5 py-1.5 rounded-2xl border border-slate-200/90 shadow-sm max-w-[170px] text-center">
-                              <h4 className="font-serif font-bold text-xs text-slate-900 leading-tight line-clamp-2">
+                            {/* ETIQUETA / PILL BRANCA LIMPA ABAIXO DA ILHA (Estilo Lumi Kids) */}
+                            <div className="mt-2.5 bg-white px-3.5 py-1 sm:px-4 sm:py-1.5 rounded-full border border-slate-100 shadow-md max-w-[190px] text-center group-hover:border-purple-200 transition-colors">
+                              <h4 className="font-bold text-xs sm:text-sm text-slate-800 leading-tight truncate">
                                 {story.title}
                               </h4>
-                              {story.value && (
-                                <span className="text-[0.62rem] font-bold text-[#0D9488] uppercase block mt-0.5 truncate">
-                                  ⭐ {story.value}
-                                </span>
-                              )}
                             </div>
                           </Link>
 
@@ -456,47 +485,50 @@ export default function JourneyMap({ stories, userPlan = 'free', isAdmin = false
           })}
         </div>
 
-        {/* ═══ BARRA FLUTUANTE DE STATS NO CANTO INFERIOR ESQUERDO (Estilo Bible App) ═══ */}
-        <div className="fixed bottom-5 sm:bottom-8 left-4 sm:left-8 z-30 bg-white/95 backdrop-blur-md rounded-full px-5 py-2.5 sm:px-6 sm:py-3 border-2 border-white shadow-[0_10px_30px_rgba(0,0,0,0.15)] flex items-center gap-4 sm:gap-6">
-          <div className="flex items-center gap-2 font-black text-amber-700 text-sm sm:text-base" title="Troféus conquistados">
-            <span className="text-xl sm:text-2xl">🏆</span>
-            <span className="text-base sm:text-lg">{completedCount}</span>
-          </div>
-          <div className="flex items-center gap-2 font-black text-amber-500 text-sm sm:text-base" title="Estrelas coletadas">
-            <span className="text-xl sm:text-2xl">⭐</span>
-            <span className="text-base sm:text-lg">{totalStarsCount}</span>
-          </div>
-          <div className="flex items-center gap-2 font-black text-cyan-600 text-sm sm:text-base" title="Gemas do explorador">
-            <span className="text-xl sm:text-2xl">💎</span>
-            <span className="text-base sm:text-lg">{diamondCount}</span>
-          </div>
-        </div>
-
-        {/* ═══ BOTÕES FLUTUANTES DE AÇÃO NO CANTO INFERIOR DIREITO (Estilo Bible App) ═══ */}
-        <div className="fixed bottom-5 sm:bottom-8 right-4 sm:right-8 z-30 flex items-center gap-3 sm:gap-4">
-          {/* Botão de Perfil / Álbum */}
-          <Link
-            href="/app/progresso"
-            onClick={() => playSound(480)}
-            className="w-13 h-13 sm:w-15 sm:h-15 md:w-16 md:h-16 rounded-full bg-white text-[#0284C7] shadow-[0_10px_30px_rgba(0,0,0,0.15)] border-3 sm:border-4 border-white flex items-center justify-center font-black text-2xl sm:text-3xl hover:scale-105 active:scale-95 transition-transform"
-            title="Meu Álbum & Progresso"
-          >
-            👤
-          </Link>
-
-          {/* Botão de Configurações */}
+        {/* ═══ BARRA INFERIOR DOCKADA (Estilo Mobile Lumi Kids) ═══ */}
+        <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-8px_30px_rgba(0,0,0,0.08)] py-2 px-6 flex items-center justify-around max-w-lg mx-auto sm:rounded-t-3xl">
+          {/* Tab 1: Jornada */}
           <button
             type="button"
             onClick={() => {
-              playSound(520);
-              setIsSettingsOpen(true);
+              playSound(480);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
-            className="w-13 h-13 sm:w-15 sm:h-15 md:w-16 md:h-16 rounded-full bg-white text-[#0284C7] shadow-[0_10px_30px_rgba(0,0,0,0.15)] border-3 sm:border-4 border-white flex items-center justify-center font-black text-2xl sm:text-3xl hover:scale-105 active:scale-95 transition-transform cursor-pointer"
-            title="Configurações do Mapa"
+            className="flex flex-col items-center gap-0.5 cursor-pointer group"
           >
-            ⚙️
+            <div className="w-12 h-8 rounded-2xl bg-[#D1FAE5] text-[#065F46] flex items-center justify-center text-lg shadow-2xs group-hover:scale-105 transition-transform">
+              🗺️
+            </div>
+            <span className="font-bold text-[0.68rem] text-[#065F46]">Jornada</span>
           </button>
-        </div>
+
+          {/* Tab 2: Todas as Histórias (Catálogo) */}
+          <button
+            type="button"
+            onClick={() => {
+              playSound(580);
+              setIsCatalogOpen(true);
+            }}
+            className="flex flex-col items-center gap-0.5 cursor-pointer group"
+          >
+            <div className="w-12 h-8 rounded-2xl bg-slate-100 text-slate-600 flex items-center justify-center text-lg group-hover:bg-purple-100 group-hover:text-purple-700 transition-colors">
+              📚
+            </div>
+            <span className="font-bold text-[0.68rem] text-slate-600 group-hover:text-purple-700">Histórias</span>
+          </button>
+
+          {/* Tab 3: Playground / Perfil */}
+          <Link
+            href="/app/progresso"
+            onClick={() => playSound(520)}
+            className="flex flex-col items-center gap-0.5 cursor-pointer group"
+          >
+            <div className="w-12 h-8 rounded-2xl bg-slate-100 text-slate-600 flex items-center justify-center text-lg group-hover:bg-amber-100 group-hover:text-amber-700 transition-colors">
+              🎪
+            </div>
+            <span className="font-bold text-[0.68rem] text-slate-600 group-hover:text-amber-700">Playground</span>
+          </Link>
+        </nav>
 
       </div>
 

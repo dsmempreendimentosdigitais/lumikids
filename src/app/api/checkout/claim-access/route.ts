@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminDb, adminAuth } from '@/lib/firebase/admin';
+import { sendWelcomeAccessEmail } from '@/lib/email';
 
 export const dynamic = 'force-dynamic';
 
@@ -48,7 +49,17 @@ export async function POST(req: NextRequest) {
       const planId = targetPayment.metadata?.plan_id || 'yearly';
 
       if (!payerEmail) {
-        return NextResponse.json({ error: 'E-mail do pagador não encontrado no comprovante.' }, { status: 400 });
+        // Dispara e-mail profissional com dados de compra e login
+      sendWelcomeAccessEmail({
+        email: payerEmail,
+        name: payerName,
+        planName: planId === 'yearly' ? 'Plano Anual' : 'Plano Mensal',
+        planAmount: planId === 'yearly' ? 'R$ 199,90' : 'R$ 29,90',
+        password: password || undefined,
+        paymentId: String(targetPayment.id)
+      }).catch(e => console.error('[claim-access] Erro ao enviar email:', e));
+
+      return NextResponse.json({ error: 'E-mail do pagador não encontrado no comprovante.' }, { status: 400 });
       }
 
       // Localiza ou cria o usuário no Firebase Auth
@@ -95,6 +106,16 @@ export async function POST(req: NextRequest) {
       // Gera Custom Token para login imediato no navegador sem pedir credenciais novamente
       const customToken = await adminAuth.createCustomToken(userRecord.uid);
 
+      // Dispara e-mail profissional com dados de compra e login
+      sendWelcomeAccessEmail({
+        email: payerEmail,
+        name: payerName,
+        planName: planId === 'yearly' ? 'Plano Anual' : 'Plano Mensal',
+        planAmount: planId === 'yearly' ? 'R$ 199,90' : 'R$ 29,90',
+        password: password || undefined,
+        paymentId: String(targetPayment.id)
+      }).catch(e => console.error('[claim-access] Erro ao enviar email:', e));
+
       return NextResponse.json({
         success: true,
         email: payerEmail,
@@ -116,6 +137,15 @@ export async function POST(req: NextRequest) {
             await adminAuth.updateUser(user.uid, { password });
           }
           const token = await adminAuth.createCustomToken(user.uid);
+          // Dispara e-mail profissional com dados de compra e login
+          sendWelcomeAccessEmail({
+            email: cleanEmail,
+            name: user.displayName || 'Assinante',
+            planName: userDoc.data()?.planType === 'yearly' ? 'Plano Anual' : 'Plano Mensal',
+            planAmount: userDoc.data()?.planType === 'yearly' ? 'R$ 199,90' : 'R$ 29,90',
+            password: password || undefined
+          }).catch(e => console.error('[claim-access] Erro ao enviar email:', e));
+
           return NextResponse.json({
             success: true,
             email: cleanEmail,

@@ -4,15 +4,27 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { SUBSCRIPTION_PLANS } from '@/config/plans';
-import LumikidsLogo from '@/components/ui/LumikidsLogo';
-import { Check, Crown, ShieldCheck, Zap, ArrowLeft, QrCode, CreditCard, Sparkles, MessageCircle } from 'lucide-react';
+
+type SubscriptionPlanId = 'monthly' | 'yearly';
+import { 
+  X, 
+  Crown, 
+  Sparkles, 
+  BookOpen, 
+  Volume2, 
+  Users, 
+  Check, 
+  Award, 
+  Compass, 
+  ShieldCheck, 
+  Loader2 
+} from 'lucide-react';
 
 export default function PlanosPage() {
   const router = useRouter();
   const { user } = useAuth();
-  
-  const [selectedPlanId, setSelectedPlanId] = useState<'yearly' | 'monthly'>('yearly');
-  const [paymentMethod, setPaymentMethod] = useState<'pix' | 'card'>('pix');
+
+  const [selectedPlanId, setSelectedPlanId] = useState<SubscriptionPlanId>('yearly');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -40,13 +52,11 @@ export default function PlanosPage() {
         throw new Error(data.error || 'Erro ao comunicar com o servidor');
       }
 
-      // Redirecionamento direto e profissional para o checkout oficial do Mercado Pago
       if (data.init_point) {
         window.location.href = data.init_point;
         return;
       }
 
-      // Fallback seguro de link direto de checkout do Mercado Pago
       window.location.href = 'https://www.mercadopago.com.br';
     } catch (err: any) {
       console.error('Erro ao iniciar checkout:', err);
@@ -57,228 +67,266 @@ export default function PlanosPage() {
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col justify-between bg-gradient-to-b from-[#FFFDF9] via-[#FAF6ED] to-[#F5ECE0] text-[#1A1D20] font-sans overflow-x-hidden select-none py-6 px-4 sm:px-8 md:px-12">
+    <div className="min-h-screen w-full bg-gradient-to-b from-[#F3F0FF] via-[#F8F6FF] to-white text-[#1E1B4B] font-sans overflow-x-hidden select-none flex flex-col justify-between p-4 sm:p-6 md:p-8">
       
-      {/* ═══ TOPO / CABEÇALHO FLUIDO E ESPAÇOSO ═══ */}
-      <header className="w-full max-w-4xl mx-auto flex items-center justify-between pb-6">
-        <button 
+      {/* ═══ TOPO / BOTÃO FECHAR ESTILO APP LUMI KIDS ═══ */}
+      <div className="w-full max-w-md mx-auto flex items-center justify-between pt-1 pb-3">
+        <button
           type="button"
-          onClick={() => router.back()} 
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/90 hover:bg-white border border-amber-200 text-slate-700 transition-all shadow-xs cursor-pointer active:scale-95 text-xs sm:text-sm font-bold"
-          title="Voltar"
+          onClick={() => router.back()}
+          className="w-10 h-10 rounded-full bg-white/90 hover:bg-white text-slate-700 shadow-sm border border-slate-200/60 flex items-center justify-center transition-all cursor-pointer active:scale-95"
+          title="Fechar"
         >
-          <ArrowLeft size={18} />
-          <span>Voltar ao App</span>
+          <X size={20} />
         </button>
 
-        <LumikidsLogo size="sm" withLink={false} />
-
-        <span className="hidden sm:inline-flex text-xs font-black uppercase tracking-wider text-amber-900 bg-amber-100/90 px-4 py-1.5 rounded-full border border-amber-300 shadow-2xs">
-          👑 Acesso Ilimitado Contos & Virtudes
+        <span className="text-[0.68rem] font-bold text-[#6C47FF] bg-purple-100/80 px-3 py-1 rounded-full border border-purple-200 flex items-center gap-1">
+          <ShieldCheck size={13} />
+          Garantia de 7 dias
         </span>
-      </header>
+      </div>
 
-      {/* ═══ CORPO PRINCIPAL: PREENCHENDO A TELA DE FORMA HARMÔNICA ═══ */}
-      <main className="w-full max-w-3xl mx-auto flex-1 flex flex-col justify-center py-4">
+      {/* ═══ CORPO PRINCIPAL DO PAYWALL ═══ */}
+      <main className="w-full max-w-md mx-auto flex-1 flex flex-col justify-center py-2">
         
-        {/* Título Principal com Tipografia Grande e Arejada */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-amber-300 via-amber-400 to-amber-500 text-amber-950 border-4 border-white shadow-lg mb-4 animate-bounce-subtle">
-            <Crown size={36} />
+        {/* Mascote Ilustrado (Corujinha Sábia com Baú de Tesouro & Estrelas) */}
+        <div className="text-center mb-3 flex flex-col items-center">
+          <div className="relative w-28 h-28 sm:w-32 sm:h-32 mb-1 drop-shadow-md">
+            {/* SVG da Corujinha Sábia com Estrelas & Tesouro */}
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+              {/* Brilhos de fundo */}
+              <circle cx="60" cy="60" r="50" fill="#EDE9FE" opacity="0.6"/>
+              <path d="M60 12L63 22H73L65 28L68 38L60 32L52 38L55 28L47 22H57L60 12Z" fill="#FBBF24"/>
+              <path d="M98 42L100 48H106L101 52L103 58L98 54L93 58L95 52L90 48H96L98 42Z" fill="#FBBF24" opacity="0.8"/>
+              <path d="M22 45L23.5 50H28L24.5 53L26 58L22 55L18 58L19.5 53L16 50H20.5L22 45Z" fill="#FBBF24" opacity="0.8"/>
+
+              {/* Corpo da Corujinha */}
+              <ellipse cx="60" cy="68" rx="26" ry="30" fill="#7C5CFC"/>
+              {/* Peito da Corujinha */}
+              <ellipse cx="60" cy="74" rx="18" ry="20" fill="#FEF3C7"/>
+              {/* Asas */}
+              <path d="M34 62C30 70 32 84 40 88C37 80 36 70 38 62Z" fill="#5B36F0"/>
+              <path d="M86 62C90 70 88 84 80 88C83 80 84 70 82 62Z" fill="#5B36F0"/>
+              {/* Orelhas / Peninhas */}
+              <polygon points="42,42 48,50 36,52" fill="#5B36F0"/>
+              <polygon points="78,42 72,50 84,52" fill="#5B36F0"/>
+              {/* Olhos Grandes Expressivos */}
+              <circle cx="48" cy="54" r="11" fill="#FFFFFF"/>
+              <circle cx="72" cy="54" r="11" fill="#FFFFFF"/>
+              <circle cx="49" cy="54" r="6.5" fill="#1E1B4B"/>
+              <circle cx="71" cy="54" r="6.5" fill="#1E1B4B"/>
+              <circle cx="51" cy="52" r="2.2" fill="#FFFFFF"/>
+              <circle cx="73" cy="52" r="2.2" fill="#FFFFFF"/>
+              {/* Bico */}
+              <polygon points="56,60 64,60 60,67" fill="#F59E0B"/>
+              {/* Bochechinhas rosadas */}
+              <ellipse cx="40" cy="62" rx="4" ry="2.5" fill="#FCA5A5" opacity="0.7"/>
+              <ellipse cx="80" cy="62" rx="4" ry="2.5" fill="#FCA5A5" opacity="0.7"/>
+              {/* Patinhas segurando baú */}
+              <ellipse cx="50" cy="98" rx="5" ry="3" fill="#F59E0B"/>
+              <ellipse cx="70" cy="98" rx="5" ry="3" fill="#F59E0B"/>
+              {/* Baú de ouro */}
+              <rect x="42" y="94" width="36" height="18" rx="4" fill="#D97706"/>
+              <rect x="44" y="90" width="32" height="6" rx="2" fill="#FBBF24"/>
+              <circle cx="60" cy="98" r="2.5" fill="#FEF3C7"/>
+            </svg>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-black text-slate-900 leading-tight mb-3">
-            Desbloqueie Todas as Histórias
-          </h1>
-          
-          <p className="text-slate-600 text-sm sm:text-base md:text-lg font-semibold max-w-2xl mx-auto leading-relaxed">
-            Tenha acesso completo e irrestrito a mais de 60 histórias ilustradas no estilo Puffin Rock, narração em áudio profissional, quizzes pedagógicos e 5 idiomas.
+          {/* Título Oficial Estilo Lumi Plus */}
+          <div className="flex items-center justify-center gap-2 mb-0.5">
+            <span className="text-2xl sm:text-3xl">👑</span>
+            <h1 className="text-2xl sm:text-3xl font-serif font-black text-slate-900 tracking-tight">
+              Contos & Virtudes Plus
+            </h1>
+          </div>
+          <p className="text-slate-500 font-semibold text-xs sm:text-sm max-w-xs mx-auto">
+            Acesso ilimitado. Todas as 60+ histórias, narração e virtudes.
           </p>
         </div>
 
-        {/* Toggle Mensal / Anual Responsivo e Confortável */}
-        <div className="bg-amber-100/70 p-2 rounded-full border border-amber-300 flex items-center justify-between mb-8 shadow-inner max-w-md w-full mx-auto">
-          <button
-            type="button"
-            onClick={() => setSelectedPlanId('monthly')}
-            className={`flex-1 py-3 px-4 rounded-full text-xs sm:text-sm font-black transition-all cursor-pointer text-center ${
-              selectedPlanId === 'monthly'
-                ? 'bg-white text-slate-900 shadow-md'
-                : 'text-amber-900 hover:text-slate-900'
-            }`}
-          >
-            Mensal (R$ 29,90)
-          </button>
-          
-          <button
-            type="button"
-            onClick={() => setSelectedPlanId('yearly')}
-            className={`flex-1 py-3 px-4 rounded-full text-xs sm:text-sm font-black transition-all relative cursor-pointer text-center ${
-              selectedPlanId === 'yearly'
-                ? 'bg-[#0D9488] text-white shadow-md'
-                : 'text-amber-900 hover:text-slate-900'
-            }`}
-          >
-            Anual (R$ 19,90/mês)
-            <span className="absolute -top-3 -right-1 bg-amber-400 text-amber-950 text-[0.65rem] font-black uppercase px-2.5 py-0.5 rounded-full shadow-xs border border-white">
-              -33% OFF
-            </span>
-          </button>
-        </div>
-
-        {/* Card do Plano Selecionado (Espaçoso, Fluido e com Fontes Maiores) */}
-        <div className="w-full bg-white rounded-[36px] overflow-hidden shadow-2xl border-2 border-amber-300 relative transition-all">
-          
-          {selectedPlanId === 'yearly' && (
-            <div className="bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 text-amber-950 text-xs sm:text-sm font-black uppercase tracking-wider py-2.5 px-4 text-center shadow-xs">
-              ⭐ O PLANO MAIS ESCOLHIDO PELAS FAMÍLIAS ⭐
-            </div>
-          )}
-
-          {/* Cabeçalho do Card */}
-          <div className="p-6 sm:p-8 text-center border-b border-amber-100 bg-gradient-to-b from-amber-50/70 to-white">
-            <h2 className="text-2xl sm:text-3xl font-serif font-black text-slate-900 mb-2">
-              {selectedPlan.name}
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-500 font-semibold mb-4 max-w-lg mx-auto">
-              {selectedPlan.description}
-            </p>
-
-            {/* Destaque do Preço */}
-            <div className="flex items-baseline justify-center gap-2 my-3">
-              <span className="text-lg sm:text-xl font-bold text-slate-400">R$</span>
-              <span className="text-6xl sm:text-7xl font-serif font-black text-slate-900 tracking-tight">
-                {selectedPlan.priceMonthlyEquivalent.toFixed(2).split('.')[0]}
-              </span>
-              <span className="text-3xl sm:text-4xl font-serif font-black text-slate-900">
-                ,{selectedPlan.priceMonthlyEquivalent.toFixed(2).split('.')[1]}
-              </span>
-              <span className="text-sm sm:text-base text-slate-500 font-bold">/mês</span>
-            </div>
-
-            {selectedPlanId === 'yearly' ? (
-              <div className="inline-block px-4 py-1.5 rounded-full bg-emerald-50 text-[#0D9488] border border-emerald-200 text-xs sm:text-sm font-black mt-2">
-                Cobrado anualmente: R$ 238,80 ou em até 12x de R$ 19,90 no Cartão
-              </div>
-            ) : (
-              <div className="inline-block px-4 py-1.5 rounded-full bg-amber-50 text-amber-900 border border-amber-200 text-xs sm:text-sm font-black mt-2">
-                Cobrança mês a mês • Sem fidelidade • Cancele quando quiser
-              </div>
-            )}
-          </div>
-
-          {/* Lista de Benefícios Espaçosa com Letras Grandes */}
-          <div className="p-6 sm:p-9 space-y-4 sm:space-y-5 bg-white">
-            {selectedPlan.features.map((feature, idx) => (
-              <div key={idx} className="flex items-start gap-4">
-                <div className="w-7 h-7 rounded-full bg-teal-50 text-[#0D9488] border-2 border-teal-200 flex items-center justify-center text-sm shrink-0 mt-0.5 shadow-xs">
-                  <Check size={16} strokeWidth={3} />
+        {/* ═══ CARD 1: ROTINA SEMANAL (7 DIAS DA SEMANA) ═══ */}
+        <div className="bg-white rounded-3xl p-4 sm:p-5 shadow-xs border border-purple-100/90 mb-3.5">
+          {/* Círculos dos dias da semana */}
+          <div className="flex items-center justify-between max-w-[320px] mx-auto mb-3">
+            {[
+              { day: 'S', active: true },
+              { day: 'T', active: true },
+              { day: 'Q', active: true },
+              { day: 'Q', active: true },
+              { day: 'S', active: true },
+              { day: 'S', active: true },
+              { day: 'D', active: true }
+            ].map((item, idx) => (
+              <div key={idx} className="flex flex-col items-center gap-1">
+                <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm shadow-2xs transition-transform ${
+                  item.active 
+                    ? 'bg-[#6C47FF] text-white shadow-purple-500/20' 
+                    : 'bg-purple-100 text-purple-600'
+                }`}>
+                  <BookOpen size={16} />
                 </div>
-                <span className="text-sm sm:text-base md:text-lg font-bold text-slate-700 leading-relaxed">
-                  {feature}
-                </span>
+                <span className="text-[0.62rem] font-bold text-slate-500">{item.day}</span>
               </div>
             ))}
           </div>
 
-          {/* Formas de Pagamento e CTA do Mercado Pago */}
-          <div className="p-6 sm:p-9 bg-slate-50/70 border-t border-slate-100">
-            <div className="text-xs sm:text-sm font-black uppercase tracking-wider text-slate-500 mb-3 flex items-center justify-between">
-              <span>Forma de Pagamento (Mercado Pago Oficial)</span>
-              <span className="text-[#0D9488] font-black flex items-center gap-1">
-                <Sparkles size={14} /> Aprovação Instantânea
-              </span>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 mb-5">
-              <button
-                type="button"
-                onClick={() => setPaymentMethod('pix')}
-                className={`p-4 rounded-2xl border-2 flex items-center justify-center gap-2.5 text-xs sm:text-sm font-bold transition-all cursor-pointer ${
-                  paymentMethod === 'pix'
-                    ? 'border-[#0D9488] bg-teal-50/90 text-[#0D9488] ring-2 ring-teal-200 shadow-sm'
-                    : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
-                }`}
-              >
-                <QrCode size={20} />
-                <span>PIX Instantâneo</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setPaymentMethod('card')}
-                className={`p-4 rounded-2xl border-2 flex items-center justify-center gap-2.5 text-xs sm:text-sm font-bold transition-all cursor-pointer ${
-                  paymentMethod === 'card'
-                    ? 'border-[#0D9488] bg-teal-50/90 text-[#0D9488] ring-2 ring-teal-200 shadow-sm'
-                    : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
-                }`}
-              >
-                <CreditCard size={20} />
-                <span>Cartão em até 12x</span>
-              </button>
-            </div>
-
-            {/* Mensagem de Erro / Orientação se houver */}
-            {errorMessage && (
-              <div className="mb-4 p-3 bg-amber-100 border border-amber-300 rounded-xl text-amber-900 text-xs font-bold text-center">
-                {errorMessage}
-              </div>
-            )}
-
-            {/* Botão de Compra Gigante e Responsivo */}
-            <button
-              type="button"
-              onClick={handleSubscribe}
-              disabled={loading}
-              className="w-full h-16 sm:h-20 rounded-2xl font-black text-white bg-[#0D9488] hover:bg-[#0F766E] shadow-xl shadow-teal-900/25 active:scale-98 transition-all text-base sm:text-xl uppercase tracking-wider flex items-center justify-center gap-3 cursor-pointer disabled:opacity-60"
-            >
-              {loading ? (
-                <span className="animate-pulse flex items-center gap-2">
-                  <Zap size={22} className="animate-spin" />
-                  Abrindo Mercado Pago Seguro...
-                </span>
-              ) : (
-                <>
-                  <Zap size={24} />
-                  <span>LIBERAR ACESSO TOTAL AGORA 🚀</span>
-                </>
-              )}
-            </button>
+          <div className="text-center">
+            <h3 className="font-serif font-bold text-slate-900 text-sm sm:text-base leading-tight">
+              Uma história por noite, 5 a 7 min
+            </h3>
+            <p className="text-slate-500 text-xs font-semibold mt-0.5">
+              Rotina saudável de sono, conexão e valores para a criança
+            </p>
           </div>
-
-          {/* Selos de Confiança */}
-          <div className="p-4 text-center flex items-center justify-center gap-2.5 text-xs font-bold text-slate-500 bg-slate-50 border-t border-slate-100">
-            <ShieldCheck size={18} className="text-[#0D9488] shrink-0" />
-            <span>Processamento criptografado e 100% seguro pelo Mercado Pago</span>
-          </div>
-
         </div>
 
-        {/* Garantia e Suporte */}
-        <div className="text-center text-xs sm:text-sm text-slate-500 font-semibold mt-6 space-y-2">
-          <p>Cancele quando quiser com apenas 1 clique • Garantia incondicional de 7 dias.</p>
-          <p className="text-xs text-slate-400">
-            Menos de R$ 0,66 por dia para uma rotina noturna saudável com seus filhos.
+        {/* ═══ CARD 2: LISTA DE BENEFÍCIOS (ÍCONES ROXOS) ═══ */}
+        <div className="bg-white rounded-3xl p-4 sm:p-5 shadow-xs border border-purple-100/90 mb-4 space-y-3.5">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-[#6C47FF] text-white flex items-center justify-center shrink-0 shadow-xs">
+              <Compass size={18} />
+            </div>
+            <div>
+              <h4 className="font-bold text-slate-900 text-xs sm:text-sm leading-tight">
+                8 reinos, 60+ histórias desbloqueadas
+              </h4>
+              <p className="text-slate-500 text-[0.68rem] font-semibold">
+                Bíblia, Mitologia, Mulheres Fortes e Grandes Líderes
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-[#6C47FF] text-white flex items-center justify-center shrink-0 shadow-xs">
+              <Volume2 size={18} />
+            </div>
+            <div>
+              <h4 className="font-bold text-slate-900 text-xs sm:text-sm leading-tight">
+                Narração acolhedora em voz humana suave
+              </h4>
+              <p className="text-slate-500 text-[0.68rem] font-semibold">
+                Perfeita para relaxar na hora de dormir
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-[#6C47FF] text-white flex items-center justify-center shrink-0 shadow-xs">
+              <Users size={18} />
+            </div>
+            <div>
+              <h4 className="font-bold text-slate-900 text-xs sm:text-sm leading-tight">
+                Até 4 crianças · 100% livre de anúncios
+              </h4>
+              <p className="text-slate-500 text-[0.68rem] font-semibold">
+                Ambiente seguro, sem algoritmos frenéticos
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-[#6C47FF] text-white flex items-center justify-center shrink-0 shadow-xs">
+              <Sparkles size={18} />
+            </div>
+            <div>
+              <h4 className="font-bold text-slate-900 text-xs sm:text-sm leading-tight">
+                Quizzes educativos e virtudes para a vida
+              </h4>
+              <p className="text-slate-500 text-[0.68rem] font-semibold">
+                Perguntas reflexivas que estimulam o bom caráter
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* ═══ CARD 3: SELETOR DE PLANOS LADO A LADO (MENSAL VS ANUAL) ═══ */}
+        <div className="grid grid-cols-2 gap-3 mb-4">
+          {/* Card Mensal */}
+          <div
+            onClick={() => setSelectedPlanId('monthly')}
+            className={`rounded-3xl p-3.5 sm:p-4 border-2 transition-all cursor-pointer text-center relative flex flex-col justify-between ${
+              selectedPlanId === 'monthly'
+                ? 'border-[#6C47FF] bg-[#F5F2FF] shadow-sm'
+                : 'border-slate-200 bg-white hover:border-purple-200'
+            }`}
+          >
+            <div>
+              <span className="font-bold text-xs sm:text-sm text-slate-700 block">Mensal</span>
+              <div className="my-1">
+                <span className="text-xl sm:text-2xl font-serif font-black text-[#6C47FF]">R$ 29,90</span>
+              </div>
+            </div>
+            <span className="text-[0.65rem] text-slate-500 font-semibold block leading-tight">
+              cobrado mensalmente
+            </span>
+          </div>
+
+          {/* Card Anual (Com badge MELHOR VALOR) */}
+          <div
+            onClick={() => setSelectedPlanId('yearly')}
+            className={`rounded-3xl p-3.5 sm:p-4 border-2 transition-all cursor-pointer text-center relative flex flex-col justify-between ${
+              selectedPlanId === 'yearly'
+                ? 'border-[#6C47FF] bg-[#F5F2FF] shadow-sm'
+                : 'border-slate-200 bg-white hover:border-purple-200'
+            }`}
+          >
+            {/* Badge Flutuante */}
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#00C48C] text-white font-black text-[0.62rem] px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-xs whitespace-nowrap">
+              MELHOR VALOR
+            </div>
+
+            <div>
+              <span className="font-bold text-xs sm:text-sm text-slate-700 block mt-0.5">Anual</span>
+              <div className="my-1">
+                <span className="text-xl sm:text-2xl font-serif font-black text-slate-900">R$ 199,90</span>
+              </div>
+            </div>
+            <div>
+              <span className="text-[0.65rem] text-slate-500 font-semibold block leading-tight">
+                cobrado anualmente
+              </span>
+              <span className="text-[0.68rem] font-black text-[#00C48C] block mt-0.5">
+                R$ 16,65 por mês
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {errorMessage && (
+          <div className="bg-red-50 border border-red-200 text-red-600 p-3 rounded-2xl text-xs font-bold text-center mb-3">
+            {errorMessage}
+          </div>
+        )}
+
+        {/* ═══ BOTÃO PRINCIPAL CTA ═══ */}
+        <button
+          type="button"
+          onClick={handleSubscribe}
+          disabled={loading}
+          className="w-full h-14 rounded-2xl bg-[#6C47FF] hover:bg-[#5B36F0] text-white font-black text-base shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-98 disabled:opacity-50"
+        >
+          {loading ? (
+            <Loader2 size={20} className="animate-spin" />
+          ) : (
+            <span>Começar Contos & Virtudes Plus</span>
+          )}
+        </button>
+
+        {/* Texto Legal & Continuar Grátis */}
+        <div className="text-center mt-3">
+          <p className="text-[0.65rem] text-slate-500 font-medium">
+            R$ 16,65/mês no plano anual. Cancele a qualquer momento nas configurações.
           </p>
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="text-slate-600 text-xs font-bold underline mt-2 hover:text-slate-900 cursor-pointer"
+          >
+            Continuar grátis por enquanto
+          </button>
         </div>
 
       </main>
-
-      {/* ═══ RODAPÉ COM CONTATO WHATSAPP ═══ */}
-      <footer className="w-full max-w-4xl mx-auto pt-6 pb-2 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 border-t border-amber-900/10">
-        <div>
-          Contos & Virtudes • Histórias & Valores para a Vida Inteira
-        </div>
-        <a 
-          href="https://wa.me/5531999180068?text=Ol%C3%A1!%20Gostaria%20de%20tirar%20uma%20d%C3%BAvida%20sobre%20o%20Contos%20%26%20Virtudes." 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 text-emerald-700 font-bold hover:underline"
-        >
-          <MessageCircle size={16} />
-          <span>Dúvidas? Fale conosco no WhatsApp (31 999180068)</span>
-        </a>
-      </footer>
 
     </div>
   );

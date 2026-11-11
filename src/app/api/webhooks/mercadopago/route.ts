@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminDb, adminAuth } from '@/lib/firebase/admin';
+import { sendWelcomeAccessEmail } from '@/lib/email';
 
 export async function POST(req: NextRequest) {
   try {
@@ -81,6 +82,17 @@ export async function POST(req: NextRequest) {
         await adminDb.collection('users').doc(uid).set(userPayload, { merge: true });
 
         console.log(`🎉 Assinatura ativada com sucesso para usuário ${uid} (${payerEmail || 'sem email'})!`);
+
+        // Dispara e-mail de confirmação com dados de acesso
+        if (payerEmail) {
+          sendWelcomeAccessEmail({
+            email: payerEmail,
+            name: payerName,
+            planName: planId === 'yearly' ? 'Plano Anual' : 'Plano Mensal',
+            planAmount: planId === 'yearly' ? 'R$ 199,90' : 'R$ 29,90',
+            paymentId: String(paymentId)
+          }).catch(e => console.error('[Webhook] Erro ao enviar email de boas-vindas:', e));
+        }
       }
     }
 
