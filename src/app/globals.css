@@ -1,14 +1,19 @@
 @import "tailwindcss";
 
+@theme inline {
+  --font-sans: var(--font-nunito), 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif: var(--font-nunito), 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
 :root {
-  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-serif: 'Merriweather', Georgia, serif;
+  --font-sans: var(--font-nunito), 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif: var(--font-nunito), 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
   
-  --bg:          #F8F7F2; /* Cream light background like Readmio */
+  --bg:          #F8F7F2; /* Cream light background */
   --bg-card:     #FFFFFF;
   --text-dark:   #1A1D20;
   --text-muted:  #64748B;
-  --brand-teal:  #0D9488; /* Readmio Green/Teal primary accent */
+  --brand-teal:  #0D9488; /* Contos & Virtudes Teal primary accent */
   --brand-hover: #0F766E;
   --brand-gold:  #F59E0B;
   --brand-cream: #F3F1EA;
@@ -18,14 +23,21 @@
   --shadow-lg:   0 16px 40px rgba(0, 0, 0, 0.08);
 }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-body { 
-  font-family: var(--font-sans); 
-  background-color: var(--bg); 
-  color: var(--text-dark); 
-  overflow-x: hidden; 
-  min-height: 100vh;
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  html {
+    scroll-behavior: smooth;
+    font-family: var(--font-sans);
+  }
+  body { 
+    font-family: var(--font-sans); 
+    background-color: var(--bg); 
+    color: var(--text-dark); 
+    overflow-x: hidden; 
+    min-height: 100vh;
+  }
 }
 
 ::-webkit-scrollbar { width: 5px; }

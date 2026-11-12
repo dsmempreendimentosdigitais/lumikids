@@ -2,11 +2,11 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { GenerateStoryRequest } from '@/types/ai';
-import { Sparkles, Wand2, Castle, Moon, Mic, MicOff, User, Dices } from 'lucide-react';
+import { Sparkles, Wand2, Castle, Moon, Mic, MicOff, User, Dices, Compass } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 const BRAZILIAN_NAMES = [
-  'Filipe', 'Manuela', 'Gabriel', 'Sofia', 'Lucas', 'Beatriz', 
+  'Filipe', 'Manuela', 'Gabriel', 'Sofia', 'Lucas', 'Beatriz',
   'Davi', 'Alice', 'Matheus', 'Valentina', 'Samuel', 'Isabella',
   'Enzo', 'Helena', 'Heitor', 'Laura', 'Bernardo', 'Giovanna'
 ];
@@ -41,19 +41,17 @@ export default function CriarPage() {
     characterAppearanceSummary: ''
   });
 
-  // Função para sortear nome brasileiro tradicional
   const pickRandomName = () => {
     const randomName = BRAZILIAN_NAMES[Math.floor(Math.random() * BRAZILIAN_NAMES.length)];
     setFormData(prev => ({ ...prev, childName: randomName }));
   };
 
-  // Suporte a Reconhecimento de Voz por Áudio Nativo do Navegador
   const handleVoiceInput = () => {
     if (typeof window === 'undefined') return;
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
-      setVoiceNotice('Navegador não suporta transcrição de áudio direta. Por favor, selecione as opções nos menus!');
+      setVoiceNotice('Navegador não suporta transcrição de áudio direta. Por favor, selecione as opções abaixo!');
       setTimeout(() => setVoiceNotice(''), 4000);
       return;
     }
@@ -72,8 +70,7 @@ export default function CriarPage() {
         const transcript = event.results[0][0].transcript.toLowerCase();
         setIsListening(false);
         setVoiceNotice(`✨ Entendido: "${transcript}"`);
-        
-        // Tenta extrair detalhes falados
+
         let hairC = formData.hairColor;
         let hairS = formData.hairStyle;
         let skin = formData.skinTone;
@@ -119,7 +116,7 @@ export default function CriarPage() {
 
       recognition.onerror = () => {
         setIsListening(false);
-        setVoiceNotice('Não conseguimos ouvir. Selecione pelos menus suspensos abaixo!');
+        setVoiceNotice('Não conseguimos ouvir. Selecione pelos menus abaixo!');
         setTimeout(() => setVoiceNotice(''), 3000);
       };
 
@@ -146,9 +143,8 @@ export default function CriarPage() {
     setProgressStage('✨ Criando o roteiro com Inteligência Artificial...');
     setSuccess(null);
 
-    // Constrói resumo visual
     const appearanceSummary = `${formData.gender === 'menino' ? 'Menino' : 'Menina'}, cabelo ${formData.hairStyle?.toLowerCase()} ${formData.hairColor?.toLowerCase()}, pele ${formData.skinTone?.toLowerCase()}, ${formData.topClothing?.toLowerCase()}, ${formData.bottomClothing?.toLowerCase()}${formData.accessories && formData.accessories !== 'Nenhum' ? `, com ${formData.accessories.toLowerCase()}` : ''}`;
-    
+
     const finalFormData = {
       ...formData,
       characterAppearanceSummary: appearanceSummary
@@ -160,10 +156,10 @@ export default function CriarPage() {
           setProgressStage('✨ Escrevendo páginas e diálogos envolventes...');
           return prev + 4;
         } else if (prev < 75) {
-          setProgressStage(`🎨 Ilustrando ${formData.childName} no modelo FLUX 2D consistente...`);
+          setProgressStage(`🎨 Ilustrando ${formData.childName} em aquarela 2D consistente...`);
           return prev + 3;
         } else if (prev < 94) {
-          setProgressStage('🎙️ Sintetizando narração em áudio de alta definição...');
+          setProgressStage('🎙️ Preparando narração acolhedora...');
           return prev + 1;
         }
         return prev;
@@ -183,11 +179,11 @@ export default function CriarPage() {
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Erro ao gerar história.');
-      
+
       clearInterval(progressTimer);
       setProgress(100);
       setProgressStage('🚀 Tudo pronto! Abrindo sua história mágica...');
-      
+
       if (data.storyId) {
         setTimeout(() => {
           router.push(`/app/historias/${data.storyId}`);
@@ -203,47 +199,60 @@ export default function CriarPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F7F2] text-[#1A1D20] font-sans overflow-x-hidden pb-36 relative">
-      <div className="p-4 md:p-6 relative z-10 max-w-lg md:max-w-xl mx-auto min-h-[calc(100vh-110px)] flex flex-col justify-between py-4 pb-28">
-        
-        {/* Title */}
-        <div className="flex items-center justify-center gap-2 mb-6 mt-2">
-          <h1 className="text-2xl md:text-3xl font-serif font-bold text-slate-900 leading-tight">
-            Criar História
+    <div className="min-h-screen bg-gradient-to-b from-[#FFFDF9] via-[#FEF7E6] to-[#ECFDF5] text-[#1A1D20] font-sans overflow-x-hidden pb-40 relative">
+      {/* Plano de Fundo Cenográfico Estilo Caminho da Leitura */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+        <div className="absolute top-6 left-6 text-4xl opacity-65">☁️</div>
+        <div className="absolute top-12 right-8 text-5xl opacity-70">☁️</div>
+        <div className="absolute top-72 left-4 text-3xl opacity-55">🌲🌿</div>
+        <div className="absolute top-[520px] right-4 text-3xl opacity-55">🌻✨</div>
+        <div className="absolute bottom-48 left-6 text-3xl opacity-55">🌳🏮</div>
+      </div>
+
+      <div className="px-4 sm:px-6 pt-6 pb-32 relative z-10 max-w-xl mx-auto">
+        {/* Cabeçalho Estilo Reino / Caminho da Leitura */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-100 border border-amber-300 text-amber-900 text-xs font-extrabold uppercase tracking-wider shadow-2xs mb-3">
+            <Sparkles size={14} className="text-[#D97706]" />
+            <span>Trilha da Imaginação</span>
+          </div>
+          <h1 className="text-3xl sm:text-4xl font-black text-slate-900 leading-tight tracking-tight">
+            Criar História <span className="text-[#0D9488]">Mágica</span> ✨
           </h1>
-          <Sparkles className="text-[#F59E0B] w-6 h-6" />
+          <p className="text-xs sm:text-sm text-slate-600 font-semibold max-w-sm mx-auto mt-1.5 leading-relaxed">
+            Siga os 5 passos da trilha para criar um livro ilustrado personalizado com o nome e o rostinho da criança!
+          </p>
         </div>
 
         {/* Modal de Carregamento com Barra de Progresso */}
         {loading && (
           <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-300">
-            <div className="max-w-md w-full bg-white border border-slate-200 rounded-[32px] p-8 shadow-2xl relative overflow-hidden text-slate-900">
-              <div className="w-16 h-16 rounded-[22px] bg-teal-50 border border-teal-100 flex items-center justify-center text-[#0D9488] text-3xl mb-6 mx-auto animate-bounce">
+            <div className="max-w-md w-full bg-white border-2 border-[#E6DEC8] rounded-[36px] p-8 shadow-2xl relative overflow-hidden text-slate-900">
+              <div className="w-16 h-16 rounded-3xl bg-teal-50 border border-teal-200 flex items-center justify-center text-[#0D9488] text-3xl mb-6 mx-auto animate-bounce">
                 ✨
               </div>
 
-              <h2 className="text-2xl font-serif font-bold text-slate-900 mb-2">
+              <h2 className="text-2xl font-black text-slate-900 mb-2">
                 Criando História Mágica
               </h2>
 
-              <p className="text-slate-500 text-xs font-semibold mb-6 min-h-[32px]">
+              <p className="text-slate-600 text-sm font-semibold mb-6 min-h-[36px]">
                 {progressStage}
               </p>
 
-              {/* Barra de Progresso */}
-              <div className="w-full bg-slate-100 h-3.5 rounded-full p-0.5 border border-slate-200 overflow-hidden mb-3">
-                <div 
+              <div className="w-full bg-slate-100 h-4 rounded-full p-0.5 border border-slate-200 overflow-hidden mb-3">
+                <div
                   className="bg-[#0D9488] h-full rounded-full transition-all duration-300"
                   style={{ width: `${progress}%` }}
-                ></div>
+                />
               </div>
 
-              <div className="flex justify-between items-center text-[0.7rem] font-bold text-slate-400 mb-4 px-1">
+              <div className="flex justify-between items-center text-xs font-extrabold text-slate-500 mb-5 px-1">
                 <span>Gerando ilustrações 2D & áudio</span>
                 <span>{progress}%</span>
               </div>
 
-              <div className="p-3 bg-amber-50 border border-amber-200 rounded-2xl text-[0.7rem] text-[#F59E0B] font-medium">
+              <div className="p-4 bg-amber-50 border border-amber-200 rounded-2xl text-xs text-amber-900 font-bold leading-relaxed">
                 💡 O personagem {formData.childName || 'principal'} manterá exatamente o mesmo visual em todas as páginas!
               </div>
             </div>
@@ -251,110 +260,132 @@ export default function CriarPage() {
         )}
 
         {!success ? (
-          <form onSubmit={handleSubmit} className="flex-1 flex flex-col space-y-4">
-            
-            {/* Bloco 1: Quem Viverá a Aventura */}
-            <div className="bg-white border border-slate-200/90 rounded-[24px] p-4 md:p-5 shadow-xs">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-3">
-                  <div className="text-[#0D9488]">
-                    <Wand2 size={24} strokeWidth={2} />
+          <form onSubmit={handleSubmit} className="flex flex-col items-center">
+            {/* ═══ PASSO 1: QUEM VIVERÁ A AVENTURA ═══ */}
+            <div className="w-full bg-white/95 backdrop-blur-md border-2 border-[#E6DEC8] rounded-[32px] p-6 sm:p-7 shadow-[0_12px_30px_rgba(45,33,20,0.06)]">
+              <div className="flex items-center justify-between gap-3 mb-4">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-11 h-11 rounded-2xl bg-teal-50 border-2 border-teal-200 text-[#0D9488] flex items-center justify-center font-black text-base shadow-2xs shrink-0">
+                    1
                   </div>
-                  <label className="block text-slate-900 font-bold text-sm">1. Quem viverá a aventura?</label>
+                  <div>
+                    <label className="block text-slate-900 font-extrabold text-base sm:text-lg leading-tight">
+                      Quem viverá a aventura?
+                    </label>
+                    <span className="text-xs text-slate-500 font-semibold">
+                      O herói ou heroína principal da história
+                    </span>
+                  </div>
                 </div>
 
-                <button 
+                <button
                   type="button"
                   onClick={pickRandomName}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 border border-slate-200 rounded-full text-xs font-bold text-slate-700 hover:bg-slate-200 transition-all"
+                  className="flex items-center gap-1.5 px-4 py-2 bg-amber-50 border border-amber-300 rounded-full text-xs font-extrabold text-amber-900 hover:bg-amber-100 transition-all shrink-0 cursor-pointer"
                   title="Sortear nome brasileiro aleatório"
                 >
-                  <Dices size={14} /> <span>🎲 Aleatório</span>
+                  <Dices size={15} />
+                  <span>🎲 Aleatório</span>
                 </button>
               </div>
 
-              <input 
-                type="text" 
+              <input
+                type="text"
                 required
-                className="w-full bg-[#FAF9F5] border border-slate-300 rounded-[14px] h-[46px] px-4 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0D9488] font-medium text-sm"
-                placeholder="Insira o nome da criança (ex: Manuela, Filipe)"
+                className="w-full bg-[#FAF8F2] border-2 border-[#E2D9C5] rounded-2xl h-13 px-4 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#0D9488] focus:bg-white font-bold text-sm sm:text-base transition-colors"
+                placeholder="Digite o nome da criança (ex: Manuela, Filipe)"
                 value={formData.childName}
-                onChange={(e) => setFormData({...formData, childName: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, childName: e.target.value })}
               />
             </div>
 
-            {/* Bloco 2: Personalização Visual do Personagem */}
-            <div className="bg-white border border-slate-200/90 rounded-[24px] p-4 md:p-5 shadow-xs space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="text-[#0D9488]">
-                    <User size={24} strokeWidth={2} />
+            {/* Pedrinhas Douradas do Caminho */}
+            <div className="my-3 flex flex-col items-center gap-1.5 pointer-events-none">
+              <div className="w-4 h-3 rounded-full bg-[#DFC38D] border border-[#B89758]" />
+              <div className="w-3.5 h-2.5 rounded-full bg-[#DFC38D] border border-[#B89758]" />
+            </div>
+
+            {/* ═══ PASSO 2: APARÊNCIA DO PERSONAGEM ═══ */}
+            <div className="w-full bg-white/95 backdrop-blur-md border-2 border-[#E6DEC8] rounded-[32px] p-6 sm:p-7 shadow-[0_12px_30px_rgba(45,33,20,0.06)] space-y-5">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-11 h-11 rounded-2xl bg-amber-50 border-2 border-amber-300 text-[#D97706] flex items-center justify-center font-black text-base shadow-2xs shrink-0">
+                    2
                   </div>
                   <div>
-                    <h3 className="block text-slate-900 font-bold text-sm">2. Aparência do Personagem</h3>
-                    <p className="text-[0.7rem] text-slate-500 font-medium">Garante o mesmo visual em todas as páginas!</p>
+                    <h3 className="text-slate-900 font-extrabold text-base sm:text-lg leading-tight">
+                      Aparência do Personagem
+                    </h3>
+                    <p className="text-xs text-slate-500 font-semibold mt-0.5">
+                      Garante o mesmo visual em todas as páginas!
+                    </p>
                   </div>
                 </div>
 
-                {/* Botão de Transcrição por Voz */}
                 <button
                   type="button"
                   onClick={handleVoiceInput}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all border ${
-                    isListening 
-                    ? 'bg-red-50 border-red-200 text-red-600 animate-pulse' 
-                    : 'bg-teal-50 border-teal-200 text-[#0D9488] hover:bg-teal-100'
+                  className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-extrabold transition-all border shrink-0 cursor-pointer ${
+                    isListening
+                      ? 'bg-red-50 border-red-300 text-red-600 animate-pulse'
+                      : 'bg-teal-50 border-teal-200 text-[#0D9488] hover:bg-teal-100'
                   }`}
                   title="Clique e fale a aparência da criança"
                 >
-                  {isListening ? <MicOff size={14} /> : <Mic size={14} />}
-                  <span>{isListening ? 'Ouvindo...' : '🎙️ Falar por voz'}</span>
+                  {isListening ? <MicOff size={15} /> : <Mic size={15} />}
+                  <span>{isListening ? 'Ouvindo...' : '🎙️ Voz'}</span>
                 </button>
               </div>
 
               {voiceNotice && (
-                <div className="p-2.5 bg-teal-50 border border-teal-200 rounded-xl text-xs text-[#0D9488] font-semibold text-center animate-in fade-in">
+                <div className="p-3.5 bg-teal-50 border border-teal-200 rounded-2xl text-xs sm:text-sm text-[#0D9488] font-bold text-center">
                   {voiceNotice}
                 </div>
               )}
 
-              {/* Toggle Gênero */}
+              {/* Toggle Gênero Espaçado */}
               <div>
-                <label className="block text-slate-600 text-xs font-bold mb-1.5">Gênero do Personagem</label>
-                <div className="grid grid-cols-2 gap-2">
+                <label className="block text-slate-700 text-xs sm:text-sm font-extrabold mb-2">
+                  Gênero do Personagem
+                </label>
+                <div className="grid grid-cols-2 gap-3.5">
                   <button
                     type="button"
-                    onClick={() => setFormData({...formData, gender: 'menino'})}
-                    className={`h-[40px] rounded-xl font-bold text-xs flex items-center justify-center gap-2 border transition-all ${
-                      formData.gender === 'menino' 
-                      ? 'bg-[#0D9488] border-[#0D9488] text-white shadow-xs' 
-                      : 'bg-[#FAF9F5] border-slate-200 text-slate-600'
+                    onClick={() => setFormData({ ...formData, gender: 'menino' })}
+                    className={`min-h-[50px] py-3 px-4 rounded-2xl font-extrabold text-sm flex items-center justify-center gap-2.5 border-2 transition-all cursor-pointer ${
+                      formData.gender === 'menino'
+                        ? 'bg-[#0D9488] border-[#0D9488] text-white shadow-md shadow-teal-900/15'
+                        : 'bg-[#FAF8F2] border-[#E2D9C5] text-slate-700 hover:bg-amber-50/50'
                     }`}
                   >
-                    👦 Menino
+                    <span className="text-lg">👦</span>
+                    <span>Menino</span>
                   </button>
                   <button
                     type="button"
-                    onClick={() => setFormData({...formData, gender: 'menina'})}
-                    className={`h-[40px] rounded-xl font-bold text-xs flex items-center justify-center gap-2 border transition-all ${
-                      formData.gender === 'menina' 
-                      ? 'bg-[#0D9488] border-[#0D9488] text-white shadow-xs' 
-                      : 'bg-[#FAF9F5] border-slate-200 text-slate-600'
+                    onClick={() => setFormData({ ...formData, gender: 'menina' })}
+                    className={`min-h-[50px] py-3 px-4 rounded-2xl font-extrabold text-sm flex items-center justify-center gap-2.5 border-2 transition-all cursor-pointer ${
+                      formData.gender === 'menina'
+                        ? 'bg-[#0D9488] border-[#0D9488] text-white shadow-md shadow-teal-900/15'
+                        : 'bg-[#FAF8F2] border-[#E2D9C5] text-slate-700 hover:bg-amber-50/50'
                     }`}
                   >
-                    👧 Menina
+                    <span className="text-lg">👧</span>
+                    <span>Menina</span>
                   </button>
                 </div>
               </div>
 
-              {/* Dropdowns de Cabelo e Tom de Pele */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {/* Seletores de Cabelo e Tom de Pele com Espaçamento Amplo */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-slate-600 text-[0.7rem] font-bold mb-1">Cor do Cabelo</label>
+                  <label className="block text-slate-700 text-xs font-extrabold mb-1.5">
+                    Cor do Cabelo
+                  </label>
                   <select
-                    className="w-full bg-[#FAF9F5] border border-slate-300 rounded-[10px] h-[38px] px-3 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#0D9488] cursor-pointer"
+                    className="w-full bg-[#FAF8F2] border-2 border-[#E2D9C5] rounded-2xl h-12 px-3.5 text-sm font-bold text-slate-800 focus:outline-none focus:border-[#0D9488] cursor-pointer"
                     value={formData.hairColor}
-                    onChange={(e) => setFormData({...formData, hairColor: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, hairColor: e.target.value })}
                   >
                     <option value="Preto">🖤 Cabelo Preto</option>
                     <option value="Castanho">🟤 Cabelo Castanho</option>
@@ -365,44 +396,50 @@ export default function CriarPage() {
                 </div>
 
                 <div>
-                  <label className="block text-slate-600 text-[0.7rem] font-bold mb-1">Estilo do Cabelo</label>
+                  <label className="block text-slate-700 text-xs font-extrabold mb-1.5">
+                    Estilo do Cabelo
+                  </label>
                   <select
-                    className="w-full bg-[#FAF9F5] border border-slate-300 rounded-[10px] h-[38px] px-3 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#0D9488] cursor-pointer"
+                    className="w-full bg-[#FAF8F2] border-2 border-[#E2D9C5] rounded-2xl h-12 px-3.5 text-sm font-bold text-slate-800 focus:outline-none focus:border-[#0D9488] cursor-pointer"
                     value={formData.hairStyle}
-                    onChange={(e) => setFormData({...formData, hairStyle: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, hairStyle: e.target.value })}
                   >
-                    <option value="Curto">Curto</option>
-                    <option value="Longo">Longo</option>
-                    <option value="Cacheado">Cacheado</option>
-                    <option value="Crespo">Crespo</option>
-                    <option value="Liso">Liso</option>
-                    <option value="Trança">Tranças</option>
+                    <option value="Curto">✨ Curto</option>
+                    <option value="Longo">✨ Longo</option>
+                    <option value="Cacheado">✨ Cacheado</option>
+                    <option value="Crespo">✨ Crespo</option>
+                    <option value="Liso">✨ Liso</option>
+                    <option value="Trança">✨ Tranças</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-slate-600 text-[0.7rem] font-bold mb-1">Tom de Pele</label>
+                  <label className="block text-slate-700 text-xs font-extrabold mb-1.5">
+                    Tom de Pele
+                  </label>
                   <select
-                    className="w-full bg-[#FAF9F5] border border-slate-300 rounded-[10px] h-[38px] px-3 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#0D9488] cursor-pointer"
+                    className="w-full bg-[#FAF8F2] border-2 border-[#E2D9C5] rounded-2xl h-12 px-3.5 text-sm font-bold text-slate-800 focus:outline-none focus:border-[#0D9488] cursor-pointer"
                     value={formData.skinTone}
-                    onChange={(e) => setFormData({...formData, skinTone: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, skinTone: e.target.value })}
                   >
-                    <option value="Clara">Clara</option>
-                    <option value="Parda">Parda / Morena</option>
-                    <option value="Negra">Negra</option>
-                    <option value="Muito Clara">Muito Clara</option>
+                    <option value="Clara">🌟 Clara</option>
+                    <option value="Parda">🌟 Parda / Morena</option>
+                    <option value="Negra">🌟 Negra</option>
+                    <option value="Muito Clara">🌟 Muito Clara</option>
                   </select>
                 </div>
               </div>
 
-              {/* Dropdowns de Roupas e Acessórios */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {/* Seletores de Roupas e Acessórios */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-slate-600 text-[0.7rem] font-bold mb-1">Camisa / Blusa</label>
+                  <label className="block text-slate-700 text-xs font-extrabold mb-1.5">
+                    Camisa / Blusa
+                  </label>
                   <select
-                    className="w-full bg-[#FAF9F5] border border-slate-300 rounded-[10px] h-[38px] px-3 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#0D9488] cursor-pointer"
+                    className="w-full bg-[#FAF8F2] border-2 border-[#E2D9C5] rounded-2xl h-12 px-3.5 text-sm font-bold text-slate-800 focus:outline-none focus:border-[#0D9488] cursor-pointer"
                     value={formData.topClothing}
-                    onChange={(e) => setFormData({...formData, topClothing: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, topClothing: e.target.value })}
                   >
                     <option value="Camiseta verde">👕 Camiseta verde</option>
                     <option value="Blusa azul">👕 Blusa azul</option>
@@ -413,11 +450,13 @@ export default function CriarPage() {
                 </div>
 
                 <div>
-                  <label className="block text-slate-600 text-[0.7rem] font-bold mb-1">Short / Calça</label>
+                  <label className="block text-slate-700 text-xs font-extrabold mb-1.5">
+                    Short / Calça
+                  </label>
                   <select
-                    className="w-full bg-[#FAF9F5] border border-slate-300 rounded-[10px] h-[38px] px-3 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#0D9488] cursor-pointer"
+                    className="w-full bg-[#FAF8F2] border-2 border-[#E2D9C5] rounded-2xl h-12 px-3.5 text-sm font-bold text-slate-800 focus:outline-none focus:border-[#0D9488] cursor-pointer"
                     value={formData.bottomClothing}
-                    onChange={(e) => setFormData({...formData, bottomClothing: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, bottomClothing: e.target.value })}
                   >
                     <option value="Short kaqui">🩳 Short kaqui</option>
                     <option value="Calça jeans">👖 Calça jeans</option>
@@ -428,13 +467,15 @@ export default function CriarPage() {
                 </div>
 
                 <div>
-                  <label className="block text-slate-600 text-[0.7rem] font-bold mb-1">Acessório Extra</label>
+                  <label className="block text-slate-700 text-xs font-extrabold mb-1.5">
+                    Acessório Extra
+                  </label>
                   <select
-                    className="w-full bg-[#FAF9F5] border border-slate-300 rounded-[10px] h-[38px] px-3 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#0D9488] cursor-pointer"
+                    className="w-full bg-[#FAF8F2] border-2 border-[#E2D9C5] rounded-2xl h-12 px-3.5 text-sm font-bold text-slate-800 focus:outline-none focus:border-[#0D9488] cursor-pointer"
                     value={formData.accessories}
-                    onChange={(e) => setFormData({...formData, accessories: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, accessories: e.target.value })}
                   >
-                    <option value="Nenhum">Nenhum</option>
+                    <option value="Nenhum">✨ Nenhum</option>
                     <option value="Óculos">👓 Óculos</option>
                     <option value="Boné vermelho">🧢 Boné vermelho</option>
                     <option value="Tiara de borboleta">👑 Tiara</option>
@@ -442,70 +483,111 @@ export default function CriarPage() {
                   </select>
                 </div>
               </div>
-
             </div>
 
-            {/* Bloco 3: Idade */}
-            <div className="bg-white border border-slate-200/90 rounded-[24px] p-4 md:p-5 flex items-center gap-5 shadow-xs">
-              <div className="text-[#0D9488] font-black text-[2.4rem] leading-none" style={{ fontFamily: 'sans-serif' }}>
-                {formData.ageGroup === '2-4' ? '3' : formData.ageGroup === '5-7' ? '7' : formData.ageGroup === '8-10' ? '9' : '12'}
-              </div>
-              <div className="flex-1">
-                <label className="block text-slate-900 font-bold text-sm mb-1">3. Faixa Etária</label>
-                <select 
-                  className="w-full bg-[#FAF9F5] border border-slate-300 rounded-[12px] h-[44px] px-4 text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0D9488] appearance-none cursor-pointer text-sm font-medium"
-                  value={formData.ageGroup}
-                  onChange={(e) => setFormData({...formData, ageGroup: e.target.value as any})}
-                >
-                  <option value="2-4">2 a 4 anos (histórias curtas)</option>
-                  <option value="5-7">5 a 7 anos (histórias ilustradas)</option>
-                  <option value="8-10">8 a 10 anos (narrativas completas)</option>
-                  <option value="11-14">11 a 14 anos (enredos profundos)</option>
-                </select>
-              </div>
+            {/* Pedrinhas Douradas do Caminho */}
+            <div className="my-3 flex flex-col items-center gap-1.5 pointer-events-none">
+              <div className="w-4 h-3 rounded-full bg-[#DFC38D] border border-[#B89758]" />
+              <div className="w-3.5 h-2.5 rounded-full bg-[#DFC38D] border border-[#B89758]" />
             </div>
 
-            {/* Bloco 4: Tema */}
-            <div className="bg-white border border-slate-200/90 rounded-[24px] p-4 md:p-5 shadow-xs space-y-3">
-              <div className="flex items-center gap-4">
-                <div className="text-[#0D9488]">
-                  <Castle size={28} strokeWidth={2} />
+            {/* ═══ PASSO 3: FAIXA ETÁRIA ═══ */}
+            <div className="w-full bg-white/95 backdrop-blur-md border-2 border-[#E6DEC8] rounded-[32px] p-6 sm:p-7 shadow-[0_12px_30px_rgba(45,33,20,0.06)]">
+              <div className="flex items-center gap-3.5 mb-4">
+                <div className="w-11 h-11 rounded-2xl bg-teal-50 border-2 border-teal-200 text-[#0D9488] flex items-center justify-center font-black text-base shadow-2xs shrink-0">
+                  3
                 </div>
-                <div className="flex-1">
-                  <label className="block text-slate-900 font-bold text-sm mb-1">4. Tema da Aventura</label>
-                  <input 
-                    type="text" 
-                    required
-                    className="w-full bg-[#FAF9F5] border border-slate-300 rounded-[12px] h-[44px] px-4 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0D9488] text-sm font-medium"
-                    placeholder="Ex: Os 12 Trabalhos de Hércules, Davi e Golias, Joana d'Arc..."
-                    value={formData.theme}
-                    onChange={(e) => setFormData({...formData, theme: e.target.value})}
-                  />
+                <div>
+                  <label className="block text-slate-900 font-extrabold text-base sm:text-lg leading-tight">
+                    Faixa Etária da Criança
+                  </label>
+                  <span className="text-xs text-slate-500 font-semibold">
+                    Adapta o vocabulário e o tamanho dos parágrafos
+                  </span>
                 </div>
               </div>
 
-              {/* Atalhos para Trilhas de Conhecimento */}
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { id: '2-4', title: '2 a 4 anos', desc: 'Frases curtinhas e lúdicas', emoji: '🐣' },
+                  { id: '5-7', title: '5 a 7 anos', desc: 'Histórias ilustradas', emoji: '🦊' },
+                  { id: '8-10', title: '8 a 10 anos', desc: 'Aventuras completas', emoji: '🦁' },
+                  { id: '11-14', title: '11+ anos', desc: 'Enredos profundos', emoji: '🦅' },
+                ].map((age) => (
+                  <button
+                    key={age.id}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, ageGroup: age.id as any })}
+                    className={`p-3.5 rounded-2xl border-2 text-left transition-all cursor-pointer flex items-start gap-2.5 ${
+                      formData.ageGroup === age.id
+                        ? 'bg-teal-50/80 border-[#0D9488] text-slate-900 shadow-xs'
+                        : 'bg-[#FAF8F2] border-[#E2D9C5] text-slate-700 hover:bg-amber-50/40'
+                    }`}
+                  >
+                    <span className="text-xl shrink-0 mt-0.5">{age.emoji}</span>
+                    <div>
+                      <div className="font-extrabold text-xs sm:text-sm leading-tight">{age.title}</div>
+                      <div className="text-[0.68rem] text-slate-500 font-semibold mt-0.5 leading-snug">{age.desc}</div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Pedrinhas Douradas do Caminho */}
+            <div className="my-3 flex flex-col items-center gap-1.5 pointer-events-none">
+              <div className="w-4 h-3 rounded-full bg-[#DFC38D] border border-[#B89758]" />
+              <div className="w-3.5 h-2.5 rounded-full bg-[#DFC38D] border border-[#B89758]" />
+            </div>
+
+            {/* ═══ PASSO 4: TEMA & REINO DA AVENTURA ═══ */}
+            <div className="w-full bg-white/95 backdrop-blur-md border-2 border-[#E6DEC8] rounded-[32px] p-6 sm:p-7 shadow-[0_12px_30px_rgba(45,33,20,0.06)] space-y-4">
+              <div className="flex items-center gap-3.5">
+                <div className="w-11 h-11 rounded-2xl bg-amber-50 border-2 border-amber-300 text-[#D97706] flex items-center justify-center font-black text-base shadow-2xs shrink-0">
+                  4
+                </div>
+                <div>
+                  <label className="block text-slate-900 font-extrabold text-base sm:text-lg leading-tight">
+                    Reino & Tema da Aventura
+                  </label>
+                  <span className="text-xs text-slate-500 font-semibold">
+                    Digite uma ideia ou escolha um reino abaixo
+                  </span>
+                </div>
+              </div>
+
+              <input
+                type="text"
+                required
+                className="w-full bg-[#FAF8F2] border-2 border-[#E2D9C5] rounded-2xl h-13 px-4 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#0D9488] focus:bg-white text-sm sm:text-base font-bold transition-colors"
+                placeholder="Ex: Floresta Mágica, Davi e Golias, Os Trabalhos de Hércules..."
+                value={formData.theme}
+                onChange={(e) => setFormData({ ...formData, theme: e.target.value })}
+              />
+
               <div>
-                <span className="block text-[0.68rem] text-slate-500 font-bold mb-2">✨ Ou escolha uma Trilha de Conhecimento:</span>
-                <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+                <span className="block text-xs text-slate-600 font-extrabold mb-2.5">
+                  ✨ Ou toque em uma Trilha do Caminho da Leitura:
+                </span>
+                <div className="flex flex-wrap gap-2">
                   {[
                     { name: '🏛️ Mitologia Grega', value: 'Mitologia Grega: Os Trabalhos de Hércules e lições de virtude' },
                     { name: '📖 Histórias da Bíblia', value: 'História Bíblica: Davi e Golias com lições de fé' },
-                    { name: '👑 Mulheres Fortes', value: 'Mulheres Fortes: Joana d\'Arc e coragem moral' },
+                    { name: '👑 Mulheres Fortes', value: "Mulheres Fortes: Joana d'Arc e coragem moral" },
                     { name: '🏰 Biografias', value: 'Biografia Histórica: Santos Dumont e a invenção' },
                     { name: '🛡️ Contos & Fábulas', value: 'Fábulas Clássicas: O Leão e o Rato e compaixão' },
                     { name: '🔬 Ciência', value: 'Grandes Inventores: Albert Einstein e curiosidade' },
                     { name: '✨ Virtudes', value: 'Virtudes no dia a dia: Verdade, paciência e respeito' },
-                    { name: '🌿 Natureza', value: 'Natureza do Brasil: Vida selvagem no Pantanal' }
+                    { name: '🌿 Natureza', value: 'Natureza do Brasil: Vida selvagem no Pantanal' },
                   ].map((t) => (
                     <button
                       key={t.name}
                       type="button"
-                      onClick={() => setFormData({...formData, theme: t.value})}
-                      className={`px-3 py-1.5 rounded-full text-[0.68rem] font-bold whitespace-nowrap transition-all border ${
-                        formData.theme === t.value 
-                        ? 'bg-[#0D9488] border-[#0D9488] text-white' 
-                        : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                      onClick={() => setFormData({ ...formData, theme: t.value })}
+                      className={`px-3.5 py-2 rounded-full text-xs font-extrabold transition-all border-2 cursor-pointer ${
+                        formData.theme === t.value
+                          ? 'bg-[#0D9488] border-[#0D9488] text-white shadow-xs'
+                          : 'bg-[#FAF8F2] border-[#E2D9C5] text-slate-700 hover:bg-amber-50'
                       }`}
                     >
                       {t.name}
@@ -515,19 +597,29 @@ export default function CriarPage() {
               </div>
             </div>
 
-            {/* Bloco 5: Emoção da História */}
-            <div className="bg-white border border-slate-200/90 rounded-[24px] p-4 md:p-5 shadow-xs mb-6">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="text-[#F59E0B]">
-                  <Moon size={24} fill="currentColor" strokeWidth={1} />
+            {/* Pedrinhas Douradas do Caminho */}
+            <div className="my-3 flex flex-col items-center gap-1.5 pointer-events-none">
+              <div className="w-4 h-3 rounded-full bg-[#DFC38D] border border-[#B89758]" />
+              <div className="w-3.5 h-2.5 rounded-full bg-[#DFC38D] border border-[#B89758]" />
+            </div>
+
+            {/* ═══ PASSO 5: EMOÇÃO & VIRTUDE DA HISTÓRIA ═══ */}
+            <div className="w-full bg-white/95 backdrop-blur-md border-2 border-[#E6DEC8] rounded-[32px] p-6 sm:p-7 shadow-[0_12px_30px_rgba(45,33,20,0.06)] mb-6">
+              <div className="flex items-center gap-3.5 mb-4">
+                <div className="w-11 h-11 rounded-2xl bg-teal-50 border-2 border-teal-200 text-[#0D9488] flex items-center justify-center font-black text-base shadow-2xs shrink-0">
+                  5
                 </div>
                 <div>
-                  <h3 className="block text-slate-900 font-bold text-sm">5. Emoção da História</h3>
-                  <p className="text-[0.7rem] text-slate-500 font-medium">Selecione o sentimento principal da aventura</p>
+                  <h3 className="text-slate-900 font-extrabold text-base sm:text-lg leading-tight">
+                    Emoção & Virtude da História
+                  </h3>
+                  <p className="text-xs text-slate-500 font-semibold mt-0.5">
+                    Escolha o sentimento principal desta aventura
+                  </p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 pt-1">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {[
                   { label: 'Feliz', emoji: '😊' },
                   { label: 'Curioso', emoji: '🔍' },
@@ -540,19 +632,19 @@ export default function CriarPage() {
                   { label: 'Criativo', emoji: '🎨' },
                   { label: 'Empático', emoji: '🤝' },
                   { label: 'Sonhador', emoji: '⭐' },
-                  { label: 'Inspirador', emoji: '✨' }
-                ].map(em => (
+                  { label: 'Inspirador', emoji: '✨' },
+                ].map((em) => (
                   <button
                     key={em.label}
                     type="button"
-                    onClick={() => setFormData({...formData, emotion: em.label})}
-                    className={`h-[40px] px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all border ${
-                      formData.emotion === em.label 
-                      ? 'bg-[#0D9488] text-white border-[#0D9488] shadow-xs' 
-                      : 'bg-[#FAF9F5] text-slate-700 border-slate-200 hover:bg-slate-100'
+                    onClick={() => setFormData({ ...formData, emotion: em.label })}
+                    className={`min-h-[48px] py-2.5 px-3.5 rounded-2xl font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all border-2 cursor-pointer ${
+                      formData.emotion === em.label
+                        ? 'bg-[#0D9488] text-white border-[#0D9488] shadow-md shadow-teal-900/15'
+                        : 'bg-[#FAF8F2] text-slate-700 border-[#E2D9C5] hover:bg-amber-50/60'
                     }`}
                   >
-                    <span>{em.emoji}</span>
+                    <span className="text-base">{em.emoji}</span>
                     <span>{em.label}</span>
                   </button>
                 ))}
@@ -560,37 +652,39 @@ export default function CriarPage() {
             </div>
 
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-600 font-bold p-4 rounded-[16px] text-sm text-center">
+              <div className="w-full bg-red-50 border-2 border-red-200 text-red-600 font-extrabold p-4 rounded-2xl text-sm text-center mb-4">
                 {error}
               </div>
             )}
 
-            {/* Submit Button */}
-            <div className="pt-2">
-              <button 
+            {/* Botão Principal de Criação com Espaçamento Amplo */}
+            <div className="w-full pt-2">
+              <button
                 type="submit"
                 disabled={loading}
-                className="w-full h-[56px] bg-[#0D9488] hover:bg-[#0F766E] transition-all text-white font-bold text-base rounded-full shadow-md flex items-center justify-center gap-2"
+                className="w-full min-h-[60px] py-4 px-6 bg-gradient-to-r from-[#0D9488] to-[#0F766E] hover:from-[#0F766E] hover:to-[#115E59] transition-all text-white font-extrabold text-base sm:text-lg rounded-2xl shadow-lg shadow-teal-900/20 flex items-center justify-center gap-2.5 cursor-pointer active:scale-98"
               >
+                <Sparkles size={20} className="text-amber-300" />
                 {loading ? (
                   <span className="animate-pulse">Escrevendo História com IA...</span>
                 ) : (
-                  <span>Criar História Ilustrada</span>
+                  <span>Criar História Ilustrada Agora</span>
                 )}
               </button>
             </div>
           </form>
         ) : (
-          <div className="bg-white border border-slate-200 rounded-[28px] p-6 shadow-md text-center mt-8">
-            <h2 className="font-serif font-bold text-2xl text-slate-900 mb-6">
+          <div className="bg-white border-2 border-[#E6DEC8] rounded-[32px] p-8 shadow-lg text-center mt-8">
+            <h2 className="font-black text-2xl text-slate-900 mb-6">
               {success.story.title || 'História Criada!'}
             </h2>
 
-            <button 
+            <button
               onClick={() => setSuccess(null)}
-              className="w-full h-[50px] rounded-full font-bold flex items-center justify-center gap-2 bg-[#0D9488] text-white hover:bg-[#0F766E] transition-all shadow-md text-sm"
+              className="w-full min-h-[54px] py-4 px-6 rounded-2xl font-extrabold flex items-center justify-center gap-2 bg-[#0D9488] text-white hover:bg-[#0F766E] transition-all shadow-md text-base cursor-pointer"
             >
-              Criar Outra <Sparkles size={18} />
+              <span>Criar Outra História</span>
+              <Sparkles size={18} />
             </button>
           </div>
         )}

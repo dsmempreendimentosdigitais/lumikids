@@ -243,27 +243,27 @@ export default function JourneyMap({ stories, userPlan = 'free', isAdmin = false
       {/* ═══ CONTEÚDO PRINCIPAL DO MAPA ═══ */}
       <div className="relative z-10 w-full max-w-5xl mx-auto px-4 sm:px-6 pt-4 pb-28">
         
-        {/* ═══ BARRA SUPERIOR FLUTUANTE (Estilo Lumi Kids Explorer) ═══ */}
-        <div className="sticky top-2 z-40 mb-3 py-1">
-          <div className="flex items-center justify-between gap-2 bg-white/95 backdrop-blur-md rounded-full px-3.5 py-2 shadow-sm border border-slate-200/80 max-w-md mx-auto">
+        {/* ═══ BARRA SUPERIOR FLUTUANTE (Identidade Visual Contos & Virtudes) ═══ */}
+        <div className="sticky top-2 z-40 mb-4 py-1">
+          <div className="flex items-center justify-between gap-3 bg-white/95 backdrop-blur-md rounded-full px-4 py-2.5 shadow-md border border-[#E6DEC8] max-w-md mx-auto">
             
             {/* Lado Esquerdo: Avatar + Nome + Bandeira + Meta */}
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-3 min-w-0">
               <Link 
                 href="/app/progresso" 
-                className="w-10 h-10 rounded-full bg-amber-100 border-2 border-white shadow-xs overflow-hidden flex items-center justify-center shrink-0 hover:scale-105 transition-transform" 
+                className="w-11 h-11 rounded-full bg-amber-100 border-2 border-amber-300 shadow-xs overflow-hidden flex items-center justify-center shrink-0 hover:scale-105 transition-transform" 
                 title="Meu Perfil"
               >
-                <span className="text-xl">🦁</span>
+                <img src="/icons/lumikids-star-logo.svg" alt="Contos & Virtudes" className="w-full h-full object-cover" />
               </Link>
-              <div className="flex flex-col leading-tight">
-                <span className="font-bold text-xs sm:text-sm text-slate-900 truncate max-w-[100px] sm:max-w-[130px]">
+              <div className="flex flex-col leading-tight min-w-0">
+                <span className="font-extrabold text-sm sm:text-base text-slate-900 truncate max-w-[120px] sm:max-w-[150px]">
                   {userName}
                 </span>
-                <div className="flex items-center gap-1.5 text-[0.62rem] text-slate-500 font-semibold">
-                  <span className="inline-flex items-center gap-0.5">🇧🇷 Português</span>
+                <div className="flex items-center gap-1.5 text-xs text-slate-500 font-bold mt-0.5">
+                  <span className="inline-flex items-center gap-1">🇧🇷 Português</span>
                   <span className="text-slate-300">•</span>
-                  <span className="text-purple-600 font-bold inline-flex items-center gap-0.5">
+                  <span className="text-[#0D9488] font-extrabold inline-flex items-center gap-0.5">
                     🎯 {completedCount}/{trailStories.length || 4}
                   </span>
                 </div>
@@ -271,9 +271,9 @@ export default function JourneyMap({ stories, userPlan = 'free', isAdmin = false
             </div>
 
             {/* Lado Direito: Estrelas + Botão Família / Perfil */}
-            <div className="flex items-center gap-1.5 shrink-0">
+            <div className="flex items-center gap-2 shrink-0">
               {/* Pill de Estrelas */}
-              <div className="px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-700 font-black text-xs flex items-center gap-1 shadow-2xs">
+              <div className="px-3.5 py-1.5 rounded-full bg-amber-50 border border-amber-300 text-amber-800 font-extrabold text-xs sm:text-sm flex items-center gap-1.5 shadow-2xs">
                 <span>⭐</span>
                 <span>{totalStarsCount}</span>
               </div>
@@ -282,7 +282,7 @@ export default function JourneyMap({ stories, userPlan = 'free', isAdmin = false
               <Link
                 href="/app/progresso"
                 onClick={() => playSound(480)}
-                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center text-sm shadow-2xs transition-all cursor-pointer"
+                className="w-9 h-9 rounded-full bg-teal-50 hover:bg-teal-100 border border-teal-200 text-[#0D9488] flex items-center justify-center text-sm shadow-2xs transition-all cursor-pointer"
                 title="Família & Progresso"
               >
                 👥
@@ -291,7 +291,7 @@ export default function JourneyMap({ stories, userPlan = 'free', isAdmin = false
               {isAdmin && (
                 <Link
                   href="/app/admin"
-                  className="px-2 py-1 rounded-full bg-amber-400 text-slate-950 font-black text-[0.65rem] shadow-xs"
+                  className="px-2.5 py-1.5 rounded-full bg-amber-400 text-slate-950 font-black text-xs shadow-xs"
                   title="Admin"
                 >
                   👑
@@ -302,9 +302,9 @@ export default function JourneyMap({ stories, userPlan = 'free', isAdmin = false
           </div>
         </div>
 
-        {/* ═══ CARD FLUTUANTE: PRÓXIMA ILHA / HISTÓRIA (Estilo Lumi Kids) ═══ */}
+        {/* ═══ CARD FLUTUANTE: PRÓXIMA ILHA / HISTÓRIA (Identidade Teal & Dourado) ═══ */}
         {trailStories.length > 0 && (
-          <div className="max-w-md mx-auto mb-3 px-1">
+          <div className="max-w-md mx-auto mb-4 px-1">
             {(() => {
               const nextStory = trailStories.find(s => !s.isCompleted) || trailStories[0];
               const completedInCurrent = trailStories.filter(s => s.isCompleted || (s.stars && s.stars > 0)).length;
@@ -314,31 +314,31 @@ export default function JourneyMap({ stories, userPlan = 'free', isAdmin = false
                 <Link
                   href={`/app/historias/${nextStory.id}`}
                   onClick={() => playSound(640)}
-                  className="bg-white/95 backdrop-blur-md rounded-3xl p-3.5 shadow-sm border border-purple-100/90 flex items-center justify-between gap-3 group hover:shadow-md transition-all block text-left"
+                  className="bg-white/95 backdrop-blur-md rounded-3xl p-4 sm:p-4.5 shadow-md border-2 border-[#E6DEC8] flex items-center justify-between gap-3.5 group hover:border-[#0D9488] hover:shadow-lg transition-all block text-left"
                 >
                   {/* Anel de Progresso Circular */}
-                  <div className="relative w-12 h-12 rounded-full bg-purple-50 border-2 border-purple-300 flex items-center justify-center shrink-0">
-                    <span className="font-bold text-xs text-purple-700">
+                  <div className="relative w-13 h-13 rounded-full bg-teal-50 border-2 border-[#0D9488] flex items-center justify-center shrink-0">
+                    <span className="font-extrabold text-xs sm:text-sm text-[#0F766E]">
                       {completedInCurrent}/{totalInCurrent}
                     </span>
                   </div>
 
                   {/* Textos da Próxima Ilha */}
-                  <div className="flex-1 min-w-0">
-                    <span className="text-[0.65rem] font-bold text-purple-600 uppercase tracking-wider block">
-                      Próxima Aventura
+                  <div className="flex-1 min-w-0 py-0.5">
+                    <span className="text-[0.68rem] font-extrabold text-[#D97706] uppercase tracking-wider block mb-0.5">
+                      ✨ Próxima Aventura
                     </span>
-                    <h3 className="font-serif font-bold text-slate-900 text-sm truncate leading-tight group-hover:text-[#6C47FF] transition-colors">
+                    <h3 className="font-extrabold text-slate-900 text-sm sm:text-base truncate leading-snug group-hover:text-[#0D9488] transition-colors">
                       {nextStory.title}
                     </h3>
-                    <p className="text-[0.68rem] text-slate-500 font-semibold truncate mt-0.5">
-                      {activeTrail.title} • 5-7 min • {nextStory.value || 'Sabedoria'}
+                    <p className="text-xs text-slate-500 font-semibold truncate mt-0.5">
+                      {activeTrail.title} • 5–7 min • {nextStory.value || 'Sabedoria'}
                     </p>
                   </div>
 
-                  {/* Botão de Ação Roxo com Sparkle */}
-                  <div className="w-10 h-10 rounded-full bg-[#6C47FF] text-white flex items-center justify-center shrink-0 shadow-md group-hover:scale-105 active:scale-95 transition-transform">
-                    <Sparkles size={18} />
+                  {/* Botão de Ação Teal com Play/Sparkle */}
+                  <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#0D9488] to-[#0F766E] text-white flex items-center justify-center shrink-0 shadow-md shadow-teal-900/20 group-hover:scale-105 active:scale-95 transition-transform">
+                    <Sparkles size={19} />
                   </div>
                 </Link>
               );
@@ -347,15 +347,15 @@ export default function JourneyMap({ stories, userPlan = 'free', isAdmin = false
         )}
 
         {/* ═══ PILL DE NÍVEL / TRILHA ATIVA ═══ */}
-        <div className="max-w-md mx-auto mb-6 flex justify-start px-2">
+        <div className="max-w-md mx-auto mb-6 flex justify-center sm:justify-start px-2">
           <button
             type="button"
             onClick={() => setIsCatalogOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-600 text-white font-bold text-xs shadow-xs hover:bg-emerald-700 transition-colors cursor-pointer"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#0D9488] text-white font-extrabold text-xs sm:text-sm shadow-sm hover:bg-[#0F766E] transition-colors cursor-pointer"
           >
             <span>🎓</span>
             <span>Trilha: {activeTrail.title}</span>
-            <span className="text-emerald-200 text-[0.65rem] ml-1">Trocar ▾</span>
+            <span className="text-teal-100 text-xs ml-1">Trocar ▾</span>
           </button>
         </div>
 
@@ -369,25 +369,67 @@ export default function JourneyMap({ stories, userPlan = 'free', isAdmin = false
               <section 
                 key={trail.id} 
                 id={`world-${trail.id}`}
-                className="w-full max-w-md mx-auto flex flex-col items-center pt-6 pb-16 transition-all scroll-mt-28"
+                className={`relative w-full max-w-lg mx-auto flex flex-col items-center pt-8 pb-20 px-4 mb-10 rounded-[44px] bg-gradient-to-b ${config.bgColor} border-2 border-white/80 shadow-[0_16px_40px_rgba(45,33,20,0.08)] overflow-hidden transition-all scroll-mt-28`}
               >
+                {/* ═══ FUNDO ILUSTRADO CENOGRÁFICO DE CADA REINO (Colinas, Árvores, Rio e Caminho Dourado) ═══ */}
+                <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+                  <svg className="w-full h-full" viewBox="0 0 500 1200" preserveAspectRatio="none">
+                    {/* Sol / Brilho Suave no Topo */}
+                    <circle cx="410" cy="85" r="55" fill="#FEF08A" opacity="0.55" />
+                    {/* Colinas distantes em aquarela */}
+                    <path d="M0,220 Q130,150 260,210 T500,190 L500,1200 L0,1200 Z" fill="#D9F0D6" opacity="0.55" />
+                    <path d="M0,480 Q160,400 320,470 T500,440 L500,1200 L0,1200 Z" fill="#C2E7BF" opacity="0.55" />
+                    {/* Riacho cristalino cruzando o jardim */}
+                    <path d="M-20,660 C140,610 340,720 520,650 L520,705 C340,775 140,665 -20,715 Z" fill="#7DD3FC" opacity="0.5" />
+                    <path d="M0,860 Q140,790 290,850 T500,820 L500,1200 L0,1200 Z" fill="#A7DCA5" opacity="0.5" />
+                    {/* Estrada sinuosa dourada de pedrinhas ao centro */}
+                    <path
+                      d="M250,180 C150,280 150,360 250,450 C350,540 350,640 250,730 C150,820 150,920 250,1020 C330,1090 280,1150 250,1190"
+                      fill="none"
+                      stroke="#E7CFA1"
+                      strokeWidth="42"
+                      strokeLinecap="round"
+                      opacity="0.7"
+                    />
+                    <path
+                      d="M250,180 C150,280 150,360 250,450 C350,540 350,640 250,730 C150,820 150,920 250,1020 C330,1090 280,1150 250,1190"
+                      fill="none"
+                      stroke="#FFFDF7"
+                      strokeWidth="6"
+                      strokeDasharray="14 14"
+                      strokeLinecap="round"
+                      opacity="0.85"
+                    />
+                  </svg>
+
+                  {/* Elementos Decorativos Botânicos e Arquitetônicos nas Laterais da Trilha */}
+                  <div className="absolute top-10 left-5 text-3xl opacity-75">☁️</div>
+                  <div className="absolute top-16 right-6 text-4xl opacity-80">☁️</div>
+                  <div className="absolute top-52 left-4 text-3xl opacity-85">🌲🌳</div>
+                  <div className="absolute top-72 right-5 text-3xl opacity-80">🌿🌻</div>
+                  <div className="absolute top-[430px] left-5 text-3xl opacity-80">🏮✨</div>
+                  <div className="absolute top-[560px] right-4 text-3xl opacity-85">🌳🐿️</div>
+                  <div className="absolute top-[720px] left-4 text-3xl opacity-80">🌉🦢</div>
+                  <div className="absolute bottom-24 right-5 text-3xl opacity-85">🌲🌸</div>
+                </div>
+
                 {/* PORTAL / ARCO CENOGRÁFICO DO MUNDO */}
-                <div className="text-center mb-8 relative">
-                  <div className="text-5xl mb-2 filter drop-shadow-md select-none">{config.bgDecoration}</div>
-                  <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full ${config.badgeBg} ${config.badgeText} border text-xs sm:text-sm font-black uppercase tracking-wider shadow-sm mb-2`}>
+                <div className="text-center mb-10 relative z-10">
+                  <div className="text-5xl mb-2.5 filter drop-shadow-md select-none">{config.bgDecoration}</div>
+                  <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full ${config.badgeBg} ${config.badgeText} border text-xs sm:text-sm font-extrabold uppercase tracking-wider shadow-xs mb-2.5`}>
                     <span>{trail.emoji}</span>
                     <span>{config.themeName}</span>
                   </div>
-                  <h2 className="text-3xl sm:text-4xl font-serif font-black text-slate-900 drop-shadow-xs">
+                  <h2 className="text-3xl sm:text-4xl font-black text-slate-900 drop-shadow-2xs">
                     {trail.title}
                   </h2>
-                  <p className="text-xs text-slate-600 font-bold max-w-xs mx-auto mt-1 leading-snug">
+                  <p className="text-xs sm:text-sm text-slate-600 font-bold max-w-xs mx-auto mt-1.5 leading-relaxed">
                     {trail.desc || (trail as any).description}
                   </p>
                 </div>
 
                 {/* NÓS DA TRILHA DESTE MUNDO EM ZIGUE-ZAGUE */}
-                <div className="relative w-full flex flex-col items-center gap-14">
+                <div className="relative z-10 w-full flex flex-col items-center gap-16">
                   {worldStories.length === 0 ? (
                     <div className="bg-white/90 backdrop-blur-md rounded-3xl p-6 text-center border-2 border-dashed border-slate-300 max-w-xs mx-auto shadow-sm">
                       <span className="text-3xl block mb-1">🧭</span>
@@ -396,29 +438,20 @@ export default function JourneyMap({ stories, userPlan = 'free', isAdmin = false
                     </div>
                   ) : (
                     worldStories.map((story, index) => {
-                      const positions = ['-translate-x-14 md:-translate-x-20', 'translate-x-0', 'translate-x-14 md:translate-x-20'];
+                      const positions = ['-translate-x-12 sm:-translate-x-16', 'translate-x-0', 'translate-x-12 sm:translate-x-16'];
                       const posClass = positions[index % 3];
                       const isFirstInApp = worldIdx === 0 && index === 0;
                       const isLocked = !isFirstInApp && story.isLocked;
-                      const starsCount = story.stars || (isFirstInApp ? 3 : 0);
-
-                      const activityTags = [
-                        { emoji: '🧩', bg: 'bg-pink-500' },
-                        { emoji: '🎨', bg: 'bg-purple-500' },
-                        { emoji: '🌟', bg: 'bg-amber-500' },
-                        { emoji: '👑', bg: 'bg-blue-500' }
-                      ];
-                      const tag = activityTags[index % activityTags.length];
 
                       return (
                         <div key={story.id} className={`relative flex flex-col items-center transition-all ${posClass}`}>
                           
-                          {/* PEDRINHAS DE PASSAGEM (STEPPING STONES) CONECTANDO OS NÓS */}
+                          {/* PEDRINHAS DOURADAS DE PASSAGEM (STEPPING STONES) CONECTANDO OS NÓS */}
                           {index < worldStories.length - 1 && (
-                            <div className="absolute top-24 flex flex-col items-center gap-2 -z-0 pointer-events-none opacity-85">
-                              <div className="w-4 h-3 rounded-full bg-[#E5D7B8] border border-[#C5B38F] shadow-2xs"></div>
-                              <div className="w-4 h-3 rounded-full bg-[#E5D7B8] border border-[#C5B38F] shadow-2xs"></div>
-                              <div className="w-4 h-3 rounded-full bg-[#E5D7B8] border border-[#C5B38F] shadow-2xs"></div>
+                            <div className="absolute top-28 flex flex-col items-center gap-2.5 -z-10 pointer-events-none">
+                              <div className="w-5 h-3.5 rounded-full bg-[#DFC38D] border-2 border-[#B89758] shadow-xs"></div>
+                              <div className="w-4 h-3 rounded-full bg-[#DFC38D] border-2 border-[#B89758] shadow-xs"></div>
+                              <div className="w-5 h-3.5 rounded-full bg-[#DFC38D] border-2 border-[#B89758] shadow-xs"></div>
                             </div>
                           )}
 
@@ -429,10 +462,10 @@ export default function JourneyMap({ stories, userPlan = 'free', isAdmin = false
                             className="group relative flex flex-col items-center focus:outline-none"
                           >
                             {/* ILHA FLUTUANTE ILUSTRADA */}
-                            <div className={`relative w-24 h-24 sm:w-28 sm:h-28 rounded-full p-1 bg-white border-3 sm:border-4 border-white shadow-[0_12px_24px_rgba(0,0,0,0.14)] flex items-center justify-center cursor-pointer transition-transform duration-300 group-hover:scale-108 ${
+                            <div className={`relative w-26 h-26 sm:w-30 sm:h-30 rounded-full p-1.5 bg-white border-4 border-amber-300 shadow-[0_12px_26px_rgba(45,33,20,0.18)] flex items-center justify-center cursor-pointer transition-transform duration-300 group-hover:scale-108 ${
                               isLocked ? 'grayscale opacity-75' : ''
                             }`}>
-                              <div className="w-full h-full rounded-full overflow-hidden bg-slate-100 flex items-center justify-center">
+                              <div className="w-full h-full rounded-full overflow-hidden bg-amber-50 flex items-center justify-center">
                                 {story.coverImageUrl ? (
                                   <img src={story.coverImageUrl} alt={story.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" />
                                 ) : (
@@ -442,19 +475,19 @@ export default function JourneyMap({ stories, userPlan = 'free', isAdmin = false
                                 )}
                               </div>
 
-                              {/* BADGE DE CADEADO OU ESTRELA NO CANTO DA ILHA (Estilo Lumi Kids) */}
-                              <div className="absolute -top-1 -right-1 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white text-slate-800 flex items-center justify-center text-xs shadow-md border border-slate-200">
+                              {/* BADGE DE CADEADO OU ESTRELA NO CANTO DA ILHA */}
+                              <div className="absolute -top-1 -right-1 w-8 h-8 rounded-full bg-white text-slate-800 flex items-center justify-center text-xs shadow-md border-2 border-amber-200">
                                 {isLocked ? (
-                                  <Lock size={13} className="text-slate-600" />
+                                  <Lock size={14} className="text-slate-600" />
                                 ) : (
-                                  <Star size={13} className="text-amber-500 fill-amber-500" />
+                                  <Star size={14} className="text-amber-500 fill-amber-500" />
                                 )}
                               </div>
                             </div>
 
-                            {/* ETIQUETA / PILL BRANCA LIMPA ABAIXO DA ILHA (Estilo Lumi Kids) */}
-                            <div className="mt-2.5 bg-white px-3.5 py-1 sm:px-4 sm:py-1.5 rounded-full border border-slate-100 shadow-md max-w-[190px] text-center group-hover:border-purple-200 transition-colors">
-                              <h4 className="font-bold text-xs sm:text-sm text-slate-800 leading-tight truncate">
+                            {/* ETIQUETA / PILL BRANCA COM ESPAÇAMENTO AMPLO ABAIXO DA ILHA */}
+                            <div className="mt-3 bg-white/98 px-4 py-2 rounded-full border-2 border-[#E6DEC8] shadow-md max-w-[220px] text-center group-hover:border-[#0D9488] transition-colors">
+                              <h4 className="font-extrabold text-xs sm:text-sm text-slate-800 leading-snug truncate">
                                 {story.title}
                               </h4>
                             </div>
@@ -511,10 +544,10 @@ export default function JourneyMap({ stories, userPlan = 'free', isAdmin = false
             }}
             className="flex flex-col items-center gap-0.5 cursor-pointer group"
           >
-            <div className="w-12 h-8 rounded-2xl bg-slate-100 text-slate-600 flex items-center justify-center text-lg group-hover:bg-purple-100 group-hover:text-purple-700 transition-colors">
+            <div className="w-12 h-8 rounded-2xl bg-slate-100 text-slate-600 flex items-center justify-center text-lg group-hover:bg-teal-100 group-hover:text-teal-700 transition-colors">
               📚
             </div>
-            <span className="font-bold text-[0.68rem] text-slate-600 group-hover:text-purple-700">Histórias</span>
+            <span className="font-bold text-[0.68rem] text-slate-600 group-hover:text-teal-700">Histórias</span>
           </button>
 
           {/* Tab 3: Playground / Perfil */}
@@ -703,18 +736,18 @@ export default function JourneyMap({ stories, userPlan = 'free', isAdmin = false
             {/* Corpo em Pergaminho Dobrado */}
             <div className="parchment-sheet p-5 sm:p-6 space-y-4 text-[#2D2114] overflow-y-auto">
               {/* Efeitos Sonoros */}
-              <div className="flex items-center justify-between p-3.5 bg-amber-50/60 rounded-2xl border border-amber-900/10 shadow-xs">
-                <div className="flex items-center gap-3">
-                  <span className="text-xl">🔔</span>
+              <div className="flex items-center justify-between gap-3 p-4 bg-amber-50/70 rounded-2xl border border-amber-900/10 shadow-xs">
+                <div className="flex items-center gap-3.5">
+                  <span className="text-2xl">🔔</span>
                   <div>
-                    <span className="font-black text-sm block leading-tight">{t('reader_sound_effects', 'Efeitos Sonoros')}</span>
-                    <span className="text-[0.7rem] text-[#6B5A45] font-semibold">{t('reader_sound_effects_desc', 'Sons de mapa e botões')}</span>
+                    <span className="font-extrabold text-sm sm:text-base block leading-tight">{t('reader_sound_effects', 'Efeitos Sonoros')}</span>
+                    <span className="text-xs text-[#6B5A45] font-semibold block mt-0.5">{t('reader_sound_effects_desc', 'Sons de mapa e botões')}</span>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => setSoundEnabled(prev => !prev)}
-                  className={`btn-round-action px-3.5 h-9 rounded-full flex items-center gap-1.5 text-white text-xs font-black shadow-xs transition-all cursor-pointer ${
+                  className={`btn-round-action px-5 py-2.5 min-w-[96px] h-11 rounded-full flex items-center justify-center gap-1.5 text-white text-xs sm:text-sm font-extrabold shadow-xs transition-all cursor-pointer shrink-0 ${
                     soundEnabled ? 'bg-[#0284C7]' : 'bg-gray-400 opacity-60'
                   }`}
                 >
@@ -723,28 +756,28 @@ export default function JourneyMap({ stories, userPlan = 'free', isAdmin = false
               </div>
 
               {/* Seletor de Idiomas */}
-              <div className="p-3.5 bg-amber-50/60 rounded-2xl border border-amber-900/10 shadow-xs">
-                <div className="text-xs font-black uppercase tracking-wider text-[#4A3B2C] mb-1">
+              <div className="p-4 bg-amber-50/70 rounded-2xl border border-amber-900/10 shadow-xs">
+                <div className="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-[#4A3B2C] mb-1">
                   🌍 {t('settings_language', 'Idioma do Aplicativo')}
                 </div>
-                <div className="text-[0.7rem] text-[#6B5A45] font-semibold mb-2.5">
+                <div className="text-xs text-[#6B5A45] font-semibold mb-3">
                   {t('settings_language_desc', 'Mudar para Inglês, Espanhol, Francês ou Italiano')}
                 </div>
                 <LanguageSelector variant="list" />
               </div>
 
-              <div className="pt-2 space-y-2.5">
+              <div className="pt-2 space-y-3">
                 <Link
                   href="/app/historias"
-                  className="w-full py-2.5 px-4 rounded-2xl bg-white border-2 border-[#D8C29D] text-[#2D2114] font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-xs hover:bg-amber-50 transition-colors"
+                  className="w-full min-h-[54px] py-3.5 px-5 rounded-2xl bg-white border-2 border-[#D8C29D] text-[#2D2114] font-extrabold text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-xs hover:bg-amber-50 transition-colors"
                 >
-                  <span>{t('manage_stories', '📚 Gerenciar Histórias')}</span>
+                  <span>{t('manage_stories', '📚 Biblioteca de Histórias')}</span>
                 </Link>
 
                 <button
                   type="button"
                   onClick={() => setIsSettingsOpen(false)}
-                  className="w-full h-12 rounded-2xl bg-[#0D9488] text-white font-black text-xs uppercase tracking-wider shadow-md hover:bg-[#0F766E] transition-all active:scale-98 flex items-center justify-center cursor-pointer"
+                  className="w-full min-h-[54px] py-3.5 px-6 rounded-2xl bg-[#0D9488] text-white font-extrabold text-sm uppercase tracking-wider shadow-md hover:bg-[#0F766E] transition-all active:scale-98 flex items-center justify-center cursor-pointer"
                 >
                   {t('save_and_close', 'Salvar e Fechar')}
                 </button>

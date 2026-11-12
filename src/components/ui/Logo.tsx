@@ -22,8 +22,8 @@ export default function Logo({ size = 'md', showText = true, className = '' }: L
 
   return (
     <div className={`flex items-center gap-2.5 select-none ${className}`}>
-      {/* Ícone Estrela Contos & Virtudes */}
-      <div className={`${iconSizes[size]} bg-gradient-to-br from-amber-300 via-amber-400 to-amber-500 flex items-center justify-center p-1 shadow-xs border border-amber-300/40 shrink-0`}>
+      {/* Ícone Corujinha Sábia Contos & Virtudes */}
+      <div className={`${iconSizes[size]} flex items-center justify-center shadow-sm overflow-hidden shrink-0`}>
         <img 
           src="/icons/lumikids-star-logo.svg" 
           alt="Contos & Virtudes" 

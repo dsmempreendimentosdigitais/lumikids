@@ -89,12 +89,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const provider = new GoogleAuthProvider();
     try {
       const res = await signInWithPopup(auth, provider);
-      // Garantir que exista no banco
-      await setDoc(doc(db, 'users', res.user.uid), {
+      const userRef = doc(db, 'users', res.user.uid);
+      const existingSnap = await getDoc(userRef);
+      const existingPlan = existingSnap.exists() ? existingSnap.data()?.plan : null;
+
+      await setDoc(userRef, {
         email: res.user.email,
         displayName: res.user.displayName,
         photoURL: res.user.photoURL,
-        plan: 'free',
+        plan: existingPlan && existingPlan !== 'free' ? existingPlan : 'free',
         updatedAt: new Date(),
       }, { merge: true });
     } catch (error) {

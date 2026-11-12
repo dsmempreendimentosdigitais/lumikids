@@ -209,6 +209,7 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
 
   // Referências para o áudio e sincronização de fala
   const audioElementRef = React.useRef<HTMLAudioElement | null>(null);
+  const audioBlobCacheRef = React.useRef<Record<string, string>>({});
   const wordIntervalRef = React.useRef<any>(null);
 
   // Pré-aquecimento das vozes neurais instaladas no navegador / sistema operacional
@@ -243,24 +244,18 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
     setActiveWordIndex(null);
   };
 
-  const speakText = (text: string) => {
-    stopNarration();
-    if (!text || !text.trim()) return;
-
+  const speakWithBrowserFallback = (text: string) => {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
       setIsSpeaking(false);
       setIsAudioLoading(false);
       return;
     }
 
-    setIsAudioLoading(true);
-
     try {
       const utterance = new SpeechSynthesisUtterance(text);
       const targetLocale = LOCALE_BY_LANG[language] || 'pt-BR';
       utterance.lang = targetLocale;
-      // Cadência calma e acolhedora de livro infantil
-      utterance.rate = 0.88;
+      utterance.rate = 0.85;
       utterance.pitch = 1.02;
 
       const voices = window.speechSynthesis.getVoices();
@@ -287,7 +282,6 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
         setIsSpeaking(true);
         setIsAudioLoading(false);
 
-        // Fallback suave para navegadores móveis onde onboundary não é emitido
         setTimeout(() => {
           if (!boundaryTriggered && words.length > 0) {
             let currentW = 0;
@@ -295,13 +289,11 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
               currentW++;
               if (currentW < words.length) {
                 setActiveWordIndex(currentW);
-              } else {
-                if (wordIntervalRef.current) {
-                  clearInterval(wordIntervalRef.current);
-                  wordIntervalRef.current = null;
-                }
+              } else if (wordIntervalRef.current) {
+                clearInterval(wordIntervalRef.current);
+                wordIntervalRef.current = null;
               }
-            }, 360);
+            }, 390);
           }
         }, 400);
       };
@@ -328,9 +320,80 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
 
       window.speechSynthesis.speak(utterance);
     } catch (e) {
-      console.warn('Erro ao reproduzir voz:', e);
+      console.warn('Erro ao reproduzir voz fallback:', e);
       setIsSpeaking(false);
       setIsAudioLoading(false);
+    }
+  };
+
+  const speakText = async (text: string) => {
+    stopNarration();
+    const cleanText = text?.trim();
+    if (!cleanText) return;
+
+    setIsAudioLoading(true);
+    const words = cleanText.split(/\s+/);
+    const cacheKey = `${language}:${cleanText}`;
+
+    try {
+      let audioUrl = audioBlobCacheRef.current[cacheKey];
+
+      if (!audioUrl) {
+        const res = await fetch('/api/ai/narrate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            text: cleanText,
+            lang: language,
+            voice: 'Aoede',
+          }),
+        });
+
+        if (!res.ok) {
+          throw new Error(`Narrate API status ${res.status}`);
+        }
+
+        const blob = await res.blob();
+        if (blob.size < 100) {
+          throw new Error('Empty audio blob');
+        }
+        audioUrl = URL.createObjectURL(blob);
+        audioBlobCacheRef.current[cacheKey] = audioUrl;
+      }
+
+      const audio = new Audio(audioUrl);
+      // Cadência levemente mais suave para leitura infantil acolhedora
+      audio.playbackRate = 0.96;
+      audioElementRef.current = audio;
+
+      audio.onplay = () => {
+        setIsAudioLoading(false);
+        setIsSpeaking(true);
+        setActiveWordIndex(0);
+      };
+
+      audio.ontimeupdate = () => {
+        if (audio.duration && words.length > 0) {
+          const progress = Math.min(1, audio.currentTime / (audio.duration * 0.96));
+          const idx = Math.min(words.length - 1, Math.floor(progress * words.length));
+          setActiveWordIndex(idx);
+        }
+      };
+
+      audio.onended = () => {
+        setIsSpeaking(false);
+        setIsAudioLoading(false);
+        setActiveWordIndex(null);
+      };
+
+      audio.onerror = () => {
+        speakWithBrowserFallback(cleanText);
+      };
+
+      await audio.play();
+    } catch (err) {
+      console.warn('Usando fallback de voz local:', err);
+      speakWithBrowserFallback(cleanText);
     }
   };
 
@@ -1257,20 +1320,20 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
             </div>
 
             {/* Corpo em Pergaminho Dobrado com Toggles */}
-            <div className="parchment-sheet p-5 sm:p-6 space-y-3.5 text-[#2D2114] overflow-y-auto">
+            <div className="parchment-sheet p-5 sm:p-6 space-y-4 text-[#2D2114] overflow-y-auto">
               {/* Opção Efeitos Sonoros */}
-              <div className="flex items-center justify-between p-3.5 bg-amber-50/60 rounded-2xl border border-amber-900/10 shadow-xs">
-                <div className="flex items-center gap-3">
-                  <span className="text-xl">🔔</span>
+              <div className="flex items-center justify-between gap-3 p-4 bg-amber-50/70 rounded-2xl border border-amber-900/10 shadow-xs">
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <span className="text-2xl shrink-0">🔔</span>
                   <div>
-                    <span className="font-black text-sm block leading-tight">{t('reader_sound_effects', 'Efeitos Sonoros')}</span>
-                    <span className="text-[0.7rem] text-[#6B5A45] font-semibold">{t('reader_sound_effects_desc', 'Sons de virar página e toques')}</span>
+                    <span className="font-extrabold text-sm sm:text-base block leading-tight">{t('reader_sound_effects', 'Efeitos Sonoros')}</span>
+                    <span className="text-xs text-[#6B5A45] font-semibold block mt-0.5">{t('reader_sound_effects_desc', 'Sons de virar página e toques')}</span>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => setSoundEffectsEnabled(prev => !prev)}
-                  className={`btn-round-action px-3.5 h-9 rounded-full flex items-center gap-1.5 text-white text-xs font-black shadow-xs transition-all cursor-pointer ${
+                  className={`btn-round-action px-5 py-2.5 min-w-[96px] h-11 rounded-full flex items-center justify-center gap-1.5 text-white text-xs sm:text-sm font-extrabold shadow-xs transition-all cursor-pointer shrink-0 ${
                     soundEffectsEnabled ? 'bg-[#0284C7]' : 'bg-gray-400 opacity-60'
                   }`}
                 >
@@ -1279,12 +1342,12 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
               </div>
 
               {/* Opção Narração */}
-              <div className="flex items-center justify-between p-3.5 bg-amber-50/60 rounded-2xl border border-amber-900/10 shadow-xs">
-                <div className="flex items-center gap-3">
-                  <span className="text-xl">🗣️</span>
+              <div className="flex items-center justify-between gap-3 p-4 bg-amber-50/70 rounded-2xl border border-amber-900/10 shadow-xs">
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <span className="text-2xl shrink-0">🗣️</span>
                   <div>
-                    <span className="font-black text-sm block leading-tight">{t('reader_audio_narration', 'Narração em Áudio')}</span>
-                    <span className="text-[0.7rem] text-[#6B5A45] font-semibold">{t('reader_audio_narration_desc', 'Leitura realista em voz alta')}</span>
+                    <span className="font-extrabold text-sm sm:text-base block leading-tight">{t('reader_audio_narration', 'Narração em Áudio')}</span>
+                    <span className="text-xs text-[#6B5A45] font-semibold block mt-0.5">{t('reader_audio_narration_desc', 'Voz suave, fluida e pausada')}</span>
                   </div>
                 </div>
                 <button
@@ -1299,7 +1362,7 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
                       speakText(currentText);
                     }
                   }}
-                  className={`btn-round-action px-3.5 h-9 rounded-full flex items-center gap-1.5 text-white text-xs font-black shadow-xs transition-all cursor-pointer ${
+                  className={`btn-round-action px-5 py-2.5 min-w-[96px] h-11 rounded-full flex items-center justify-center gap-1.5 text-white text-xs sm:text-sm font-extrabold shadow-xs transition-all cursor-pointer shrink-0 ${
                     isSpeaking ? 'bg-amber-600 animate-pulse' : 'bg-[#0284C7]'
                   }`}
                 >
@@ -1308,38 +1371,40 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
               </div>
 
               {/* Idioma da História */}
-              <div className="p-3.5 bg-amber-50/60 rounded-2xl border border-amber-900/10 shadow-xs">
-                <div className="text-xs font-black uppercase tracking-wider text-[#4A3B2C] mb-1">
+              <div className="p-4 bg-amber-50/70 rounded-2xl border border-amber-900/10 shadow-xs">
+                <div className="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-[#4A3B2C] mb-1">
                   🌍 {t('reader_language', 'Idioma da História')}
                 </div>
-                <div className="text-[0.7rem] text-[#6B5A45] font-semibold mb-2.5">
+                <div className="text-xs text-[#6B5A45] font-semibold mb-3">
                   {t('reader_language_desc', 'Alterne o idioma de leitura e narração')}
                 </div>
                 <LanguageSelector variant="list" />
               </div>
 
-              {/* Botões de Ação com Espaçamento Amplo */}
-              <div className="pt-2 space-y-2.5">
-                <div className="grid grid-cols-2 gap-2">
+              {/* Botões de Ação com Espaçamento Amplo (Início e Biblioteca maiores) */}
+              <div className="pt-2 space-y-3">
+                <div className="grid grid-cols-2 gap-3">
                   <Link
                     href="/app"
-                    className="py-2.5 px-3 rounded-2xl bg-white border-2 border-[#D8C29D] text-[#2D2114] font-black text-[0.75rem] uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-xs hover:bg-amber-50 text-center"
+                    className="min-h-[56px] py-4 px-5 rounded-2xl bg-white border-2 border-[#D8C29D] text-[#2D2114] font-extrabold text-sm sm:text-base uppercase tracking-wider flex items-center justify-center gap-2.5 shadow-sm hover:bg-amber-50 active:scale-98 transition-all text-center"
                   >
-                    <span>🗺️ {t('nav_home', 'Mapa')}</span>
+                    <span className="text-lg">🗺️</span>
+                    <span>{t('nav_home', 'Início')}</span>
                   </Link>
 
                   <Link
                     href="/app/historias"
-                    className="py-2.5 px-3 rounded-2xl bg-white border-2 border-[#D8C29D] text-[#2D2114] font-black text-[0.75rem] uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-xs hover:bg-amber-50 text-center"
+                    className="min-h-[56px] py-4 px-5 rounded-2xl bg-white border-2 border-[#D8C29D] text-[#2D2114] font-extrabold text-sm sm:text-base uppercase tracking-wider flex items-center justify-center gap-2.5 shadow-sm hover:bg-amber-50 active:scale-98 transition-all text-center"
                   >
-                    <span>📚 {t('nav_library', 'Catálogo')}</span>
+                    <span className="text-lg">📚</span>
+                    <span>{t('nav_library', 'Biblioteca')}</span>
                   </Link>
                 </div>
 
                 <button
                   type="button"
                   onClick={() => setIsMenuOpen(false)}
-                  className="w-full h-12 rounded-2xl bg-[#0D9488] text-white font-black text-xs uppercase tracking-wider shadow-md hover:bg-[#0F766E] transition-all active:scale-98 flex items-center justify-center cursor-pointer"
+                  className="w-full min-h-[56px] py-4 px-6 rounded-2xl bg-[#0D9488] text-white font-extrabold text-sm sm:text-base uppercase tracking-wider shadow-md hover:bg-[#0F766E] transition-all active:scale-98 flex items-center justify-center cursor-pointer"
                 >
                   {t('save_and_close', 'Salvar e Fechar')}
                 </button>

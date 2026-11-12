@@ -1,108 +1,141 @@
 <svg viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Fundo Quadrado Arredondado Azul Real Vibrante -->
-  <rect width="512" height="512" rx="128" fill="url(#bg_gradient)" />
-  <rect x="8" y="8" width="496" height="496" rx="120" stroke="url(#border_glow)" stroke-width="8" opacity="0.4" />
+  <!-- Fundo App Store / Play Store Squircle na Identidade Visual Contos & Virtudes (Teal Esmeralda Profundo) -->
+  <rect width="512" height="512" rx="124" fill="url(#bg_teal_grad)" />
+  <rect x="10" y="10" width="492" height="492" rx="116" stroke="url(#gold_rim_grad)" stroke-width="6" opacity="0.55" />
 
-  <!-- Brilho Ambiente Central -->
-  <circle cx="256" cy="256" r="180" fill="url(#star_glow)" opacity="0.6" />
+  <!-- Halo Dourado Acolhedor Central -->
+  <circle cx="256" cy="252" r="195" fill="url(#warm_halo)" />
 
-  <!-- Estrelinhas e Faíscas de Luz ao Redor -->
-  <path d="M120 160L126 176L142 182L126 188L120 204L114 188L98 182L114 176Z" fill="#FFFFFF" opacity="0.9" />
-  <path d="M380 140L385 154L399 159L385 164L380 178L375 164L361 159L375 154Z" fill="#FFFFFF" opacity="0.95" />
-  <path d="M400 340L404 352L416 356L404 360L400 372L396 360L384 356L396 352Z" fill="#FDE047" opacity="0.85" />
-  <path d="M110 350L114 360L124 364L114 368L110 378L106 368L96 364L106 360Z" fill="#FDE047" opacity="0.85" />
-  
-  <circle cx="200" cy="110" r="4" fill="#FFFFFF" opacity="0.8" />
-  <circle cx="320" cy="120" r="5" fill="#FFFFFF" opacity="0.9" />
-  <circle cx="150" cy="270" r="3.5" fill="#FDE047" opacity="0.7" />
-  <circle cx="370" cy="260" r="4.5" fill="#FFFFFF" opacity="0.8" />
-  <circle cx="260" cy="410" r="3" fill="#FFFFFF" opacity="0.7" />
+  <!-- Estrelinhas Douradas Mágicas ao Redor -->
+  <path d="M98 132L104 148L120 154L104 160L98 176L92 160L76 154L92 148Z" fill="#FEF08A" opacity="0.92" />
+  <path d="M416 122L422 136L436 142L422 148L416 162L410 148L396 142L410 136Z" fill="#FEF08A" opacity="0.95" />
+  <path d="M424 342L428 352L438 356L428 360L424 370L420 360L410 356L420 352Z" fill="#FDE047" opacity="0.85" />
+  <path d="M88 336L92 346L102 350L92 354L88 364L84 354L74 350L84 346Z" fill="#FDE047" opacity="0.85" />
+  <circle cx="152" cy="96" r="5" fill="#FFFBEB" opacity="0.85" />
+  <circle cx="364" cy="92" r="4.5" fill="#FFFBEB" opacity="0.8" />
+  <circle cx="256" cy="68" r="6" fill="#FDE047" opacity="0.9" />
 
-  <!-- Sombra Projetada da Estrela -->
-  <ellipse cx="256" cy="385" rx="130" ry="24" fill="#0A2269" opacity="0.5" filter="blur(10px)" />
+  <!-- Sombra Suave na Base -->
+  <ellipse cx="256" cy="436" rx="140" ry="22" fill="#042F2E" opacity="0.45" />
 
-  <!-- Braços / Mãozinhas Amigáveis da Estrela -->
-  <path d="M142 270C132 260 120 268 126 284C134 304 165 305 178 296Z" fill="#F59E0B" />
-  <path d="M140 272C133 264 124 270 128 282C135 298 160 299 172 292Z" fill="#FBBF24" />
+  <!-- Asinhas Abertas Acolhedoras (Âmbar / Mel Dourado) -->
+  <path d="M126 268C94 252 76 282 92 316C106 344 138 356 160 342L168 286Z" fill="url(#wing_amber)" stroke="#B45309" stroke-width="5" stroke-linejoin="round" />
+  <path d="M386 268C418 252 436 282 420 316C406 344 374 356 352 342L344 286Z" fill="url(#wing_amber)" stroke="#B45309" stroke-width="5" stroke-linejoin="round" />
 
-  <path d="M370 270C380 260 392 268 386 284C378 304 347 305 334 296Z" fill="#F59E0B" />
-  <path d="M372 272C379 264 388 270 384 282C377 298 352 299 340 292Z" fill="#FBBF24" />
+  <!-- Corpo Principal da Corujinha Sábia (Dourado Caramelo e Âmbar Quente) -->
+  <ellipse cx="256" cy="296" rx="116" ry="122" fill="url(#owl_body_gold)" stroke="#B45309" stroke-width="6" />
 
-  <!-- Corpo Dourado da Estrela com Cantos Curvos Aconchegantes -->
-  <path d="M256 96
-           C264 126 276 170 292 196
-           C326 200 376 210 406 226
-           C384 252 350 286 338 316
-           C348 350 362 398 352 422
-           C324 410 284 384 256 384
-           C228 384 188 410 160 422
-           C150 398 164 350 174 316
-           C162 286 128 252 106 226
-           C136 210 186 200 220 196
-           C236 170 248 126 256 96Z" 
-        fill="url(#star_gold_body)" 
-        stroke="#F59E0B" 
-        stroke-width="6" 
-        stroke-linejoin="round" />
+  <!-- Barriguinha Creme Aconchegante -->
+  <ellipse cx="256" cy="322" rx="82" ry="86" fill="url(#belly_cream)" />
 
-  <!-- Destaque Superior de Volume 3D (Highlights) -->
-  <path d="M256 112
-           C262 136 272 172 286 194
-           C316 198 360 206 386 220
-           C370 238 344 264 334 288
-           C322 248 290 208 256 196
-           C222 208 190 248 178 288
-           C168 264 142 238 126 220
-           C152 206 196 198 226 194
-           C240 172 250 136 256 112Z" 
-        fill="url(#star_top_shine)" 
-        opacity="0.6" />
+  <!-- Peninhas Delicadas no Peito (Tom Caramelo Suave) -->
+  <path d="M222 308Q232 320 242 308" stroke="#D97706" stroke-width="4.5" stroke-linecap="round" opacity="0.55" />
+  <path d="M246 308Q256 320 266 308" stroke="#D97706" stroke-width="4.5" stroke-linecap="round" opacity="0.55" />
+  <path d="M270 308Q280 320 290 308" stroke="#D97706" stroke-width="4.5" stroke-linecap="round" opacity="0.55" />
+  <path d="M234 334Q244 346 254 334" stroke="#D97706" stroke-width="4.5" stroke-linecap="round" opacity="0.45" />
+  <path d="M258 334Q268 346 278 334" stroke="#D97706" stroke-width="4.5" stroke-linecap="round" opacity="0.45" />
 
-  <!-- Bochechinhas Rosadas Fofas -->
-  <circle cx="204" cy="308" r="18" fill="#F87171" opacity="0.65" />
-  <circle cx="308" cy="308" r="18" fill="#F87171" opacity="0.65" />
+  <!-- Cabeça e Orelhinhas de Sábia da Corujinha -->
+  <path d="M148 214C134 166 154 118 192 142C214 130 236 126 256 126C276 126 298 130 320 142C358 118 378 166 364 214C376 244 366 282 340 294H172C146 282 136 244 148 214Z" fill="url(#owl_head_gold)" stroke="#B45309" stroke-width="6" stroke-linejoin="round" />
 
-  <!-- Olhos Pretos Carinhosos Grandes com Brilho Anime/Pixar -->
-  <ellipse cx="218" cy="274" rx="16" ry="20" fill="#1E1B4B" />
-  <circle cx="213" cy="266" r="6.5" fill="#FFFFFF" />
-  <circle cx="223" cy="282" r="3" fill="#FFFFFF" />
+  <!-- Detalhe Interno das Orelhinhas -->
+  <path d="M158 184C152 158 164 138 186 152" fill="#FDE68A" opacity="0.75" />
+  <path d="M354 184C360 158 348 138 326 152" fill="#FDE68A" opacity="0.75" />
 
-  <ellipse cx="294" cy="274" rx="16" ry="20" fill="#1E1B4B" />
-  <circle cx="289" cy="266" r="6.5" fill="#FFFFFF" />
-  <circle cx="299" cy="282" r="3" fill="#FFFFFF" />
+  <!-- Máscara Facial em Formato de Coração Suave (Creme Marfim) -->
+  <path d="M164 214C164 176 206 164 256 192C306 164 348 176 348 214C348 254 312 276 256 276C200 276 164 254 164 214Z" fill="#FFFDF9" stroke="#F59E0B" stroke-width="4" />
 
-  <!-- Sorriso Doce e Acolhedor -->
-  <path d="M240 300C240 318 272 318 272 300" stroke="#78350F" stroke-width="6" stroke-linecap="round" fill="#B45309" />
-  <path d="M246 302C250 312 262 312 266 302" fill="#F87171" />
+  <!-- Olhos Grandes Expressivos estilo Pixar/Storybook -->
+  <!-- Olho Esquerdo -->
+  <circle cx="212" cy="216" r="36" fill="#FFFFFF" stroke="#D97706" stroke-width="4.5" />
+  <circle cx="214" cy="216" r="25" fill="url(#iris_teal)" />
+  <circle cx="214" cy="216" r="16" fill="#134E4A" />
+  <circle cx="205" cy="206" r="8" fill="#FFFFFF" />
+  <circle cx="222" cy="224" r="3.8" fill="#FFFFFF" />
 
-  <!-- Gradientes e Filtros -->
+  <!-- Olho Direito -->
+  <circle cx="300" cy="216" r="36" fill="#FFFFFF" stroke="#D97706" stroke-width="4.5" />
+  <circle cx="298" cy="216" r="25" fill="url(#iris_teal)" />
+  <circle cx="298" cy="216" r="16" fill="#134E4A" />
+  <circle cx="289" cy="206" r="8" fill="#FFFFFF" />
+  <circle cx="306" cy="224" r="3.8" fill="#FFFFFF" />
+
+  <!-- Bochechinhas Rosadas Carinhosas -->
+  <ellipse cx="176" cy="242" rx="14" ry="9" fill="#FB7185" opacity="0.55" />
+  <ellipse cx="336" cy="242" rx="14" ry="9" fill="#FB7185" opacity="0.55" />
+
+  <!-- Bico Dourado Laranja Sorriso -->
+  <path d="M242 232Q256 224 270 232L256 256Z" fill="url(#beak_grad)" stroke="#9A3412" stroke-width="3.5" stroke-linejoin="round" />
+
+  <!-- Lencinho / Gola de Aventureira Verde-Teal com Estrela Dourada -->
+  <path d="M180 272Q256 302 332 272L314 298Q256 322 198 298Z" fill="#0D9488" stroke="#0F766E" stroke-width="4" stroke-linejoin="round" />
+  <path d="M240 288L256 318L272 288Z" fill="#14B8A6" stroke="#0F766E" stroke-width="3.5" stroke-linejoin="round" />
+  <circle cx="256" cy="292" r="7" fill="#FDE047" stroke="#B45309" stroke-width="2" />
+
+  <!-- Livro Aberto Iluminado nas Patinhas (Símbolo de Contos & Virtudes) -->
+  <g transform="translate(0, 6)">
+    <!-- Páginas Creme e Capa Dourada -->
+    <path d="M168 386C196 374 232 378 256 392C280 378 316 374 344 386L336 424C310 414 278 416 256 430C234 416 202 414 176 424Z" fill="#FFFDF9" stroke="#B45309" stroke-width="5" stroke-linejoin="round" />
+    <path d="M174 378C200 366 232 370 256 384C280 370 312 366 338 378L332 414C308 404 278 406 256 420C234 406 204 404 180 414Z" fill="#FEF3C7" stroke="#D97706" stroke-width="3.5" stroke-linejoin="round" />
+    <line x1="256" y1="384" x2="256" y2="426" stroke="#B45309" stroke-width="4" stroke-linecap="round" />
+
+    <!-- Patinhas Laranjinhas Segurando o Livro -->
+    <ellipse cx="204" cy="422" rx="22" ry="12" fill="#F97316" stroke="#9A3412" stroke-width="4" />
+    <ellipse cx="308" cy="422" rx="22" ry="12" fill="#F97316" stroke="#9A3412" stroke-width="4" />
+  </g>
+
+  <!-- Pequena Coroa / Estrela de Virtude no Topo da Cabeça -->
+  <path d="M234 124L242 102L256 114L270 102L278 124Z" fill="#FDE047" stroke="#B45309" stroke-width="3.5" stroke-linejoin="round" />
+
   <defs>
-    <linearGradient id="bg_gradient" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#2563EB" />
-      <stop offset="50%" stop-color="#1D4ED8" />
-      <stop offset="100%" stop-color="#1E3A8A" />
+    <linearGradient id="bg_teal_grad" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#14B8A6" />
+      <stop offset="45%" stop-color="#0D9488" />
+      <stop offset="100%" stop-color="#115E59" />
     </linearGradient>
 
-    <linearGradient id="border_glow" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#93C5FD" />
-      <stop offset="100%" stop-color="#3B82F6" />
-    </linearGradient>
-
-    <radialGradient id="star_glow" cx="0.5" cy="0.5" r="0.5" gradientUnits="userSpaceOnUse" gradientTransform="translate(256 256) scale(180)">
-      <stop offset="0%" stop-color="#FEF08A" stop-opacity="0.5" />
-      <stop offset="100%" stop-color="#3B82F6" stop-opacity="0" />
-    </radialGradient>
-
-    <linearGradient id="star_gold_body" x1="256" y1="96" x2="256" y2="422" gradientUnits="userSpaceOnUse">
+    <linearGradient id="gold_rim_grad" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
       <stop offset="0%" stop-color="#FEF08A" />
-      <stop offset="35%" stop-color="#FDE047" />
-      <stop offset="70%" stop-color="#F59E0B" />
+      <stop offset="50%" stop-color="#F59E0B" />
       <stop offset="100%" stop-color="#D97706" />
     </linearGradient>
 
-    <linearGradient id="star_top_shine" x1="256" y1="100" x2="256" y2="280" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.9" />
-      <stop offset="100%" stop-color="#FEF08A" stop-opacity="0" />
+    <radialGradient id="warm_halo" cx="0.5" cy="0.5" r="0.5" gradientUnits="userSpaceOnUse" gradientTransform="translate(256 252) scale(195)">
+      <stop offset="0%" stop-color="#FEF08A" stop-opacity="0.42" />
+      <stop offset="65%" stop-color="#14B8A6" stop-opacity="0.12" />
+      <stop offset="100%" stop-color="#0D9488" stop-opacity="0" />
+    </radialGradient>
+
+    <linearGradient id="owl_head_gold" x1="256" y1="126" x2="256" y2="294" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FBBF24" />
+      <stop offset="55%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#D97706" />
+    </linearGradient>
+
+    <linearGradient id="owl_body_gold" x1="256" y1="174" x2="256" y2="418" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#F59E0B" />
+      <stop offset="65%" stop-color="#D97706" />
+      <stop offset="100%" stop-color="#B45309" />
+    </linearGradient>
+
+    <linearGradient id="wing_amber" x1="0" y1="260" x2="0" y2="355" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#B45309" />
+    </linearGradient>
+
+    <linearGradient id="belly_cream" x1="256" y1="236" x2="256" y2="408" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFDF9" />
+      <stop offset="100%" stop-color="#FDE68A" />
+    </linearGradient>
+
+    <radialGradient id="iris_teal" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#2DD4BF" />
+      <stop offset="100%" stop-color="#0D9488" />
+    </radialGradient>
+
+    <linearGradient id="beak_grad" x1="256" y1="228" x2="256" y2="256" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FB923C" />
+      <stop offset="100%" stop-color="#EA580C" />
     </linearGradient>
   </defs>
 </svg>

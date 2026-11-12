@@ -1,17 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Plus_Jakarta_Sans, Merriweather } from "next/font/google";
+import { Nunito } from "next/font/google";
 import "./globals.css";
 
-const plusJakartaSans = Plus_Jakarta_Sans({
+const nunito = Nunito({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  variable: "--font-sans",
-});
-
-const merriweather = Merriweather({
-  subsets: ["latin"],
-  weight: ["300", "400", "700", "900"],
-  variable: "--font-serif",
+  weight: ["400", "500", "600", "700", "800", "900"],
+  variable: "--font-nunito",
 });
 
 export const metadata: Metadata = {
@@ -46,7 +40,7 @@ export default function RootLayout({
     <html
       lang="pt"
       data-scroll-behavior="smooth"
-      className={`${plusJakartaSans.variable} ${merriweather.variable} h-full antialiased font-sans bg-[#F8F7F2]`}
+      className={`${nunito.variable} h-full antialiased font-sans bg-[#F8F7F2]`}
     >
       <head>
         <link rel="manifest" href="/manifest.json" />

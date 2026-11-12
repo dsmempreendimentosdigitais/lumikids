@@ -73,9 +73,9 @@ export default function PwaInstaller() {
           aria-label="Instalar Aplicativo"
           className="fixed bottom-24 sm:bottom-6 left-4 right-4 sm:left-auto sm:right-24 max-w-sm sm:max-w-md z-40 animate-in fade-in slide-in-from-bottom duration-500"
         >
-          <div className="bg-[#FFFDF7]/98 backdrop-blur-xl border-2 border-amber-300 rounded-[28px] p-3.5 sm:p-4 shadow-[0_16px_40px_rgba(45,33,20,0.15)] flex items-center justify-between gap-3 text-slate-900">
-            {/* Ícone Estrelinha Dourada */}
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-amber-300 to-amber-500 p-0.5 shadow-md flex items-center justify-center shrink-0">
+          <div className="bg-[#FFFDF7]/98 backdrop-blur-xl border-2 border-amber-300 rounded-[28px] p-4 sm:p-4.5 shadow-[0_16px_40px_rgba(45,33,20,0.15)] flex items-center justify-between gap-3.5 text-slate-900">
+            {/* Ícone Corujinha Sábia Contos & Virtudes */}
+            <div className="w-12 h-12 rounded-2xl shadow-md flex items-center justify-center overflow-hidden shrink-0">
               <img 
                 src="/icons/lumikids-star-logo.svg" 
                 alt="Contos & Virtudes Ícone" 
@@ -85,19 +85,19 @@ export default function PwaInstaller() {
             
             <div className="flex-1 overflow-hidden">
               <div className="flex items-center gap-1.5 mb-0.5">
-                <h4 className="font-serif font-black text-sm text-slate-900 leading-tight">Instalar Aplicativo</h4>
-                <Sparkles size={13} className="text-amber-500" />
+                <h4 className="font-serif font-extrabold text-sm sm:text-base text-slate-900 leading-tight">Instalar Aplicativo</h4>
+                <Sparkles size={14} className="text-amber-500 shrink-0" />
               </div>
-              <p className="text-slate-600 text-[0.68rem] font-semibold leading-tight line-clamp-1">
+              <p className="text-slate-600 text-xs font-semibold leading-tight line-clamp-1">
                 Acesse direto da tela do seu celular!
               </p>
             </div>
 
-            <div className="flex items-center gap-1.5 shrink-0">
+            <div className="flex items-center gap-2 shrink-0">
               <button
                 type="button"
                 onClick={handleInstallClick}
-                className="bg-[#0D9488] hover:bg-[#0F766E] text-white font-black text-xs px-3.5 sm:px-4 py-2 rounded-full shadow-md shadow-teal-800/20 flex items-center gap-1.5 transition-all whitespace-nowrap active:scale-95 cursor-pointer"
+                className="bg-[#0D9488] hover:bg-[#0F766E] text-white font-extrabold text-xs sm:text-sm px-4 sm:px-5 py-2.5 rounded-full shadow-md shadow-teal-800/20 flex items-center gap-1.5 transition-all whitespace-nowrap active:scale-95 cursor-pointer"
               >
                 <Download size={13} />
                 <span>Instalar</span>
@@ -129,8 +129,8 @@ export default function PwaInstaller() {
               <X size={20} />
             </button>
 
-            <div className="w-14 h-14 rounded-2xl bg-amber-100 border border-amber-300 text-amber-800 flex items-center justify-center text-2xl mb-4 shadow-sm mx-auto">
-              ⭐
+            <div className="w-16 h-16 rounded-2xl overflow-hidden flex items-center justify-center mb-4 shadow-md mx-auto">
+              <img src="/icons/lumikids-star-logo.svg" alt="Contos & Virtudes" className="w-full h-full object-contain" />
             </div>
 
             <h3 className="text-center font-serif font-black text-xl text-slate-900 mb-1">
