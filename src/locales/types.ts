@@ -59,6 +59,7 @@ export interface TranslationDictionary {
   reader_language: string;
   reader_language_desc: string;
   reader_finish: string;
+  reader_start_reading: string;
   reader_opening_book: string;
 
   // Settings & Profile

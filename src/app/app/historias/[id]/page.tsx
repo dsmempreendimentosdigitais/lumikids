@@ -1064,85 +1064,101 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
         {/* Gradiente sutil apenas na faixa superior para destacar os botões flutuantes */}
         <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/45 to-transparent pointer-events-none z-10" />
 
-        {/* TOPO ESQUERDO FLUTUANTE SOBRE A IMAGEM: Voltar + Modo Sono + Idioma */}
+        {/* TOPO FLUTUANTE SOBRE A IMAGEM: Voltar + Modo Sono + Tradução + OUVIR em linha */}
         <div
-          className="absolute top-3.5 left-3.5 sm:top-5 sm:left-5 z-30 flex items-center gap-2"
-          onClick={(e) => e.stopPropagation()}
+          className="absolute top-3 inset-x-3 sm:top-5 sm:inset-x-5 z-30 flex items-center justify-between gap-2 pointer-events-none"
         >
-          {currentPageIndex === 0 ? (
-            <Link
-              href="/app"
-              className="px-3.5 py-2 rounded-full bg-white/95 hover:bg-white text-slate-900 font-extrabold text-xs sm:text-sm shadow-lg border border-white/60 flex items-center gap-1.5 active:scale-95 transition-all"
-              title="Voltar para o Mapa"
-            >
-              <span>←</span>
-              <span>Mapa</span>
-            </Link>
-          ) : (
+          <div
+            className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto scrollbar-none py-1 max-w-full pointer-events-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* 1. Voltar / Mapa */}
+            {currentPageIndex === 0 ? (
+              <Link
+                href="/app"
+                className="h-9 px-3 rounded-full bg-white/95 hover:bg-white text-slate-900 font-extrabold text-xs shadow-md border border-white/60 flex items-center gap-1.5 active:scale-95 transition-all shrink-0"
+                title="Voltar para o Mapa"
+              >
+                <span>←</span>
+                <span>Mapa</span>
+              </Link>
+            ) : (
+              <button
+                type="button"
+                onClick={handlePrevPage}
+                className="h-9 px-3 rounded-full bg-white/95 hover:bg-white text-slate-900 font-extrabold text-xs shadow-md border border-white/60 flex items-center gap-1.5 active:scale-95 transition-all cursor-pointer shrink-0"
+                title="Página anterior"
+              >
+                <span>←</span>
+                <span>Voltar</span>
+              </button>
+            )}
+
+            {/* 2. Toggle Modo Sono (Luz Azul Zero / Sépia Noturno) */}
             <button
               type="button"
-              onClick={handlePrevPage}
-              className="px-3.5 py-2 rounded-full bg-white/95 hover:bg-white text-slate-900 font-extrabold text-xs sm:text-sm shadow-lg border border-white/60 flex items-center gap-1.5 active:scale-95 transition-all cursor-pointer"
-              title="Página anterior"
+              onClick={() => setIsNightMode((prev) => !prev)}
+              className={`h-9 px-3 rounded-full font-extrabold text-xs shadow-md border transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 shrink-0 ${
+                isNightMode
+                  ? 'bg-[#2C2014] border-amber-400 text-amber-300'
+                  : 'bg-white/95 border-white/60 text-slate-800 hover:bg-white'
+              }`}
+              title="Alternar Modo Hora do Sono"
             >
-              <span>←</span>
-              <span className="hidden sm:inline">Voltar</span>
+              <span>{isNightMode ? '☀️' : '🌙'}</span>
+              <span>{isNightMode ? 'Modo Sono: On' : 'Modo Sono'}</span>
             </button>
-          )}
 
-          {/* Toggle Modo Sono (Luz Azul Zero / Sépia Noturno) */}
-          <button
-            type="button"
-            onClick={() => setIsNightMode((prev) => !prev)}
-            className={`px-3.5 py-2 rounded-full font-extrabold text-xs sm:text-sm shadow-lg border transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 ${
-              isNightMode
-                ? 'bg-[#2C2014] border-amber-400 text-amber-300'
-                : 'bg-white/95 border-white/60 text-slate-800 hover:bg-white'
-            }`}
-            title="Alternar Modo Hora do Sono"
-          >
-            <span>{isNightMode ? '☀️' : '🌙'}</span>
-            <span>{isNightMode ? 'Modo Sono: On' : 'Modo Sono'}</span>
-          </button>
+            {/* 3. Tradução / Idioma */}
+            <div className="shrink-0">
+              <LanguageSelector variant="pill" />
+            </div>
 
-          <LanguageSelector variant="pill" />
+            {/* 4. BOTÃO OUVIR (Exatamente à direita da escolha de tradução com o design solicitado) */}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (isSpeaking || isAudioLoading) {
+                  stopNarration();
+                } else {
+                  const currentText =
+                    currentPageIndex > 0 && currentPageIndex <= totalStoryPages
+                      ? getActiveText(displayParagraphs[currentPageIndex - 1].text)
+                      : getActiveText(story.title);
+                  speakText(currentText);
+                }
+              }}
+              className={`h-9 pl-3 pr-1 rounded-full bg-black hover:bg-neutral-900 text-white border border-white/30 shadow-lg flex items-center gap-2 font-black text-xs tracking-wider uppercase transition-all cursor-pointer active:scale-95 shrink-0 select-none ${
+                isSpeaking ? 'ring-2 ring-amber-400' : ''
+              }`}
+              title={
+                isSpeaking
+                  ? t('reader_pause', 'Pausar narração')
+                  : isAudioLoading
+                    ? 'Carregando voz...'
+                    : t('reader_listen', 'Ouvir história')
+              }
+            >
+              <span className="font-black text-white text-[0.72rem] tracking-wider leading-none">
+                {isSpeaking ? 'PAUSAR' : 'OUVIR'}
+              </span>
+              <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center shrink-0 border border-black/15 shadow-2xs">
+                {isSpeaking ? (
+                  <svg className="w-3.5 h-3.5 text-[#DC2626] animate-pulse" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+                  </svg>
+                ) : isAudioLoading ? (
+                  <span className="text-[10px] leading-none animate-spin">⏳</span>
+                ) : (
+                  <svg className="w-3.5 h-3.5 text-[#DC2626]" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                  </svg>
+                )}
+              </div>
+            </button>
+          </div>
         </div>
-
-        {/* CANTO SUPERIOR DIREITO DA IMAGEM: BOTÃO DE ÁUDIO FLUTUANTE */}
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            if (isSpeaking || isAudioLoading) {
-              stopNarration();
-            } else {
-              const currentText =
-                currentPageIndex > 0 && currentPageIndex <= totalStoryPages
-                  ? getActiveText(displayParagraphs[currentPageIndex - 1].text)
-                  : getActiveText(story.title);
-              speakText(currentText);
-            }
-          }}
-          className={`absolute top-3.5 right-3.5 sm:top-5 sm:right-5 z-30 h-12 sm:h-13 px-4 sm:px-5 rounded-full flex items-center justify-center gap-2 font-extrabold text-xs sm:text-sm text-white shadow-[0_10px_25px_rgba(0,0,0,0.3)] border-2 border-white transition-all cursor-pointer active:scale-95 ${
-            isSpeaking
-              ? 'bg-[#D97706] ring-4 ring-amber-300/60 animate-pulse'
-              : 'bg-[#0D9488] hover:bg-[#0F766E]'
-          }`}
-          title={
-            isSpeaking
-              ? t('reader_pause', 'Pausar narração')
-              : isAudioLoading
-                ? 'Carregando voz...'
-                : t('reader_listen', 'Ouvir história')
-          }
-        >
-          <span className="text-base sm:text-lg leading-none">
-            {isAudioLoading ? '⏳' : isSpeaking ? '⏸️' : '🔊'}
-          </span>
-          <span>
-            {isAudioLoading ? 'Voz...' : isSpeaking ? 'Pausar' : 'Ouvir'}
-          </span>
-        </button>
 
         {/* Efeito Visual de Estrelinhas ao Tocar na Cena */}
         {interactivePop.active && (
@@ -1214,7 +1230,7 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
                   onClick={handleNextPage}
                   className="w-full min-h-[54px] py-3.5 px-6 rounded-full bg-[#0D9488] hover:bg-[#0F766E] text-white font-extrabold text-base shadow-lg transition-transform active:scale-95 flex items-center justify-center gap-2 border-2 border-white/50 cursor-pointer"
                 >
-                  <span>{t('reader_finish', 'Começar Leitura 📖')}</span>
+                  <span>{t('reader_start_reading', 'Iniciar História 📖')}</span>
                 </button>
               </div>
             </div>

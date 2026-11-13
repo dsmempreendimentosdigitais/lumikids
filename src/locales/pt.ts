@@ -51,6 +51,7 @@ export const pt: TranslationDictionary = {
   reader_language: 'Idioma da História',
   reader_language_desc: 'Alterne o idioma de leitura e narração',
   reader_finish: 'Concluir História',
+  reader_start_reading: 'Iniciar História',
   reader_opening_book: 'Abrindo seu livro de histórias...',
 
   // Settings & Profile

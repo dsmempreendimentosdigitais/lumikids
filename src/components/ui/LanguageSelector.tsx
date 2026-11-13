@@ -67,7 +67,7 @@ export default function LanguageSelector({ variant = 'pill', onSelect, className
       <button
         type="button"
         onClick={() => setIsOpen(prev => !prev)}
-        className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/90 hover:bg-white text-slate-800 border border-slate-200 shadow-xs text-xs font-bold transition-all active:scale-95 cursor-pointer backdrop-blur-md"
+        className="h-9 flex items-center gap-2 px-3 rounded-full bg-white/95 hover:bg-white text-slate-800 border border-white/60 shadow-md text-xs font-extrabold transition-all active:scale-95 cursor-pointer shrink-0"
         title="Alterar idioma / Change language"
       >
         <span className="text-base leading-none">{current.flag}</span>

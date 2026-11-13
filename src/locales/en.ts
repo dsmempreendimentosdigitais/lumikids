@@ -51,6 +51,7 @@ export const en: TranslationDictionary = {
   reader_language: 'Story Language',
   reader_language_desc: 'Switch reading and narration language',
   reader_finish: 'Finish Story',
+  reader_start_reading: 'Start Story',
   reader_opening_book: 'Opening your storybook...',
 
   // Settings & Profile
