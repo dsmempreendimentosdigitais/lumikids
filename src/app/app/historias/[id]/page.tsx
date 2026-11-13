@@ -202,6 +202,7 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
   const [activeWordIndex, setActiveWordIndex] = useState<number | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [soundEffectsEnabled, setSoundEffectsEnabled] = useState(true);
+  const [isNightMode, setIsNightMode] = useState(false);
 
   // Cache para traduções dinâmicas de histórias
   const [translatedParagraphs, setTranslatedParagraphs] = useState<Record<string, string>>({});
@@ -969,8 +970,34 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
           </Link>
         </div>
 
-        {/* Card Centralizado e Amplo do Quiz Pedagógico */}
-        <div className="relative z-20 w-full max-w-2xl my-auto py-2">
+        {/* Card Centralizado: Medalha da Virtude + Pergunta do Travesseiro + Quiz Pedagógico */}
+        <div className="relative z-20 w-full max-w-2xl my-auto py-2 space-y-4">
+          {/* Cartão Ritual Familiar: Medalha & Pergunta do Travesseiro */}
+          <div className="bg-[#FFFDF7]/95 backdrop-blur-md border-2 border-amber-300 rounded-[28px] p-5 sm:p-6 shadow-xl text-[#2D2114]">
+            <div className="flex items-center gap-3.5 mb-3">
+              <div className="w-13 h-13 rounded-2xl bg-gradient-to-br from-amber-300 to-[#D97706] text-white flex items-center justify-center text-2xl shadow-md border-2 border-white shrink-0">
+                🏅
+              </div>
+              <div>
+                <span className="text-[0.68rem] font-extrabold uppercase tracking-wider text-[#0D9488] block">
+                  ✨ Virtude Conquistada Hoje
+                </span>
+                <h3 className="text-lg sm:text-xl font-black text-slate-900 leading-tight">
+                  Guardião de {story.value || 'Sabedoria & Coragem'}
+                </h3>
+              </div>
+            </div>
+
+            <div className="bg-amber-50/90 border border-amber-200 rounded-2xl p-4">
+              <div className="text-xs font-extrabold uppercase tracking-wider text-[#D97706] mb-1">
+                💬 Pergunta do Travesseiro (Para conversar com seu filho)
+              </div>
+              <p className="text-sm sm:text-base font-bold text-slate-800 leading-relaxed">
+                &ldquo;Qual foi a atitude mais bonita que vimos em <strong>{getActiveText(story.title)}</strong> e como podemos praticar <strong>{(story.value || 'essa virtude').toLowerCase()}</strong> amanhã em casa?&rdquo;
+              </p>
+            </div>
+          </div>
+
           <StoryQuiz 
             storyTitle={getActiveText(story.title)}
             storyCategory={story.category}
@@ -1002,119 +1029,226 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
   }
 
   return (
-    <div className="min-h-screen w-full flex flex-col md:flex-row bg-[#2C3E50] overflow-x-hidden select-none relative font-sans">
-      
+    <div
+      className={`min-h-screen w-full flex flex-col md:flex-row overflow-x-hidden select-none relative font-sans transition-colors duration-300 ${
+        isNightMode ? 'bg-[#140F0A]' : 'bg-[#2C3E50]'
+      }`}
+    >
       {/* ═════════════════════════════════════════════════════════════
-          LADO ESQUERDO: PERGAMINHO DA HISTÓRIA (Estilo Bíblia Kids)
+          ILUSTRAÇÃO 2D AMPLIADA (No topo no celular, lado direito no desktop)
+          Com Botão de Áudio Flutuante no Canto Superior Direito
           ═════════════════════════════════════════════════════════════ */}
-      <div 
-        className="parchment-sheet parchment-border-right w-full md:w-[44%] lg:w-[40%] shrink-0 min-w-0 flex flex-col justify-between px-6 sm:px-10 md:px-12 py-6 sm:py-8 z-10 shadow-2xl relative min-h-[45vh] md:min-h-screen overflow-y-auto"
-        style={{ paddingLeft: 'max(1.75rem, calc(env(safe-area-inset-left) + 1.25rem))' }}
+      <div
+        className="order-1 md:order-2 w-full md:w-[60%] lg:w-[62%] relative min-w-0 h-[54vh] sm:h-[60vh] md:h-screen overflow-hidden bg-slate-900 flex items-center justify-center cursor-pointer select-none shrink-0"
+        onClick={triggerKidReaction}
       >
-        
-        {/* Topo do Pergaminho: Botão de Voltar Redondo Azul, Seletor de Idioma e Controles */}
-        <div className="flex items-center justify-between mb-4 w-full">
+        {/* Imagem de Fundo em 2D Cartoon Panorâmica Maior */}
+        <img
+          src={
+            currentPageIndex === 0
+              ? story.coverImageUrl || displayParagraphs[0]?.imageUrl
+              : currentPageIndex > 0 && currentPageIndex <= totalStoryPages
+                ? displayParagraphs[currentPageIndex - 1].imageUrl
+                : story.coverImageUrl || displayParagraphs[0]?.imageUrl
+          }
+          alt={story.title}
+          className={`w-full h-full object-cover transition-all duration-700 ${
+            isLockedByPaywall ? 'blur-md scale-105 opacity-60' : 'hover:scale-103'
+          } ${isNightMode ? 'brightness-85 sepia-[0.18]' : ''}`}
+          onError={(e) => {
+            e.currentTarget.src =
+              'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800"><rect width="800" height="800" fill="%230D9488"/><circle cx="400" cy="300" r="100" fill="%23F59E0B"/><text x="50%" y="60%" dominant-baseline="middle" text-anchor="middle" fill="%23FFFFFF" font-size="32" font-family="sans-serif">✨ Ilustração Contos & Virtudes</text></svg>';
+          }}
+        />
+
+        {/* Gradiente sutil apenas na faixa superior para destacar os botões flutuantes */}
+        <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/45 to-transparent pointer-events-none z-10" />
+
+        {/* TOPO ESQUERDO FLUTUANTE SOBRE A IMAGEM: Voltar + Modo Sono + Idioma */}
+        <div
+          className="absolute top-3.5 left-3.5 sm:top-5 sm:left-5 z-30 flex items-center gap-2"
+          onClick={(e) => e.stopPropagation()}
+        >
           {currentPageIndex === 0 ? (
-            <Link 
-              href="/app/historias" 
-              className="btn-round-action w-11 h-11 sm:w-12 sm:h-12 rounded-full text-white flex items-center justify-center font-black text-xl sm:text-2xl shadow-md active:scale-95"
-              title={t('reader_prev_page', 'Voltar para a biblioteca')}
+            <Link
+              href="/app"
+              className="px-3.5 py-2 rounded-full bg-white/95 hover:bg-white text-slate-900 font-extrabold text-xs sm:text-sm shadow-lg border border-white/60 flex items-center gap-1.5 active:scale-95 transition-all"
+              title="Voltar para o Mapa"
             >
-              ←
+              <span>←</span>
+              <span>Mapa</span>
             </Link>
           ) : (
-            <button 
+            <button
               type="button"
               onClick={handlePrevPage}
-              className="btn-round-action w-11 h-11 sm:w-12 sm:h-12 rounded-full text-white flex items-center justify-center font-black text-xl sm:text-2xl shadow-md active:scale-95 cursor-pointer"
-              title={t('reader_prev_page', 'Página anterior')}
+              className="px-3.5 py-2 rounded-full bg-white/95 hover:bg-white text-slate-900 font-extrabold text-xs sm:text-sm shadow-lg border border-white/60 flex items-center gap-1.5 active:scale-95 transition-all cursor-pointer"
+              title="Página anterior"
             >
-              ←
+              <span>←</span>
+              <span className="hidden sm:inline">Voltar</span>
             </button>
           )}
 
-          {/* Seletor Rápido de Idioma da Leitura */}
-          <div className="flex items-center gap-2">
-            <LanguageSelector variant="pill" />
-          </div>
-
-          {/* Botão de Narração em Voz Alta estilo Bíblia Kids */}
-          <button 
+          {/* Toggle Modo Sono (Luz Azul Zero / Sépia Noturno) */}
+          <button
             type="button"
-            onClick={() => {
-              if (isSpeaking || isAudioLoading) {
-                stopNarration();
-              } else {
-                const currentText = currentPageIndex > 0 && currentPageIndex <= totalStoryPages
-                  ? getActiveText(displayParagraphs[currentPageIndex - 1].text)
-                  : getActiveText(story.title);
-                speakText(currentText);
-              }
-            }}
-            className={`btn-round-action w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-sm shadow-md transition-all cursor-pointer ${
-              isSpeaking ? 'ring-4 ring-amber-300 animate-pulse' : ''
+            onClick={() => setIsNightMode((prev) => !prev)}
+            className={`px-3.5 py-2 rounded-full font-extrabold text-xs sm:text-sm shadow-lg border transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 ${
+              isNightMode
+                ? 'bg-[#2C2014] border-amber-400 text-amber-300'
+                : 'bg-white/95 border-white/60 text-slate-800 hover:bg-white'
             }`}
-            title={isSpeaking ? t('reader_pause', 'Pausar') : isAudioLoading ? '...' : t('reader_listen', 'Ouvir')}
+            title="Alternar Modo Hora do Sono"
           >
-            {isAudioLoading ? '⏳' : isSpeaking ? '🔊' : '🔈'}
+            <span>{isNightMode ? '☀️' : '🌙'}</span>
+            <span>{isNightMode ? 'Modo Sono: On' : 'Modo Sono'}</span>
           </button>
+
+          <LanguageSelector variant="pill" />
         </div>
 
+        {/* CANTO SUPERIOR DIREITO DA IMAGEM: BOTÃO DE ÁUDIO FLUTUANTE */}
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            if (isSpeaking || isAudioLoading) {
+              stopNarration();
+            } else {
+              const currentText =
+                currentPageIndex > 0 && currentPageIndex <= totalStoryPages
+                  ? getActiveText(displayParagraphs[currentPageIndex - 1].text)
+                  : getActiveText(story.title);
+              speakText(currentText);
+            }
+          }}
+          className={`absolute top-3.5 right-3.5 sm:top-5 sm:right-5 z-30 h-12 sm:h-13 px-4 sm:px-5 rounded-full flex items-center justify-center gap-2 font-extrabold text-xs sm:text-sm text-white shadow-[0_10px_25px_rgba(0,0,0,0.3)] border-2 border-white transition-all cursor-pointer active:scale-95 ${
+            isSpeaking
+              ? 'bg-[#D97706] ring-4 ring-amber-300/60 animate-pulse'
+              : 'bg-[#0D9488] hover:bg-[#0F766E]'
+          }`}
+          title={
+            isSpeaking
+              ? t('reader_pause', 'Pausar narração')
+              : isAudioLoading
+                ? 'Carregando voz...'
+                : t('reader_listen', 'Ouvir história')
+          }
+        >
+          <span className="text-base sm:text-lg leading-none">
+            {isAudioLoading ? '⏳' : isSpeaking ? '⏸️' : '🔊'}
+          </span>
+          <span>
+            {isAudioLoading ? 'Voz...' : isSpeaking ? 'Pausar' : 'Ouvir'}
+          </span>
+        </button>
+
+        {/* Efeito Visual de Estrelinhas ao Tocar na Cena */}
+        {interactivePop.active && (
+          <div className="absolute inset-0 bg-white/10 pointer-events-none flex items-center justify-center animate-ping z-20">
+            <span className="text-7xl drop-shadow-2xl">✨ ⭐ ✨</span>
+          </div>
+        )}
+
+        {/* BOTÃO DE AJUSTES (Canto Inferior Direito da Imagem) */}
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsMenuOpen(true);
+          }}
+          className="absolute bottom-3.5 right-3.5 sm:bottom-5 sm:right-5 z-30 w-11 h-11 rounded-full bg-black/50 hover:bg-black/70 backdrop-blur-md border border-white/40 text-white flex items-center justify-center text-base shadow-lg active:scale-95 cursor-pointer"
+          title="Ajustes de Leitura"
+        >
+          ⚙️
+        </button>
+      </div>
+
+      {/* ═════════════════════════════════════════════════════════════
+          PERGAMINHO DA HISTÓRIA (Abaixo da imagem no celular, esquerda no desktop)
+          ═════════════════════════════════════════════════════════════ */}
+      <div
+        className={`order-2 md:order-1 w-full md:w-[40%] lg:w-[38%] shrink-0 min-w-0 flex flex-col justify-between px-5 sm:px-8 md:px-10 py-5 sm:py-7 z-10 shadow-2xl relative min-h-[46vh] md:min-h-screen overflow-y-auto transition-colors duration-300 ${
+          isNightMode
+            ? 'bg-[#1D160F] text-[#F5E6C8] border-t-2 md:border-t-0 md:border-r-2 border-[#3E2E1E]'
+            : 'parchment-sheet parchment-border-right text-[#2D2114]'
+        }`}
+      >
         {/* ═══ CONTEÚDO DO PERGAMINHO ═══ */}
-        <div className="flex-1 flex flex-col justify-center my-auto py-4 w-full px-1 sm:px-2">
-          
+        <div className="flex-1 flex flex-col justify-center my-auto py-2 w-full">
           {/* CASO 1: CAPA DA HISTÓRIA (Página 0) */}
           {currentPageIndex === 0 && (
             <div className="text-left space-y-4">
-              <span className="inline-block px-3.5 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-300 text-[0.7rem] font-black uppercase tracking-wider shadow-xs">
+              <span
+                className={`inline-block px-3.5 py-1 rounded-full border text-xs font-extrabold uppercase tracking-wider shadow-2xs ${
+                  isNightMode
+                    ? 'bg-amber-950/60 text-amber-300 border-amber-700'
+                    : 'bg-amber-100 text-amber-900 border-amber-300'
+                }`}
+              >
                 {story.category ? story.category.replace('-', ' ') : 'História Infantil'}
               </span>
 
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-black text-[#2D2114] leading-tight drop-shadow-xs">
+              <h1
+                className={`text-2xl sm:text-3xl md:text-4xl font-black leading-tight ${
+                  isNightMode ? 'text-[#FEF3C7]' : 'text-[#2D2114]'
+                }`}
+              >
                 {getActiveText(story.title)}
               </h1>
 
-              <div className="flex items-center gap-3 text-xs font-bold text-[#6D4C2B] pt-1">
+              <div
+                className={`flex items-center gap-3 text-xs sm:text-sm font-bold pt-1 ${
+                  isNightMode ? 'text-amber-300/80' : 'text-[#6D4C2B]'
+                }`}
+              >
                 <span>⏱️ {story.durationMinutes || 5} min</span>
                 <span>•</span>
                 <span>⭐ {story.value || 'Valores Morais'}</span>
               </div>
 
-              <div className="pt-4">
+              <div className="pt-3">
                 <button
                   type="button"
                   onClick={handleNextPage}
-                  className="w-full py-4 rounded-full bg-[#0D9488] hover:bg-[#0F766E] text-white font-black text-base shadow-lg transition-transform active:scale-95 flex items-center justify-center gap-2 border-2 border-white/60 cursor-pointer"
+                  className="w-full min-h-[54px] py-3.5 px-6 rounded-full bg-[#0D9488] hover:bg-[#0F766E] text-white font-extrabold text-base shadow-lg transition-transform active:scale-95 flex items-center justify-center gap-2 border-2 border-white/50 cursor-pointer"
                 >
-                  <span>{t('reader_finish', 'Abrir História 📖')}</span>
+                  <span>{t('reader_finish', 'Começar Leitura 📖')}</span>
                 </button>
               </div>
             </div>
           )}
 
           {/* CASO 2: CENAS DA HISTÓRIA (Páginas 1 até N) */}
-          {currentPageIndex > 0 && currentPageIndex <= totalStoryPages && (() => {
-            const pIndex = currentPageIndex - 1;
-            const p = displayParagraphs[pIndex];
-            const isFirstStoryPage = pIndex === 0;
-            const activeContent = getActiveText(p.text);
-            const firstLetter = activeContent ? activeContent.charAt(0) : '';
-            const restOfText = activeContent ? activeContent.slice(1) : '';
+          {currentPageIndex > 0 &&
+            currentPageIndex <= totalStoryPages &&
+            (() => {
+              const pIndex = currentPageIndex - 1;
+              const p = displayParagraphs[pIndex];
+              const isFirstStoryPage = pIndex === 0;
+              const activeContent = getActiveText(p.text);
+              const firstLetter = activeContent ? activeContent.charAt(0) : '';
+              const restOfText = activeContent ? activeContent.slice(1) : '';
 
-            return (
+              return (
                 <div className="space-y-4">
                   {isTranslating && (
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-100/80 border border-amber-300 text-[0.68rem] font-bold text-amber-900 animate-pulse">
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100/80 border border-amber-300 text-xs font-bold text-amber-900 animate-pulse">
                       <span>🌍</span>
                       <span>Traduzindo...</span>
                     </div>
                   )}
 
                   {/* Texto no pergaminho com formatação calorosa e nítida */}
-                  <div className="text-[#2D2114] font-serif text-lg sm:text-xl md:text-2xl leading-relaxed font-bold select-none">
+                  <div
+                    className={`text-lg sm:text-xl md:text-2xl leading-relaxed font-bold select-none ${
+                      isNightMode ? 'text-[#F5E6C8]' : 'text-[#2D2114]'
+                    }`}
+                  >
                     {isFirstStoryPage && !isSpeaking ? (
                       <>
-                        <span className="float-left text-5xl sm:text-6xl font-serif font-black text-[#0D9488] pr-3 pb-1 leading-none">
+                        <span className="float-left text-4xl sm:text-5xl font-black text-[#0D9488] pr-3 pb-1 leading-none">
                           {firstLetter}
                         </span>
                         {restOfText}
@@ -1128,12 +1262,13 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
                               className={`transition-all duration-150 inline-block rounded-md px-1 -mx-0.5 ${
                                 isCurrentWord
                                   ? 'bg-amber-300 text-slate-950 font-black shadow-xs scale-105'
-                                  : 'text-[#2D2114]'
+                                  : isNightMode
+                                    ? 'text-[#F5E6C8]'
+                                    : 'text-[#2D2114]'
                               }`}
                             >
                               {word}
-                            </span>
-                            {' '}
+                            </span>{' '}
                           </React.Fragment>
                         );
                       })
@@ -1146,14 +1281,14 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
                   {p.interactiveChallenge && (
                     <div className="pt-2">
                       {p.interactiveChallenge.type === 'drag_rescue' && (
-                        <InteractiveDragRescue 
+                        <InteractiveDragRescue
                           instruction={p.interactiveChallenge.instruction}
                           itemEmoji={p.interactiveChallenge.itemEmoji}
                           targetEmoji={p.interactiveChallenge.targetEmoji}
                         />
                       )}
                       {p.interactiveChallenge.type === 'counting' && (
-                        <InteractiveCounting 
+                        <InteractiveCounting
                           instruction={p.interactiveChallenge.instruction}
                           targetCount={p.interactiveChallenge.targetCount}
                           itemEmoji={p.interactiveChallenge.itemEmoji}
@@ -1164,129 +1299,83 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
                 </div>
               );
             })()}
-
         </div>
 
-        {/* Rodapé do Pergaminho: Pedras de Marco / Progresso de Capítulos */}
-        <div className="pt-4 border-t border-amber-900/15 flex items-center justify-between">
-          <div className="flex items-center gap-1.5 overflow-x-auto py-1">
-            {Array.from({ length: totalPagesCount }).map((_, idx) => {
-              const isCurrent = idx === currentPageIndex;
-              const isPast = idx < currentPageIndex;
-              return (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => {
-                    playPageFlipSound();
-                    setCurrentPageIndex(idx);
-                  }}
-                  className={`transition-all rounded-full ${
-                    isCurrent
-                      ? 'w-6 h-3 bg-amber-400 ring-2 ring-amber-500 shadow-sm'
-                      : isPast
-                        ? 'w-3 h-3 bg-emerald-600'
-                        : 'w-2.5 h-2.5 bg-[#C9B68F]'
-                  }`}
-                  title={`Página ${idx + 1}`}
-                />
-              );
-            })}
-          </div>
-
-          <span className="text-[10px] font-black uppercase text-[#6D4C2B] tracking-wider shrink-0 ml-2">
-            {currentPageIndex === 0 
-              ? 'Capa' 
-              : currentPageIndex === totalPagesCount - 1 
-                ? 'Fim' 
-                : `Cena ${currentPageIndex} / ${totalStoryPages}`}
-          </span>
-        </div>
-
-      </div>
-
-      {/* ═════════════════════════════════════════════════════════════
-          LADO DIREITO: ILUSTRAÇÃO 2D EXPANDIDA (Estilo Bíblia Kids)
-          ═════════════════════════════════════════════════════════════ */}
-      <div 
-        className="w-full md:w-[56%] lg:w-[60%] flex-1 relative min-w-0 h-[55vh] md:h-screen overflow-hidden bg-slate-900 flex items-center justify-center cursor-pointer select-none"
-        onClick={triggerKidReaction}
-      >
-        {/* Imagem de Fundo em 2D Cartoon Panorâmica */}
-        <img 
-          src={
-            currentPageIndex === 0
-              ? story.coverImageUrl || displayParagraphs[0]?.imageUrl
-              : currentPageIndex > 0 && currentPageIndex <= totalStoryPages
-                ? displayParagraphs[currentPageIndex - 1].imageUrl
-                : story.coverImageUrl || displayParagraphs[0]?.imageUrl
-          } 
-          alt={story.title} 
-          className={`w-full h-full object-cover transition-transform duration-700 ${
-            isLockedByPaywall ? 'blur-md scale-105 opacity-60' : 'hover:scale-105'
+        {/* Rodapé do Pergaminho: Botões Anterior / Próxima Página + Progresso */}
+        <div
+          className={`pt-4 mt-3 border-t space-y-3 ${
+            isNightMode ? 'border-amber-900/30' : 'border-amber-900/15'
           }`}
-          onError={(e) => { 
-            e.currentTarget.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800"><rect width="800" height="800" fill="%2387CEEB"/><circle cx="400" cy="300" r="100" fill="%23FFD700"/><text x="50%" y="60%" dominant-baseline="middle" text-anchor="middle" fill="%23FFFFFF" font-size="32" font-family="serif">✨ Ilustração Contos & Virtudes</text></svg>'; 
-          }}
-        />
-
-        {/* Overlay de Bloqueio da Cena no Paywall */}
-        {isLockedByPaywall && (
-          <div className="absolute inset-0 bg-slate-950/50 backdrop-blur-xs flex flex-col items-center justify-center p-6 text-center z-20 pointer-events-none">
-            <div className="w-16 h-16 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center text-3xl shadow-xl mb-3 animate-bounce">
-              👑
-            </div>
-            <h4 className="text-white font-serif font-black text-xl mb-1 drop-shadow-md">
-              Ilustração Exclusiva Contos & Virtudes
-            </h4>
-            <p className="text-white/90 text-xs max-w-xs font-semibold drop-shadow-xs">
-              Libere o acesso total por apenas R$ 19,90/mês para ver todas as cenas em altíssima definição.
-            </p>
-          </div>
-        )}
-
-        {/* Efeito Visual de Estrelinhas e Faíscas Mágicas ao Tocar na Cena */}
-        {interactivePop.active && (
-          <div className="absolute inset-0 bg-white/10 pointer-events-none flex items-center justify-center animate-ping z-20">
-            <span className="text-7xl drop-shadow-2xl">✨ ⭐ ✨</span>
-          </div>
-        )}
-
-        {/* Badge Lúdico de Interatividade */}
-        {currentPageIndex > 0 && currentPageIndex <= totalStoryPages && (
-          <div className="absolute top-5 left-5 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full text-[0.7rem] font-black text-white shadow-lg flex items-center gap-1.5 pointer-events-none border border-white/20">
-            <span>👆 Toque na cena!</span>
-          </div>
-        )}
-
-        {/* BOTÃO PRÓXIMA PÁGINA (Seta Azul Redonda no Canto Superior Direito) */}
-        {currentPageIndex < totalPagesCount - 1 && (
-          <button 
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleNextPage();
-            }}
-            className="btn-round-action w-12 h-12 sm:w-14 sm:h-14 rounded-full text-white flex items-center justify-center font-black text-2xl sm:text-3xl shadow-xl absolute top-5 right-5 z-20 active:scale-95"
-            title="Próxima página"
-          >
-            →
-          </button>
-        )}
-
-        {/* BOTÃO DE MENU (Ícone Redondo de 3 Barras no Canto Inferior Direito) */}
-        <button 
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsMenuOpen(true);
-          }}
-          className="btn-round-action w-11 h-11 sm:w-12 sm:h-12 rounded-full text-white flex items-center justify-center font-black text-xl shadow-xl absolute bottom-5 right-5 z-20 active:scale-95"
-          title="Opções da História"
         >
-          ☰
-        </button>
+          {currentPageIndex > 0 && (
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={handlePrevPage}
+                className={`flex-1 min-h-[48px] py-3 px-4 rounded-full font-extrabold text-xs sm:text-sm border-2 transition-all cursor-pointer active:scale-95 flex items-center justify-center gap-1.5 ${
+                  isNightMode
+                    ? 'bg-[#2A2016] border-[#4A3826] text-amber-200 hover:bg-[#35281C]'
+                    : 'bg-white border-[#D8C29D] text-[#2D2114] hover:bg-amber-50 shadow-xs'
+                }`}
+              >
+                <span>← Anterior</span>
+              </button>
 
+              <button
+                type="button"
+                onClick={handleNextPage}
+                className="flex-[1.35] min-h-[48px] py-3 px-5 rounded-full bg-[#0D9488] hover:bg-[#0F766E] text-white font-extrabold text-xs sm:text-sm shadow-md transition-all cursor-pointer active:scale-95 flex items-center justify-center gap-1.5"
+              >
+                <span>
+                  {currentPageIndex === totalStoryPages
+                    ? 'Concluir & Quiz ✨'
+                    : 'Próxima Página →'}
+                </span>
+              </button>
+            </div>
+          )}
+
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5 overflow-x-auto py-1">
+              {Array.from({ length: totalPagesCount }).map((_, idx) => {
+                const isCurrent = idx === currentPageIndex;
+                const isPast = idx < currentPageIndex;
+                return (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => {
+                      playPageFlipSound();
+                      setCurrentPageIndex(idx);
+                    }}
+                    className={`transition-all rounded-full cursor-pointer ${
+                      isCurrent
+                        ? 'w-6 h-2.5 bg-amber-400 ring-2 ring-amber-500 shadow-sm'
+                        : isPast
+                          ? 'w-2.5 h-2.5 bg-[#0D9488]'
+                          : isNightMode
+                            ? 'w-2 h-2 bg-amber-900/60'
+                            : 'w-2 h-2 bg-[#C9B68F]'
+                    }`}
+                    title={`Página ${idx + 1}`}
+                  />
+                );
+              })}
+            </div>
+
+            <span
+              className={`text-[11px] font-extrabold uppercase tracking-wider shrink-0 ml-2 ${
+                isNightMode ? 'text-amber-400/80' : 'text-[#6D4C2B]'
+              }`}
+            >
+              {currentPageIndex === 0
+                ? 'Capa'
+                : currentPageIndex === totalPagesCount - 1
+                  ? 'Fim'
+                  : `Página ${currentPageIndex} de ${totalStoryPages}`}
+            </span>
+          </div>
+        </div>
       </div>
 
       {/* ═════════════════════════════════════════════════════════════

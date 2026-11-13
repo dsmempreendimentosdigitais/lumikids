@@ -2,13 +2,60 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { GenerateStoryRequest } from '@/types/ai';
-import { Sparkles, Wand2, Castle, Moon, Mic, MicOff, User, Dices, Compass } from 'lucide-react';
+import { Sparkles, Mic, MicOff, Dices } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 const BRAZILIAN_NAMES = [
   'Filipe', 'Manuela', 'Gabriel', 'Sofia', 'Lucas', 'Beatriz',
   'Davi', 'Alice', 'Matheus', 'Valentina', 'Samuel', 'Isabella',
   'Enzo', 'Helena', 'Heitor', 'Laura', 'Bernardo', 'Giovanna'
+];
+
+const SKIN_TONES = [
+  { id: 'Clara', label: 'Clara', hex: '#FBD3B4', cheek: '#F48C8C' },
+  { id: 'Parda', label: 'Morena', hex: '#D69A6A', cheek: '#C96A5B' },
+  { id: 'Negra', label: 'Negra', hex: '#8D5524', cheek: '#7A3E26' },
+  { id: 'Muito Clara', label: 'Muito Clara', hex: '#FFE8D6', cheek: '#F99B9B' },
+];
+
+const HAIR_COLORS = [
+  { id: 'Preto', label: 'Preto', hex: '#1F1B18' },
+  { id: 'Castanho', label: 'Castanho', hex: '#63391F' },
+  { id: 'Loiro', label: 'Loiro', hex: '#EAB308' },
+  { id: 'Ruivo', label: 'Ruivo', hex: '#C2410C' },
+  { id: 'Colorido', label: 'Mágico', hex: '#0D9488' },
+];
+
+const HAIR_STYLES = [
+  { id: 'Curto', label: 'Curto' },
+  { id: 'Cacheado', label: 'Cacheado' },
+  { id: 'Longo', label: 'Longo' },
+  { id: 'Crespo', label: 'Crespo' },
+  { id: 'Liso', label: 'Liso' },
+  { id: 'Trança', label: 'Tranças' },
+];
+
+const TOP_CLOTHES = [
+  { id: 'Camiseta verde', label: 'Verde', hex: '#0D9488', emoji: '👕' },
+  { id: 'Blusa azul', label: 'Azul', hex: '#0284C7', emoji: '👕' },
+  { id: 'Vestido rosa', label: 'Rosa', hex: '#EC4899', emoji: '👗' },
+  { id: 'Moletom vermelho', label: 'Vermelho', hex: '#DC2626', emoji: '🧥' },
+  { id: 'Camisa amarela', label: 'Dourado', hex: '#D97706', emoji: '👕' },
+];
+
+const BOTTOM_CLOTHES = [
+  { id: 'Short kaqui', label: 'Short Kaqui', emoji: '🩳' },
+  { id: 'Calça jeans', label: 'Calça Jeans', emoji: '👖' },
+  { id: 'Short azul', label: 'Short Azul', emoji: '🩳' },
+  { id: 'Saia vermelha', label: 'Saia', emoji: '👗' },
+];
+
+const ACCESSORIES = [
+  { id: 'Nenhum', label: 'Sem Acessório', emoji: '✨' },
+  { id: 'Óculos', label: 'Óculos', emoji: '👓' },
+  { id: 'Boné vermelho', label: 'Boné', emoji: '🧢' },
+  { id: 'Tiara de borboleta', label: 'Coroa / Tiara', emoji: '👑' },
+  { id: 'Capa de super-herói', label: 'Capa Herói', emoji: '🦸' },
 ];
 
 export default function CriarPage() {
@@ -32,7 +79,7 @@ export default function CriarPage() {
     language: 'pt-BR',
     includeBiblicalValues: true,
     gender: 'menino',
-    hairColor: 'Preto',
+    hairColor: 'Castanho',
     hairStyle: 'Curto',
     skinTone: 'Clara',
     topClothing: 'Camiseta verde',
@@ -51,7 +98,7 @@ export default function CriarPage() {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
-      setVoiceNotice('Navegador não suporta transcrição de áudio direta. Por favor, selecione as opções abaixo!');
+      setVoiceNotice('Navegador não suporta transcrição de áudio direta. Toque nos botões abaixo!');
       setTimeout(() => setVoiceNotice(''), 4000);
       return;
     }
@@ -63,7 +110,7 @@ export default function CriarPage() {
 
       recognition.onstart = () => {
         setIsListening(true);
-        setVoiceNotice('🎙️ Ouvindo... Fale a aparência da criança (ex: menino de 4 anos com cabelo preto e camiseta verde)!');
+        setVoiceNotice('🎙️ Ouvindo... Fale a aparência da criança (ex: menina com cabelo cacheado castanho e vestido rosa)!');
       };
 
       recognition.onresult = (event: any) => {
@@ -86,7 +133,8 @@ export default function CriarPage() {
         if (transcript.includes('loiro') || transcript.includes('amarelo')) hairC = 'Loiro';
         if (transcript.includes('ruivo') || transcript.includes('vermelho')) hairC = 'Ruivo';
 
-        if (transcript.includes('cacheado') || transcript.includes('crespo')) hairS = 'Cacheado';
+        if (transcript.includes('cacheado')) hairS = 'Cacheado';
+        if (transcript.includes('crespo')) hairS = 'Crespo';
         if (transcript.includes('curto')) hairS = 'Curto';
         if (transcript.includes('longo') || transcript.includes('comprido')) hairS = 'Longo';
 
@@ -98,7 +146,6 @@ export default function CriarPage() {
         if (transcript.includes('azul')) topC = 'Blusa azul';
         if (transcript.includes('vermelh')) topC = 'Moletom vermelho';
         if (transcript.includes('rosa')) topC = 'Vestido rosa';
-        if (transcript.includes('kaqui') || transcript.includes('caqui')) botC = 'Short kaqui';
 
         setFormData(prev => ({
           ...prev,
@@ -116,7 +163,7 @@ export default function CriarPage() {
 
       recognition.onerror = () => {
         setIsListening(false);
-        setVoiceNotice('Não conseguimos ouvir. Selecione pelos menus abaixo!');
+        setVoiceNotice('Não conseguimos ouvir. Escolha tocando nas opções abaixo!');
         setTimeout(() => setVoiceNotice(''), 3000);
       };
 
@@ -127,7 +174,7 @@ export default function CriarPage() {
       recognition.start();
     } catch (e) {
       setIsListening(false);
-      setVoiceNotice('Erro ao ativar microfone. Escolha as opções no formulário!');
+      setVoiceNotice('Erro ao ativar microfone. Escolha as opções abaixo!');
     }
   };
 
@@ -198,6 +245,13 @@ export default function CriarPage() {
     }
   };
 
+  // Cores ativas para o Espelho Mágico Ilustrado 2D
+  const activeSkin = SKIN_TONES.find(s => s.id === formData.skinTone) || SKIN_TONES[0];
+  const activeHair = HAIR_COLORS.find(h => h.id === formData.hairColor) || HAIR_COLORS[1];
+  const activeShirt = TOP_CLOTHES.find(c => c.id === formData.topClothing) || TOP_CLOTHES[0];
+  const isLongHair = formData.hairStyle === 'Longo' || formData.hairStyle === 'Trança';
+  const isCurlyHair = formData.hairStyle === 'Cacheado' || formData.hairStyle === 'Crespo';
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#FFFDF9] via-[#FEF7E6] to-[#ECFDF5] text-[#1A1D20] font-sans overflow-x-hidden pb-40 relative">
       {/* Plano de Fundo Cenográfico Estilo Caminho da Leitura */}
@@ -220,7 +274,7 @@ export default function CriarPage() {
             Criar História <span className="text-[#0D9488]">Mágica</span> ✨
           </h1>
           <p className="text-xs sm:text-sm text-slate-600 font-semibold max-w-sm mx-auto mt-1.5 leading-relaxed">
-            Siga os 5 passos da trilha para criar um livro ilustrado personalizado com o nome e o rostinho da criança!
+            Monte o personagem no Espelho Real e escolha o tema para gerar um livro ilustrado exclusivo!
           </p>
         </div>
 
@@ -285,7 +339,7 @@ export default function CriarPage() {
                   title="Sortear nome brasileiro aleatório"
                 >
                   <Dices size={15} />
-                  <span>🎲 Aleatório</span>
+                  <span>🎲 Sortear</span>
                 </button>
               </div>
 
@@ -305,7 +359,7 @@ export default function CriarPage() {
               <div className="w-3.5 h-2.5 rounded-full bg-[#DFC38D] border border-[#B89758]" />
             </div>
 
-            {/* ═══ PASSO 2: APARÊNCIA DO PERSONAGEM ═══ */}
+            {/* ═══ PASSO 2: ESPELHO REAL DO PERSONAGEM (AVATAR 2D ILUSTRADO AO VIVO) ═══ */}
             <div className="w-full bg-white/95 backdrop-blur-md border-2 border-[#E6DEC8] rounded-[32px] p-6 sm:p-7 shadow-[0_12px_30px_rgba(45,33,20,0.06)] space-y-5">
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3.5">
@@ -314,10 +368,10 @@ export default function CriarPage() {
                   </div>
                   <div>
                     <h3 className="text-slate-900 font-extrabold text-base sm:text-lg leading-tight">
-                      Aparência do Personagem
+                      Espelho do Personagem
                     </h3>
                     <p className="text-xs text-slate-500 font-semibold mt-0.5">
-                      Garante o mesmo visual em todas as páginas!
+                      Personalize o visual para todas as páginas!
                     </p>
                   </div>
                 </div>
@@ -333,7 +387,7 @@ export default function CriarPage() {
                   title="Clique e fale a aparência da criança"
                 >
                   {isListening ? <MicOff size={15} /> : <Mic size={15} />}
-                  <span>{isListening ? 'Ouvindo...' : '🎙️ Voz'}</span>
+                  <span>{isListening ? 'Ouvindo...' : '🎙️ Por Voz'}</span>
                 </button>
               </div>
 
@@ -343,144 +397,353 @@ export default function CriarPage() {
                 </div>
               )}
 
-              {/* Toggle Gênero Espaçado */}
+              {/* ═══ MOLDURA REAL DO ESPELHO MÁGICO (SVG 2D STORYBOOK CHARACTER) ═══ */}
+              <div className="relative rounded-[28px] p-5 bg-gradient-to-b from-[#0F766E] via-[#0D9488] to-[#FEF3C7] border-3 border-amber-300 shadow-inner overflow-hidden text-center">
+                {/* Brilhos Mágicos de Fundo */}
+                <div className="flex items-center justify-center">
+                  <div className="relative w-36 h-36 sm:w-40 sm:h-40 rounded-full bg-gradient-to-b from-[#E0F2FE] via-[#CCFBF1] to-[#FEF3C7] border-4 border-amber-400 shadow-[0_12px_30px_rgba(0,0,0,0.2)] flex items-center justify-center overflow-hidden">
+                    <svg viewBox="0 0 200 200" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                      {/* Colinas ao fundo do retrato */}
+                      <circle cx="155" cy="42" r="16" fill="#FEF08A" opacity="0.8" />
+                      <path d="M0,150 Q60,125 120,148 T200,140 L200,200 L0,200 Z" fill="#A7F3D0" opacity="0.65" />
+
+                      {/* Capa de Super-Herói (se selecionada) */}
+                      {formData.accessories === 'Capa de super-herói' && (
+                        <path d="M48,132 L26,198 L174,198 L152,132 Z" fill="#EF4444" stroke="#991B1B" strokeWidth="3" />
+                      )}
+
+                      {/* Cabelo Longo / Tranças atrás dos ombros */}
+                      {isLongHair && (
+                        <>
+                          <path
+                            d="M52,85 C42,120 44,162 60,174 L140,174 C156,162 158,120 148,85 Z"
+                            fill={activeHair.hex}
+                          />
+                          {formData.hairStyle === 'Trança' && (
+                            <>
+                              <circle cx="52" cy="148" r="10" fill={activeHair.hex} />
+                              <circle cx="50" cy="164" r="8" fill={activeHair.hex} />
+                              <circle cx="148" cy="148" r="10" fill={activeHair.hex} />
+                              <circle cx="150" cy="164" r="8" fill={activeHair.hex} />
+                            </>
+                          )}
+                        </>
+                      )}
+
+                      {/* Corpo / Camisa / Vestido */}
+                      <path
+                        d="M46,198 C48,150 72,136 100,136 C128,136 152,150 154,198 Z"
+                        fill={activeShirt.hex}
+                        stroke="#1E293B"
+                        strokeWidth="3"
+                      />
+                      {/* Gola da Roupa */}
+                      <path
+                        d="M82,137 Q100,152 118,137"
+                        fill="none"
+                        stroke="#FFFFFF"
+                        strokeWidth="4"
+                        strokeLinecap="round"
+                      />
+
+                      {/* Pescoço */}
+                      <rect x="88" y="118" width="24" height="24" rx="10" fill={activeSkin.hex} />
+
+                      {/* Orelhas */}
+                      <circle cx="54" cy="96" r="11" fill={activeSkin.hex} />
+                      <circle cx="146" cy="96" r="11" fill={activeSkin.hex} />
+
+                      {/* Rosto da Criança */}
+                      <ellipse
+                        cx="100"
+                        cy="92"
+                        rx="45"
+                        ry="43"
+                        fill={activeSkin.hex}
+                        stroke="#4A2C18"
+                        strokeWidth="2.5"
+                      />
+
+                      {/* Cabelo no Topo / Franja */}
+                      {isCurlyHair ? (
+                        <g fill={activeHair.hex}>
+                          <circle cx="62" cy="64" r="18" />
+                          <circle cx="82" cy="52" r="20" />
+                          <circle cx="105" cy="50" r="21" />
+                          <circle cx="126" cy="55" r="19" />
+                          <circle cx="140" cy="68" r="17" />
+                          <circle cx="54" cy="80" r="14" />
+                          <circle cx="146" cy="80" r="14" />
+                        </g>
+                      ) : (
+                        <path
+                          d="M54,84 C52,48 76,40 102,40 C128,40 148,50 146,84 C134,66 116,60 96,62 C78,64 64,72 54,84 Z"
+                          fill={activeHair.hex}
+                        />
+                      )}
+
+                      {/* Olhos Grandes Expressivos estilo Pixar */}
+                      <circle cx="82" cy="94" r="7.5" fill="#1E293B" />
+                      <circle cx="80" cy="91.5" r="2.8" fill="#FFFFFF" />
+                      <circle cx="118" cy="94" r="7.5" fill="#1E293B" />
+                      <circle cx="116" cy="91.5" r="2.8" fill="#FFFFFF" />
+
+                      {/* Sobrancelhas Suaves */}
+                      <path d="M73,81 Q82,77 89,81" fill="none" stroke={activeHair.hex} strokeWidth="2.8" strokeLinecap="round" />
+                      <path d="M111,81 Q118,77 127,81" fill="none" stroke={activeHair.hex} strokeWidth="2.8" strokeLinecap="round" />
+
+                      {/* Bochechinhas Coradas */}
+                      <ellipse cx="69" cy="105" rx="7.5" ry="4.5" fill={activeSkin.cheek} opacity="0.6" />
+                      <ellipse cx="131" cy="105" rx="7.5" ry="4.5" fill={activeSkin.cheek} opacity="0.6" />
+
+                      {/* Narizinho e Sorriso Feliz */}
+                      <path d="M98,99 Q100,103 103,99" fill="none" stroke="#8C583A" strokeWidth="2.2" strokeLinecap="round" />
+                      <path d="M88,111 Q100,122 112,111" fill="none" stroke="#7C2D12" strokeWidth="3.2" strokeLinecap="round" />
+
+                      {/* Acessório: Óculos */}
+                      {formData.accessories === 'Óculos' && (
+                        <g stroke="#0F766E" strokeWidth="3" fill="rgba(255,255,255,0.25)">
+                          <circle cx="82" cy="94" r="13" />
+                          <circle cx="118" cy="94" r="13" />
+                          <line x1="95" y1="94" x2="105" y2="94" />
+                        </g>
+                      )}
+
+                      {/* Acessório: Boné Vermelho */}
+                      {formData.accessories === 'Boné vermelho' && (
+                        <g>
+                          <path d="M55,66 C58,40 142,40 145,66 Z" fill="#EF4444" stroke="#991B1B" strokeWidth="2.5" />
+                          <path d="M52,65 Q105,58 158,68 Q135,74 52,65 Z" fill="#DC2626" stroke="#991B1B" strokeWidth="2.5" />
+                        </g>
+                      )}
+
+                      {/* Acessório: Coroa / Tiara Real */}
+                      {formData.accessories === 'Tiara de borboleta' && (
+                        <path
+                          d="M74,48 L82,28 L100,40 L118,28 L126,48 Z"
+                          fill="#FDE047"
+                          stroke="#B45309"
+                          strokeWidth="2.8"
+                          strokeLinejoin="round"
+                        />
+                      )}
+                    </svg>
+                  </div>
+                </div>
+
+                {/* Etiqueta Resumo do Personagem em Tempo Real */}
+                <div className="mt-3.5 inline-flex flex-wrap items-center justify-center gap-1.5 bg-white/95 backdrop-blur-md px-4 py-2 rounded-full border-2 border-amber-300 shadow-sm text-xs sm:text-sm font-extrabold text-slate-800">
+                  <span className="text-[#0D9488]">{formData.childName || 'Seu Herói'}</span>
+                  <span className="text-slate-300">•</span>
+                  <span>Cabelo {formData.hairStyle} {formData.hairColor}</span>
+                  <span className="text-slate-300">•</span>
+                  <span>{formData.topClothing}</span>
+                </div>
+              </div>
+
+              {/* 1. Gênero do Personagem */}
               <div>
-                <label className="block text-slate-700 text-xs sm:text-sm font-extrabold mb-2">
+                <label className="block text-slate-700 text-xs font-extrabold uppercase tracking-wider mb-2">
                   Gênero do Personagem
                 </label>
-                <div className="grid grid-cols-2 gap-3.5">
+                <div className="grid grid-cols-2 gap-3">
                   <button
                     type="button"
                     onClick={() => setFormData({ ...formData, gender: 'menino' })}
-                    className={`min-h-[50px] py-3 px-4 rounded-2xl font-extrabold text-sm flex items-center justify-center gap-2.5 border-2 transition-all cursor-pointer ${
+                    className={`min-h-[48px] py-2.5 px-4 rounded-2xl font-extrabold text-sm flex items-center justify-center gap-2 border-2 transition-all cursor-pointer ${
                       formData.gender === 'menino'
-                        ? 'bg-[#0D9488] border-[#0D9488] text-white shadow-md shadow-teal-900/15'
+                        ? 'bg-[#0D9488] border-[#0D9488] text-white shadow-sm'
                         : 'bg-[#FAF8F2] border-[#E2D9C5] text-slate-700 hover:bg-amber-50/50'
                     }`}
                   >
-                    <span className="text-lg">👦</span>
+                    <span>👦</span>
                     <span>Menino</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setFormData({ ...formData, gender: 'menina' })}
-                    className={`min-h-[50px] py-3 px-4 rounded-2xl font-extrabold text-sm flex items-center justify-center gap-2.5 border-2 transition-all cursor-pointer ${
+                    className={`min-h-[48px] py-2.5 px-4 rounded-2xl font-extrabold text-sm flex items-center justify-center gap-2 border-2 transition-all cursor-pointer ${
                       formData.gender === 'menina'
-                        ? 'bg-[#0D9488] border-[#0D9488] text-white shadow-md shadow-teal-900/15'
+                        ? 'bg-[#0D9488] border-[#0D9488] text-white shadow-sm'
                         : 'bg-[#FAF8F2] border-[#E2D9C5] text-slate-700 hover:bg-amber-50/50'
                     }`}
                   >
-                    <span className="text-lg">👧</span>
+                    <span>👧</span>
                     <span>Menina</span>
                   </button>
                 </div>
               </div>
 
-              {/* Seletores de Cabelo e Tom de Pele com Espaçamento Amplo */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-slate-700 text-xs font-extrabold mb-1.5">
-                    Cor do Cabelo
-                  </label>
-                  <select
-                    className="w-full bg-[#FAF8F2] border-2 border-[#E2D9C5] rounded-2xl h-12 px-3.5 text-sm font-bold text-slate-800 focus:outline-none focus:border-[#0D9488] cursor-pointer"
-                    value={formData.hairColor}
-                    onChange={(e) => setFormData({ ...formData, hairColor: e.target.value })}
-                  >
-                    <option value="Preto">🖤 Cabelo Preto</option>
-                    <option value="Castanho">🟤 Cabelo Castanho</option>
-                    <option value="Loiro">🟡 Cabelo Loiro</option>
-                    <option value="Ruivo">🔴 Cabelo Ruivo</option>
-                    <option value="Colorido">🔵 Cabelo Colorido</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-slate-700 text-xs font-extrabold mb-1.5">
-                    Estilo do Cabelo
-                  </label>
-                  <select
-                    className="w-full bg-[#FAF8F2] border-2 border-[#E2D9C5] rounded-2xl h-12 px-3.5 text-sm font-bold text-slate-800 focus:outline-none focus:border-[#0D9488] cursor-pointer"
-                    value={formData.hairStyle}
-                    onChange={(e) => setFormData({ ...formData, hairStyle: e.target.value })}
-                  >
-                    <option value="Curto">✨ Curto</option>
-                    <option value="Longo">✨ Longo</option>
-                    <option value="Cacheado">✨ Cacheado</option>
-                    <option value="Crespo">✨ Crespo</option>
-                    <option value="Liso">✨ Liso</option>
-                    <option value="Trança">✨ Tranças</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-slate-700 text-xs font-extrabold mb-1.5">
-                    Tom de Pele
-                  </label>
-                  <select
-                    className="w-full bg-[#FAF8F2] border-2 border-[#E2D9C5] rounded-2xl h-12 px-3.5 text-sm font-bold text-slate-800 focus:outline-none focus:border-[#0D9488] cursor-pointer"
-                    value={formData.skinTone}
-                    onChange={(e) => setFormData({ ...formData, skinTone: e.target.value })}
-                  >
-                    <option value="Clara">🌟 Clara</option>
-                    <option value="Parda">🌟 Parda / Morena</option>
-                    <option value="Negra">🌟 Negra</option>
-                    <option value="Muito Clara">🌟 Muito Clara</option>
-                  </select>
+              {/* 2. Tom de Pele (Swatches Visuais) */}
+              <div>
+                <label className="block text-slate-700 text-xs font-extrabold uppercase tracking-wider mb-2">
+                  Tom de Pele
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                  {SKIN_TONES.map((skin) => {
+                    const selected = formData.skinTone === skin.id;
+                    return (
+                      <button
+                        key={skin.id}
+                        type="button"
+                        onClick={() => setFormData({ ...formData, skinTone: skin.id })}
+                        className={`min-h-[46px] py-2 px-3 rounded-2xl border-2 flex items-center gap-2.5 font-extrabold text-xs sm:text-sm transition-all cursor-pointer ${
+                          selected
+                            ? 'bg-teal-50 border-[#0D9488] text-[#0F766E] shadow-xs'
+                            : 'bg-[#FAF8F2] border-[#E2D9C5] text-slate-700 hover:bg-amber-50/40'
+                        }`}
+                      >
+                        <span
+                          className="w-5 h-5 rounded-full border border-black/20 shrink-0 shadow-2xs"
+                          style={{ backgroundColor: skin.hex }}
+                        />
+                        <span className="truncate">{skin.label}</span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
-              {/* Seletores de Roupas e Acessórios */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {/* 3. Cor do Cabelo (Swatches Visuais) */}
+              <div>
+                <label className="block text-slate-700 text-xs font-extrabold uppercase tracking-wider mb-2">
+                  Cor do Cabelo
+                </label>
+                <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
+                  {HAIR_COLORS.map((hair) => {
+                    const selected = formData.hairColor === hair.id;
+                    return (
+                      <button
+                        key={hair.id}
+                        type="button"
+                        onClick={() => setFormData({ ...formData, hairColor: hair.id })}
+                        className={`min-h-[46px] py-2 px-2.5 rounded-2xl border-2 flex items-center justify-center gap-2 font-extrabold text-xs transition-all cursor-pointer ${
+                          selected
+                            ? 'bg-teal-50 border-[#0D9488] text-[#0F766E] shadow-xs'
+                            : 'bg-[#FAF8F2] border-[#E2D9C5] text-slate-700 hover:bg-amber-50/40'
+                        }`}
+                      >
+                        <span
+                          className="w-4 h-4 rounded-full border border-black/20 shrink-0"
+                          style={{ backgroundColor: hair.hex }}
+                        />
+                        <span>{hair.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* 4. Estilo do Cabelo */}
+              <div>
+                <label className="block text-slate-700 text-xs font-extrabold uppercase tracking-wider mb-2">
+                  Estilo do Cabelo
+                </label>
+                <div className="grid grid-cols-3 gap-2.5">
+                  {HAIR_STYLES.map((style) => {
+                    const selected = formData.hairStyle === style.id;
+                    return (
+                      <button
+                        key={style.id}
+                        type="button"
+                        onClick={() => setFormData({ ...formData, hairStyle: style.id })}
+                        className={`min-h-[44px] py-2 px-3 rounded-2xl border-2 font-extrabold text-xs sm:text-sm transition-all cursor-pointer ${
+                          selected
+                            ? 'bg-[#0D9488] border-[#0D9488] text-white shadow-xs'
+                            : 'bg-[#FAF8F2] border-[#E2D9C5] text-slate-700 hover:bg-amber-50/40'
+                        }`}
+                      >
+                        {style.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* 5. Roupinha da Aventura */}
+              <div>
+                <label className="block text-slate-700 text-xs font-extrabold uppercase tracking-wider mb-2">
+                  Roupinha da Aventura
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                  {TOP_CLOTHES.map((top) => {
+                    const selected = formData.topClothing === top.id;
+                    return (
+                      <button
+                        key={top.id}
+                        type="button"
+                        onClick={() => setFormData({ ...formData, topClothing: top.id })}
+                        className={`min-h-[46px] py-2 px-3 rounded-2xl border-2 flex items-center justify-center gap-1.5 font-extrabold text-xs transition-all cursor-pointer ${
+                          selected
+                            ? 'bg-teal-50 border-[#0D9488] text-[#0F766E] shadow-xs'
+                            : 'bg-[#FAF8F2] border-[#E2D9C5] text-slate-700 hover:bg-amber-50/40'
+                        }`}
+                      >
+                        <span>{top.emoji}</span>
+                        <span>{top.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* 6. Calça/Short & Acessório Especial */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
                 <div>
-                  <label className="block text-slate-700 text-xs font-extrabold mb-1.5">
-                    Camisa / Blusa
+                  <label className="block text-slate-700 text-xs font-extrabold uppercase tracking-wider mb-2">
+                    Parte de Baixo
                   </label>
-                  <select
-                    className="w-full bg-[#FAF8F2] border-2 border-[#E2D9C5] rounded-2xl h-12 px-3.5 text-sm font-bold text-slate-800 focus:outline-none focus:border-[#0D9488] cursor-pointer"
-                    value={formData.topClothing}
-                    onChange={(e) => setFormData({ ...formData, topClothing: e.target.value })}
-                  >
-                    <option value="Camiseta verde">👕 Camiseta verde</option>
-                    <option value="Blusa azul">👕 Blusa azul</option>
-                    <option value="Vestido rosa">👗 Vestido rosa</option>
-                    <option value="Moletom vermelho">🧥 Moletom vermelho</option>
-                    <option value="Camisa amarela">👕 Camisa amarela</option>
-                  </select>
+                  <div className="grid grid-cols-2 gap-2">
+                    {BOTTOM_CLOTHES.map((bot) => {
+                      const selected = formData.bottomClothing === bot.id;
+                      return (
+                        <button
+                          key={bot.id}
+                          type="button"
+                          onClick={() => setFormData({ ...formData, bottomClothing: bot.id })}
+                          className={`min-h-[42px] py-2 px-2.5 rounded-xl border-2 font-extrabold text-xs flex items-center justify-center gap-1 transition-all cursor-pointer ${
+                            selected
+                              ? 'bg-[#0D9488] border-[#0D9488] text-white'
+                              : 'bg-[#FAF8F2] border-[#E2D9C5] text-slate-700'
+                          }`}
+                        >
+                          <span>{bot.emoji}</span>
+                          <span className="truncate">{bot.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
 
                 <div>
-                  <label className="block text-slate-700 text-xs font-extrabold mb-1.5">
-                    Short / Calça
+                  <label className="block text-slate-700 text-xs font-extrabold uppercase tracking-wider mb-2">
+                    Acessório Especial
                   </label>
-                  <select
-                    className="w-full bg-[#FAF8F2] border-2 border-[#E2D9C5] rounded-2xl h-12 px-3.5 text-sm font-bold text-slate-800 focus:outline-none focus:border-[#0D9488] cursor-pointer"
-                    value={formData.bottomClothing}
-                    onChange={(e) => setFormData({ ...formData, bottomClothing: e.target.value })}
-                  >
-                    <option value="Short kaqui">🩳 Short kaqui</option>
-                    <option value="Calça jeans">👖 Calça jeans</option>
-                    <option value="Short azul">🩳 Short azul</option>
-                    <option value="Saia vermelha">👗 Saia vermelha</option>
-                    <option value="Bermuda preta">🩳 Bermuda preta</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-slate-700 text-xs font-extrabold mb-1.5">
-                    Acessório Extra
-                  </label>
-                  <select
-                    className="w-full bg-[#FAF8F2] border-2 border-[#E2D9C5] rounded-2xl h-12 px-3.5 text-sm font-bold text-slate-800 focus:outline-none focus:border-[#0D9488] cursor-pointer"
-                    value={formData.accessories}
-                    onChange={(e) => setFormData({ ...formData, accessories: e.target.value })}
-                  >
-                    <option value="Nenhum">✨ Nenhum</option>
-                    <option value="Óculos">👓 Óculos</option>
-                    <option value="Boné vermelho">🧢 Boné vermelho</option>
-                    <option value="Tiara de borboleta">👑 Tiara</option>
-                    <option value="Capa de super-herói">🦸 Capa de herói</option>
-                  </select>
+                  <div className="grid grid-cols-2 gap-2">
+                    {ACCESSORIES.slice(1).map((acc) => {
+                      const selected = formData.accessories === acc.id;
+                      return (
+                        <button
+                          key={acc.id}
+                          type="button"
+                          onClick={() =>
+                            setFormData({
+                              ...formData,
+                              accessories: selected ? 'Nenhum' : acc.id,
+                            })
+                          }
+                          className={`min-h-[42px] py-2 px-2.5 rounded-xl border-2 font-extrabold text-xs flex items-center justify-center gap-1 transition-all cursor-pointer ${
+                            selected
+                              ? 'bg-[#D97706] border-[#D97706] text-white'
+                              : 'bg-[#FAF8F2] border-[#E2D9C5] text-slate-700'
+                          }`}
+                        >
+                          <span>{acc.emoji}</span>
+                          <span className="truncate">{acc.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             </div>

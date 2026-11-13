@@ -518,51 +518,6 @@ export default function JourneyMap({ stories, userPlan = 'free', isAdmin = false
           })}
         </div>
 
-        {/* ═══ BARRA INFERIOR DOCKADA (Estilo Mobile Lumi Kids) ═══ */}
-        <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-8px_30px_rgba(0,0,0,0.08)] py-2 px-6 flex items-center justify-around max-w-lg mx-auto sm:rounded-t-3xl">
-          {/* Tab 1: Jornada */}
-          <button
-            type="button"
-            onClick={() => {
-              playSound(480);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            className="flex flex-col items-center gap-0.5 cursor-pointer group"
-          >
-            <div className="w-12 h-8 rounded-2xl bg-[#D1FAE5] text-[#065F46] flex items-center justify-center text-lg shadow-2xs group-hover:scale-105 transition-transform">
-              🗺️
-            </div>
-            <span className="font-bold text-[0.68rem] text-[#065F46]">Jornada</span>
-          </button>
-
-          {/* Tab 2: Todas as Histórias (Catálogo) */}
-          <button
-            type="button"
-            onClick={() => {
-              playSound(580);
-              setIsCatalogOpen(true);
-            }}
-            className="flex flex-col items-center gap-0.5 cursor-pointer group"
-          >
-            <div className="w-12 h-8 rounded-2xl bg-slate-100 text-slate-600 flex items-center justify-center text-lg group-hover:bg-teal-100 group-hover:text-teal-700 transition-colors">
-              📚
-            </div>
-            <span className="font-bold text-[0.68rem] text-slate-600 group-hover:text-teal-700">Histórias</span>
-          </button>
-
-          {/* Tab 3: Playground / Perfil */}
-          <Link
-            href="/app/progresso"
-            onClick={() => playSound(520)}
-            className="flex flex-col items-center gap-0.5 cursor-pointer group"
-          >
-            <div className="w-12 h-8 rounded-2xl bg-slate-100 text-slate-600 flex items-center justify-center text-lg group-hover:bg-amber-100 group-hover:text-amber-700 transition-colors">
-              🎪
-            </div>
-            <span className="font-bold text-[0.68rem] text-slate-600 group-hover:text-amber-700">Playground</span>
-          </Link>
-        </nav>
-
       </div>
 
       {/* ═════════════════════════════════════════════════════════════
