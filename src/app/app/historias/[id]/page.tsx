@@ -253,6 +253,7 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
     }
 
     try {
+      window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
       const targetLocale = LOCALE_BY_LANG[language] || 'pt-BR';
       utterance.lang = targetLocale;
@@ -260,10 +261,12 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
       utterance.pitch = 1.02;
 
       const voices = window.speechSynthesis.getVoices();
-      const matchedVoice = selectBestSpeechVoice(voices, language);
-      if (matchedVoice) {
-        utterance.voice = matchedVoice;
-        utterance.lang = matchedVoice.lang;
+      if (voices && voices.length > 0) {
+        const matchedVoice = selectBestSpeechVoice(voices, language);
+        if (matchedVoice) {
+          utterance.voice = matchedVoice;
+          utterance.lang = matchedVoice.lang;
+        }
       }
 
       const words = text.trim().split(/\s+/);
@@ -286,6 +289,7 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
         setTimeout(() => {
           if (!boundaryTriggered && words.length > 0) {
             let currentW = 0;
+            if (wordIntervalRef.current) clearInterval(wordIntervalRef.current);
             wordIntervalRef.current = setInterval(() => {
               currentW++;
               if (currentW < words.length) {
@@ -336,19 +340,32 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
     const words = cleanText.split(/\s+/);
     const cacheKey = `${language}:${cleanText}`;
 
+    // Destrava elemento de áudio no iOS Safari / mobile no clique do usuário
+    try {
+      if (!audioElementRef.current) {
+        audioElementRef.current = new Audio();
+      }
+      audioElementRef.current.pause();
+    } catch (_) {}
+
     try {
       let audioUrl = audioBlobCacheRef.current[cacheKey];
 
       if (!audioUrl) {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 6500);
+
         const res = await fetch('/api/ai/narrate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          signal: controller.signal,
           body: JSON.stringify({
             text: cleanText,
             lang: language,
-            voice: 'Aoede',
           }),
         });
+
+        clearTimeout(timeoutId);
 
         if (!res.ok) {
           throw new Error(`Narrate API status ${res.status}`);
@@ -362,8 +379,9 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
         audioBlobCacheRef.current[cacheKey] = audioUrl;
       }
 
-      const audio = new Audio(audioUrl);
-      // Cadência levemente mais suave para leitura infantil acolhedora
+      const audio = audioElementRef.current || new Audio();
+      audio.src = audioUrl;
+      // Cadência materna, suave e fluida para hora do sono infantil
       audio.playbackRate = 0.96;
       audioElementRef.current = audio;
 
@@ -388,12 +406,13 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
       };
 
       audio.onerror = () => {
+        console.warn('Erro ao reproduzir áudio neural, acionando fallback de voz do navegador');
         speakWithBrowserFallback(cleanText);
       };
 
       await audio.play();
     } catch (err) {
-      console.warn('Usando fallback de voz local:', err);
+      console.warn('Usando fallback de voz local devido a:', err);
       speakWithBrowserFallback(cleanText);
     }
   };
@@ -1064,33 +1083,33 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
         {/* Gradiente sutil apenas na faixa superior para destacar os botões flutuantes */}
         <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/45 to-transparent pointer-events-none z-10" />
 
-        {/* TOPO FLUTUANTE SOBRE A IMAGEM: Voltar + Modo Sono + Tradução + OUVIR em linha */}
+        {/* TOPO FLUTUANTE SOBRE A IMAGEM: Voltar + Modo Sono + Tradução + OUVIR em linha sem cortes */}
         <div
-          className="absolute top-3 inset-x-3 sm:top-5 sm:inset-x-5 z-30 flex items-center justify-between gap-2 pointer-events-none"
+          className="absolute top-2.5 inset-x-2.5 sm:top-4 sm:inset-x-4 z-30 flex items-center justify-between pointer-events-none"
         >
           <div
-            className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto scrollbar-none py-1 max-w-full pointer-events-auto"
+            className="flex items-center justify-between w-full gap-1 sm:gap-2 py-0.5 pointer-events-auto"
             onClick={(e) => e.stopPropagation()}
           >
             {/* 1. Voltar / Mapa */}
             {currentPageIndex === 0 ? (
               <Link
                 href="/app"
-                className="h-9 px-3 rounded-full bg-white/95 hover:bg-white text-slate-900 font-extrabold text-xs shadow-md border border-white/60 flex items-center gap-1.5 active:scale-95 transition-all shrink-0"
+                className="h-8.5 sm:h-9 px-2.5 sm:px-3 rounded-full bg-white/95 hover:bg-white text-slate-900 font-extrabold text-xs shadow-md border border-white/60 flex items-center gap-1 active:scale-95 transition-all shrink-0 select-none"
                 title="Voltar para o Mapa"
               >
-                <span>←</span>
-                <span>Mapa</span>
+                <span className="text-sm">←</span>
+                <span className="hidden min-[400px]:inline">Mapa</span>
               </Link>
             ) : (
               <button
                 type="button"
                 onClick={handlePrevPage}
-                className="h-9 px-3 rounded-full bg-white/95 hover:bg-white text-slate-900 font-extrabold text-xs shadow-md border border-white/60 flex items-center gap-1.5 active:scale-95 transition-all cursor-pointer shrink-0"
+                className="h-8.5 sm:h-9 px-2.5 sm:px-3 rounded-full bg-white/95 hover:bg-white text-slate-900 font-extrabold text-xs shadow-md border border-white/60 flex items-center gap-1 active:scale-95 transition-all cursor-pointer shrink-0 select-none"
                 title="Página anterior"
               >
-                <span>←</span>
-                <span>Voltar</span>
+                <span className="text-sm">←</span>
+                <span className="hidden min-[400px]:inline">Voltar</span>
               </button>
             )}
 
@@ -1098,15 +1117,15 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
             <button
               type="button"
               onClick={() => setIsNightMode((prev) => !prev)}
-              className={`h-9 px-3 rounded-full font-extrabold text-xs shadow-md border transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 shrink-0 ${
+              className={`h-8.5 sm:h-9 px-2.5 sm:px-3 rounded-full font-black text-[0.72rem] sm:text-xs shadow-md border transition-all flex items-center gap-1 cursor-pointer active:scale-95 shrink-0 select-none ${
                 isNightMode
                   ? 'bg-[#2C2014] border-amber-400 text-amber-300'
                   : 'bg-white/95 border-white/60 text-slate-800 hover:bg-white'
               }`}
               title="Alternar Modo Hora do Sono"
             >
-              <span>{isNightMode ? '☀️' : '🌙'}</span>
-              <span>{isNightMode ? 'Modo Sono: On' : 'Modo Sono'}</span>
+              <span className="text-sm">{isNightMode ? '☀️' : '🌙'}</span>
+              <span className="whitespace-nowrap">{isNightMode ? 'Sono: On' : 'Sono'}</span>
             </button>
 
             {/* 3. Tradução / Idioma */}
@@ -1129,7 +1148,7 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
                   speakText(currentText);
                 }
               }}
-              className={`h-9 pl-3 pr-1 rounded-full bg-black hover:bg-neutral-900 text-white border border-white/30 shadow-lg flex items-center gap-2 font-black text-xs tracking-wider uppercase transition-all cursor-pointer active:scale-95 shrink-0 select-none ${
+              className={`h-8.5 sm:h-9 pl-2.5 sm:pl-3 pr-1 rounded-full bg-black hover:bg-neutral-900 text-white border border-white/30 shadow-lg flex items-center gap-1.5 font-black text-xs tracking-wider uppercase transition-all cursor-pointer active:scale-95 shrink-0 select-none ${
                 isSpeaking ? 'ring-2 ring-amber-400' : ''
               }`}
               title={
@@ -1140,18 +1159,18 @@ export default function StoryReaderPage({ params }: { params: Promise<{ id: stri
                     : t('reader_listen', 'Ouvir história')
               }
             >
-              <span className="font-black text-white text-[0.72rem] tracking-wider leading-none">
+              <span className="font-black text-white text-[0.7rem] sm:text-xs tracking-wider leading-none">
                 {isSpeaking ? 'PAUSAR' : 'OUVIR'}
               </span>
-              <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center shrink-0 border border-black/15 shadow-2xs">
+              <div className="w-5.5 h-5.5 sm:w-6 sm:h-6 rounded-full bg-white flex items-center justify-center shrink-0 border border-black/15 shadow-2xs">
                 {isSpeaking ? (
-                  <svg className="w-3.5 h-3.5 text-[#DC2626] animate-pulse" viewBox="0 0 24 24" fill="currentColor">
+                  <svg className="w-3 h-3 text-[#DC2626] animate-pulse" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
                   </svg>
                 ) : isAudioLoading ? (
                   <span className="text-[10px] leading-none animate-spin">⏳</span>
                 ) : (
-                  <svg className="w-3.5 h-3.5 text-[#DC2626]" viewBox="0 0 24 24" fill="currentColor">
+                  <svg className="w-3 h-3 text-[#DC2626]" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
                   </svg>
                 )}
